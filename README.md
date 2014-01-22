@@ -22,5 +22,5 @@ environment setup.
 ### Tests
 To run the tests just do this:
 
-    $ coverage run --source='.' manage.py test
+    $ coverage run --source='.' --omit='*migrations*' manage.py test
     $ coverage report
