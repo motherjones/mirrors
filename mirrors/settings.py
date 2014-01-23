@@ -57,6 +57,9 @@ WSGI_APPLICATION = 'mirrors.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+# please remember to *not* leave your DB password in source
+# control!
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
