@@ -5,6 +5,10 @@ from jsonfield import JSONField
 
 
 class Content(models.Model):
+    """A piece of content.
+
+    .. todo:: Write real documentation for content.Content
+    """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField()
     content_type = models.CharField(max_length=50, default='none')
@@ -20,10 +24,11 @@ class Content(models.Model):
 
     @property
     def binary_data(self):
-        """Get the data from the most recent revision and return it as a
-        bytes object.
+        """Get the data from the most recent revision of the data.
+        
+        :rtype: bytes
         """
-        rev = self.revisions.order_by('-revision_date').first()
+        rev = self.revisions.order_by('revision').first()
         data = None
 
         if rev:
@@ -33,8 +38,13 @@ class Content(models.Model):
 
 
 class ContentRevision(models.Model):
+    """A revision of the data contained by a :class: Content object.
+
+    .. todo:: Write real documentation for content.ContentRevision
+    """
     data = models.BinaryField()
     diff = models.BinaryField()
     revision_date = models.DateTimeField(auto_now_add=True)
+    revision_number = models.IntegerField()
 
     content = models.ForeignKey('Content', related_name='revisions')
