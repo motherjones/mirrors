@@ -1,1 +1,58 @@
-[{"pk": 5, "model": "content.content", "fields": {"parent_content": null, "publish_date": "2013-01-01T10:00:00Z", "content_type": "application/octet-stream", "metadata": {"title": "test content 1", "author": "bobby tables"}, "slug": "test-content-1", "schema": {"schema": "schema name"}}}, {"pk": 7, "model": "content.content", "fields": {"parent_content": null, "publish_date": "2013-01-01T10:00:00Z", "content_type": "unknown", "metadata": {"title": "content with no revisions", "author": "bobby tables"}, "slug": "content-with-no-revisions", "schema": {"schema": "schema name"}}}, {"pk": 1, "model": "content.contentrevision", "fields": {"content": 5, "diff": "", "revision_date": "2013-12-12T00:00:00Z", "data": "dGhpcyBpcyB0aGUgZmlyc3QgcmV2aXNpb24="}}, {"pk": 2, "model": "content.contentrevision", "fields": {"content": 5, "diff": "MWMxCjwgdGhpcyBpcyB0aGUgZmlyc3QgcmV2aXNpb24KLS0tCj4gdGhpcyBpcyB0aGUgc2Vjb25kIHJldmlzaW9uCg==", "revision_date": "2014-01-22T00:00:00Z", "data": "dGhpcyBpcyB0aGUgc2Vjb25kIHJldmlzaW9u"}}]
+[
+{
+    "pk": 5, 
+    "model": "content.content", 
+    "fields": {
+        "parent_content": null, 
+        "publish_date": "2013-01-01T10:00:00Z", 
+        "content_type": "application/octet-stream", 
+        "metadata": {
+            "title": "test content 1", 
+            "author": "bobby tables"
+        }, 
+        "slug": "test-content-1", 
+        "schema": {
+            "schema": "schema name"
+        }
+    }
+},
+{
+    "pk": 7, 
+    "model": "content.content", 
+    "fields": {
+        "parent_content": null, 
+        "publish_date": "2013-01-01T10:00:00Z", 
+        "content_type": "unknown", 
+        "metadata": {
+            "title": "content with no revisions", 
+            "author": "bobby tables"
+        }, 
+        "slug": "content-with-no-revisions", 
+        "schema": {
+            "schema": "schema name"
+        }
+    }
+},
+{
+    "pk": 1, 
+    "model": "content.contentrevision", 
+    "fields": {
+        "content": 5, 
+        "diff": "", 
+        "revision_date": "2013-12-12T00:00:00Z", 
+        "data": "dGhpcyBpcyB0aGUgZmlyc3QgcmV2aXNpb24=", 
+        "revision_number": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "content.contentrevision", 
+    "fields": {
+        "content": 5, 
+        "diff": "MWMxCjwgdGhpcyBpcyB0aGUgZmlyc3QgcmV2aXNpb24KLS0tCj4gdGhpcyBpcyB0aGUgc2Vjb25kIHJldmlzaW9uCg==", 
+        "revision_date": "2014-01-22T00:00:00Z", 
+        "data": "dGhpcyBpcyB0aGUgc2Vjb25kIHJldmlzaW9u", 
+        "revision_number": 2
+    }
+}
+]
