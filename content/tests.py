@@ -139,10 +139,6 @@ class APITests(MirrorsTestCase):
         r = self.c.get('/content/no-such-content')
         self.assertEqual(r.status_code, 404)
 
-        r_data = json.loads(r.content)
-        self.assertDictEqual(r_data, {'error': True,
-                                      'message': 'No such content'})
-
     def test_get_content_plaintext_binary_data(self):
         r = self.c.get('/content/test-plain-text-content/data')
 
@@ -171,10 +167,6 @@ class APITests(MirrorsTestCase):
     def test_get_content_no_such_revision(self):
         r = self.c.get('/content/content-with-no-revisions')
         self.assertEqual(r.status_code, 404)
-
-        r_data = json.loads(r.content)
-        self.assertDictEqual(r_data, {'error': True,
-                                      'message': 'No such data'})
 
     def test_put_content(self):
         put_data = {'slug': 'test-put-content',
@@ -229,28 +221,13 @@ class APITests(MirrorsTestCase):
         r = self.c.patch('/content/test-patch-missing-content', patch_data)
         self.assertEqual(r.status_code, 404)
 
-        r_data = json.loads(r.content)
-        self.assertDictEqual(r_data, {'error': True,
-                                      'message': 'No such content'})
-
     def test_delete_content(self):
-        self.fail('Test not yet implemented')
+        r = self.c.delete('/content/test-delete-content')
+        self.assertEqual(r.status_code, 204)
+
+        r = self.c.get('/content/test-delete-content')
+        self.assertEqual(r.status_code, 404)
 
     def test_delete_missing_content(self):
         r = self.c.delete('/content/test-delete-missing-content')
         self.assertEqual(r.status_code, 404)
-
-        r_data = json.loads(r.content)
-        self.assertDictEqual(r_data, {'error': True,
-                                      'message': 'No such content'})
-
-    def test_delete_revision(self):
-        self.fail('Test not yet implemented')
-
-    def test_delete_missing_revision(self):
-        r = self.c.delete('/content/test-delete-missing-revision/revision/999')
-        self.assertEqual(r.status_code, 404)
-
-        r_data = json.loads(r.content)
-        self.assertDictEqual(r_data, {'error': True,
-                                      'message': 'No such revision'})
