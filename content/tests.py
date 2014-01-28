@@ -9,20 +9,20 @@ from content import urls as content_url
 from content.models import Content, ContentRevision
 
 class MirrorsTestCase(TestCase):
-    """This class adds the assertRecursiveDictContains function, which
+    """This class adds the `assertRecursiveDictContains` function, which
     provides a simpler way to make sure one dictionary contains (at least) all
     of the data in another dictionary.
     """
 
     def assertRecursiveDictContains(self, expected, actual):
-        """Assrt that one dictionary contains all of the data from another,
-        recursive into sub-dictionaries, if necessary.
+        """Assert that one dictionary contains all of the data from another,
+        recursive into sub-dictionaries, if necessary.  
 
         :param expected: The expected data
         :type expected: dict
         :param actual: The dictionary to check
         :type actual: dict
-        :raises: :class: AssertionError
+        :raises: :py:class:`AssertionError`
         """
         self.assertTrue(isinstance(expected, dict))
         self.assertTrue(isinstance(actual, dict))
@@ -110,6 +110,7 @@ class APITests(MirrorsTestCase):
     def test_get_content_no_members(self):
         r = self.c.get('/content/test-content-1')
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r['Content Type'], 'application/json')
 
         r_data = json.loads(r.content)
         self.assertDictContainsSubset(
@@ -124,6 +125,7 @@ class APITests(MirrorsTestCase):
     def test_get_content_with_members(self):
         r = self.c.get('/content/content-with-members')
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r['Content Type'], 'application/json')
 
         r_data = json.loads(r.content)
         self.assertDictContainsSubset(
@@ -204,6 +206,7 @@ class APITests(MirrorsTestCase):
         patch_data = {'metadata': {'author': 'patched author'}}
         r = self.c.patch('/content/test-content-1', patch_data)
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r['Content Type'], 'application/json')
 
         r_data = json.loads(r.content)['object']
         self.assertDictContainsSubset(
