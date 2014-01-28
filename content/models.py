@@ -3,7 +3,6 @@ from django.db import models
 
 from jsonfield import JSONField
 
-
 class Content(models.Model):
     """A piece of content.
 
@@ -16,7 +15,7 @@ class Content(models.Model):
     schema = JSONField()
     parent_content = models.ForeignKey(
         'self',
-        related_name='children',
+        related_name='members',
         blank=True,
         null=True,
         default=None
@@ -25,16 +24,15 @@ class Content(models.Model):
     @property
     def binary_data(self):
         """Get the data from the most recent revision of the data.
-        
+
         :rtype: bytes
         """
-        rev = self.revisions.order_by('revision').first()
-        data = None
+        rev = self.revisions.order_by('-revision_number').first()
 
         if rev:
-            data = rev.data.tobytes()
-
-        return data
+            return rev.data.tobytes()
+        else:
+            return None
 
 
 class ContentRevision(models.Model):
@@ -43,8 +41,8 @@ class ContentRevision(models.Model):
     .. todo:: Write real documentation for content.ContentRevision
     """
     data = models.BinaryField()
-    diff = models.BinaryField()
+    diff = models.BinaryField(null=True, blank=True)
     revision_date = models.DateTimeField(auto_now_add=True)
-    revision_number = models.IntegerField()
+    revision_number = models.IntegerField(default=1)
 
     content = models.ForeignKey('Content', related_name='revisions')
