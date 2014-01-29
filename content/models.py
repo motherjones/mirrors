@@ -12,14 +12,7 @@ class Content(models.Model):
     metadata = JSONField()
     content_type = models.CharField(max_length=50, default='none')
     publish_date = models.DateTimeField(null=True)
-    schema = JSONField()
-    parent_content = models.ForeignKey(
-        'self',
-        related_name='members',
-        blank=True,
-        null=True,
-        default=None
-    )
+    schema_name = models.CharField(max_length=50)
 
     @property
     def binary_data(self):
@@ -34,6 +27,21 @@ class Content(models.Model):
         else:
             return None
 
+class ContentAttribute(models.Model):
+    """Named attributes that associate :py:class:`Content` objects with
+    other `Content` objects.
+    """
+    parent = models.ForeignKey('Content', related_name='attributes')
+    child = models.ForeignKey('Content')
+    name = models.CharField(max_length=255)
+
+class ContentMembers(models.Model):
+    """Ordered list of :py:class:`Content` objects that belong to another
+    `Content` object.
+    """
+    parent = models.ForeignKey('Content', related_name='members')
+    child = models.ForeignKey('Content')
+    order = models.IntegerField(default=0)
 
 class ContentRevision(models.Model):
     """A revision of the data contained by a :class: Content object.
@@ -42,6 +50,8 @@ class ContentRevision(models.Model):
     """
     data = models.BinaryField()
     diff = models.BinaryField(null=True, blank=True)
+    metadata = JSONField()
+
     revision_date = models.DateTimeField(auto_now_add=True)
     revision_number = models.IntegerField(default=1)
 
