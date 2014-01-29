@@ -12,7 +12,7 @@ class Content(models.Model):
     metadata = JSONField()
     content_type = models.CharField(max_length=50, default='none')
     publish_date = models.DateTimeField(null=True)
-    schema_name = models.CharField(max_length=50)
+    schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     @property
     def binary_data(self):
