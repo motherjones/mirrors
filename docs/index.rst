@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    content/models
+   content/tests
 
 Documentation Todo List
 =======================
