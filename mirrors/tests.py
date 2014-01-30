@@ -91,7 +91,7 @@ class URLTests(MirrorsTestCase):
                          '/content/slug/revision/1/data')
 
 
-class APITests(MirrorsTestCase):
+class AuthTests(MirrorsTestCase):
     fixtures = ['content.json', 'users.json']
 
     def setUp(self):
@@ -99,8 +99,43 @@ class APITests(MirrorsTestCase):
         self.c.login(username='testuser', password='password')
         self.c_noauth = Client()
 
+    def test_client_authorization(self):
+        self.assertTrue(self.c.is_authenticated())
+        self.assertFalse(self.c_noauth.is_authenticated())
+
     def test_get_content_noauth(self):
         r = self.c_noauth.get('/content/test-content-1')
         self.assertEqual(r.status_code, 401)
 
-    
+    def test_get_nonexistent_content_noauth(self):
+        r = self.c_noauth.get('/content/no-such-content')
+        self.assertEqual(r.status_code, 401)
+
+    def test_get_content_auth(self):
+        r = self.c_noauth.get('/content/test-content-1')
+        self.assertEqual(r.status_code, 200)
+
+    def test_post_content_auth(self):
+        self.fail('Test not yet implemented')
+
+    def test_post_content_noauth(self):
+        self.fail('Test not yet implemented')
+
+    def test_patch_content_auth(self):
+        self.fail('Test not yet implemented')
+
+    def test_patch_content_noauth(self):
+        self.fail('Test not yet implemented')
+
+    def test_delete_content_auth(self):
+        self.fail('Test not yet implemented')
+
+    def test_delete_content_noauth(self):
+        self.fail('Test not yet implemented')
+
+    def test_put_content_auth(self):
+        self.fail('Test not yet implemented')
+
+    def test_put_content_noauth(self):
+        self.fail('Test not yet implemented')
+

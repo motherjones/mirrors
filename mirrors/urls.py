@@ -1,13 +1,11 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-from django.contrib import admin
-admin.autodiscover()
-
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'mirrors.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    #url(r'^admin/', include(admin.site.urls)),
-    url(r'^content/', include('content.urls')),
+urlpatterns = patterns(
+    'content.views',
+    url(r'^(?P<ver>[-.\d+])/(?P<slug>[-\w]+)$', 'get_content'),
+    url(r'^(?P<ver>[-.\d+])/(?P<slug>[-\w]+)/data$', 'get_content_data'),
+    url(r'^(?P<ver>[-.\d+])/(?P<slug>[-\w]+)/revision/(?P<revision>\d+)$',
+        'get_content_revision'),
+    url(r'^(?P<ver>[-.\d+])/(?P<slug>[-\w]+)/revision/(?P<revision>\d+)/data$',
+        'get_content_revision_data'),
 )
