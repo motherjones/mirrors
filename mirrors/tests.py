@@ -5,8 +5,8 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve, reverse
 from django.test import Client
 
-from content import urls as content_url
-from content.models import Content, ContentRevision
+from mirrors import urls as content_url
+from mirrors.models import Content, ContentRevision
 
 class MirrorsTestCase(TestCase):
     """This class adds the `assertRecursiveDictContains` function, which
@@ -75,18 +75,18 @@ class ContentTests(MirrorsTestCase):
 
 class URLTests(MirrorsTestCase):
     def test_content_urls(self):
-        self.assertEqual(reverse('content.views.get_content',
+        self.assertEqual(reverse('mirrors.views.get_content',
                                  args=('slug',)),
                          '/content/slug')
-        self.assertEqual(reverse('content.views.get_content_data',
+        self.assertEqual(reverse('mirrors.views.get_content_data',
                                  args=('slug',)),
                          '/content/slug/data')
 
     def test_content_revision_urls(self):
-        self.assertEqual(reverse('content.views.get_content_revision',
+        self.assertEqual(reverse('mirrors.views.get_content_revision',
                                  args=('slug', 1)),
                          '/content/slug/revision/1')
-        self.assertEqual(reverse('content.views.get_content_revision_data',
+        self.assertEqual(reverse('mirrors.views.get_content_revision_data',
                                  args=('slug', 1)),
                          '/content/slug/revision/1/data')
 
