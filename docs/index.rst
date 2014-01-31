@@ -6,8 +6,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   content/models
-   content/tests
+   mirrors/models
+   mirrors/tests
 
 Documentation Todo List
 =======================
