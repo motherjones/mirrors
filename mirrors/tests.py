@@ -90,15 +90,6 @@ class ContentRevisionTests(MirrorsTestCase):
         self.assertEqual(cr.content, c)
         self.assertEqual(cr.data, b'this is a new revision')
 
-    def test_new_revision_first_missing_data(self):
-        c = Content.objects.get(slug='test-content-with-no-revisions')
-
-        try:
-            c.new_revision(b'this is a new revision')
-            self.fail('ValueError expected')
-        except ValueError:
-            pass
-
     def test_new_revision_not_first(self):
         c = Content.objects.get(slug='test-content-1')
         cr = c.new_revision(b'this is a new revision', json.dumps({
@@ -112,17 +103,18 @@ class ContentRevisionTests(MirrorsTestCase):
     def test_new_revision_no_data(self):
         c = Content.objects.get(slug='test-content-with-no-revisions')
 
-        try:
+        with self.assertRaises(ValueError):
             cr = c.new_revision()
-            self.fail('new revision failed to raise an expected exception')
-        except ValueError:
-            pass
-        except Exception as e:
-            raise e
 
 
 class ContentAttributeTests(MirrorsTestCase):
     fixtures = ['content.json']
+
+    def test_get_attribute(self):
+        self.fail('Not yet implemented')
+
+    def test_get_attribute_nonexistent(self):
+        self.fail('Not yet implemented')
 
     def test_new_attribute_nonexistent(self):
         self.fail('Not yet implemented')

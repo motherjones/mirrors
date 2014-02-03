@@ -1,159 +1,6 @@
 [
 {
     "pk": 1, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "logentry", 
-        "name": "log entry", 
-        "app_label": "admin"
-    }
-},
-{
-    "pk": 2, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "permission", 
-        "name": "permission", 
-        "app_label": "auth"
-    }
-},
-{
-    "pk": 3, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "group", 
-        "name": "group", 
-        "app_label": "auth"
-    }
-},
-{
-    "pk": 4, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "user", 
-        "name": "user", 
-        "app_label": "auth"
-    }
-},
-{
-    "pk": 5, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contenttype", 
-        "name": "content type", 
-        "app_label": "contenttypes"
-    }
-},
-{
-    "pk": 6, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "session", 
-        "name": "session", 
-        "app_label": "sessions"
-    }
-},
-{
-    "pk": 7, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "migrationhistory", 
-        "name": "migration history", 
-        "app_label": "south"
-    }
-},
-{
-    "pk": 8, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "content", 
-        "name": "content", 
-        "app_label": "content"
-    }
-},
-{
-    "pk": 9, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentrevision", 
-        "name": "content revision", 
-        "app_label": "content"
-    }
-},
-{
-    "pk": 10, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentattribute", 
-        "name": "content attribute", 
-        "app_label": "content"
-    }
-},
-{
-    "pk": 11, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentmembers", 
-        "name": "content members", 
-        "app_label": "content"
-    }
-},
-{
-    "pk": 12, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "content", 
-        "name": "content", 
-        "app_label": "mirrors"
-    }
-},
-{
-    "pk": 13, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentattribute", 
-        "name": "content attribute", 
-        "app_label": "mirrors"
-    }
-},
-{
-    "pk": 14, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentmembers", 
-        "name": "content members", 
-        "app_label": "mirrors"
-    }
-},
-{
-    "pk": 15, 
-    "model": "contenttypes.contenttype", 
-    "fields": {
-        "model": "contentrevision", 
-        "name": "content revision", 
-        "app_label": "mirrors"
-    }
-},
-{
-    "pk": 8, 
-    "model": "south.migrationhistory", 
-    "fields": {
-        "applied": "2014-01-30T00:09:22.210Z", 
-        "app_name": "mirrors", 
-        "migration": "0001_initial"
-    }
-},
-{
-    "pk": 9, 
-    "model": "south.migrationhistory", 
-    "fields": {
-        "applied": "2014-01-30T23:43:20.166Z", 
-        "app_name": "mirrors", 
-        "migration": "0002_auto__add_field_contentattribute_added_time"
-    }
-},
-{
-    "pk": 1, 
     "model": "mirrors.content", 
     "fields": {
         "schema_name": "test-schema", 
@@ -209,6 +56,62 @@
     }
 },
 {
+    "pk": 6, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-01-30T23:51:45.293Z", 
+        "slug": "test-content-with-no-members", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content with no members"
+        }
+    }
+},
+{
+    "pk": 7, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-01-30T23:53:19.948Z", 
+        "slug": "test-content-with-members", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content with members"
+        }
+    }
+},
+{
+    "pk": 8, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-01-30T23:53:43.308Z", 
+        "slug": "test-content-member_1", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content member 1"
+        }
+    }
+},
+{
+    "pk": 9, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-01-30T23:53:51.412Z", 
+        "slug": "test-content-member_2", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content member 2"
+        }
+    }
+},
+{
     "pk": 1, 
     "model": "mirrors.contentattribute", 
     "fields": {
@@ -216,6 +119,24 @@
         "name": "subcontent", 
         "parent": 3, 
         "child": 4
+    }
+},
+{
+    "pk": 3, 
+    "model": "mirrors.contentmembers", 
+    "fields": {
+        "order": 500000000, 
+        "parent": 7, 
+        "child": 8
+    }
+},
+{
+    "pk": 4, 
+    "model": "mirrors.contentmembers", 
+    "fields": {
+        "order": 750000000, 
+        "parent": 7, 
+        "child": 9
     }
 },
 {
@@ -261,447 +182,6 @@
             "title": "test content 1", 
             "author": "author one"
         }
-    }
-},
-{
-    "pk": 1, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_logentry", 
-        "name": "Can add log entry", 
-        "content_type": 1
-    }
-},
-{
-    "pk": 2, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_logentry", 
-        "name": "Can change log entry", 
-        "content_type": 1
-    }
-},
-{
-    "pk": 3, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_logentry", 
-        "name": "Can delete log entry", 
-        "content_type": 1
-    }
-},
-{
-    "pk": 4, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_permission", 
-        "name": "Can add permission", 
-        "content_type": 2
-    }
-},
-{
-    "pk": 5, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_permission", 
-        "name": "Can change permission", 
-        "content_type": 2
-    }
-},
-{
-    "pk": 6, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_permission", 
-        "name": "Can delete permission", 
-        "content_type": 2
-    }
-},
-{
-    "pk": 7, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_group", 
-        "name": "Can add group", 
-        "content_type": 3
-    }
-},
-{
-    "pk": 8, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_group", 
-        "name": "Can change group", 
-        "content_type": 3
-    }
-},
-{
-    "pk": 9, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_group", 
-        "name": "Can delete group", 
-        "content_type": 3
-    }
-},
-{
-    "pk": 10, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_user", 
-        "name": "Can add user", 
-        "content_type": 4
-    }
-},
-{
-    "pk": 11, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_user", 
-        "name": "Can change user", 
-        "content_type": 4
-    }
-},
-{
-    "pk": 12, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_user", 
-        "name": "Can delete user", 
-        "content_type": 4
-    }
-},
-{
-    "pk": 13, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contenttype", 
-        "name": "Can add content type", 
-        "content_type": 5
-    }
-},
-{
-    "pk": 14, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contenttype", 
-        "name": "Can change content type", 
-        "content_type": 5
-    }
-},
-{
-    "pk": 15, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contenttype", 
-        "name": "Can delete content type", 
-        "content_type": 5
-    }
-},
-{
-    "pk": 16, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_session", 
-        "name": "Can add session", 
-        "content_type": 6
-    }
-},
-{
-    "pk": 17, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_session", 
-        "name": "Can change session", 
-        "content_type": 6
-    }
-},
-{
-    "pk": 18, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_session", 
-        "name": "Can delete session", 
-        "content_type": 6
-    }
-},
-{
-    "pk": 19, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_migrationhistory", 
-        "name": "Can add migration history", 
-        "content_type": 7
-    }
-},
-{
-    "pk": 20, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_migrationhistory", 
-        "name": "Can change migration history", 
-        "content_type": 7
-    }
-},
-{
-    "pk": 21, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_migrationhistory", 
-        "name": "Can delete migration history", 
-        "content_type": 7
-    }
-},
-{
-    "pk": 22, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_content", 
-        "name": "Can add content", 
-        "content_type": 8
-    }
-},
-{
-    "pk": 23, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_content", 
-        "name": "Can change content", 
-        "content_type": 8
-    }
-},
-{
-    "pk": 24, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_content", 
-        "name": "Can delete content", 
-        "content_type": 8
-    }
-},
-{
-    "pk": 25, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentrevision", 
-        "name": "Can add content revision", 
-        "content_type": 9
-    }
-},
-{
-    "pk": 26, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentrevision", 
-        "name": "Can change content revision", 
-        "content_type": 9
-    }
-},
-{
-    "pk": 27, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentrevision", 
-        "name": "Can delete content revision", 
-        "content_type": 9
-    }
-},
-{
-    "pk": 28, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentattribute", 
-        "name": "Can add content attribute", 
-        "content_type": 10
-    }
-},
-{
-    "pk": 29, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentattribute", 
-        "name": "Can change content attribute", 
-        "content_type": 10
-    }
-},
-{
-    "pk": 30, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentattribute", 
-        "name": "Can delete content attribute", 
-        "content_type": 10
-    }
-},
-{
-    "pk": 31, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentmembers", 
-        "name": "Can add content members", 
-        "content_type": 11
-    }
-},
-{
-    "pk": 32, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentmembers", 
-        "name": "Can change content members", 
-        "content_type": 11
-    }
-},
-{
-    "pk": 33, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentmembers", 
-        "name": "Can delete content members", 
-        "content_type": 11
-    }
-},
-{
-    "pk": 34, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_content", 
-        "name": "Can add content", 
-        "content_type": 12
-    }
-},
-{
-    "pk": 35, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_content", 
-        "name": "Can change content", 
-        "content_type": 12
-    }
-},
-{
-    "pk": 36, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_content", 
-        "name": "Can delete content", 
-        "content_type": 12
-    }
-},
-{
-    "pk": 37, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentattribute", 
-        "name": "Can add content attribute", 
-        "content_type": 13
-    }
-},
-{
-    "pk": 38, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentattribute", 
-        "name": "Can change content attribute", 
-        "content_type": 13
-    }
-},
-{
-    "pk": 39, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentattribute", 
-        "name": "Can delete content attribute", 
-        "content_type": 13
-    }
-},
-{
-    "pk": 40, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentmembers", 
-        "name": "Can add content members", 
-        "content_type": 14
-    }
-},
-{
-    "pk": 41, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentmembers", 
-        "name": "Can change content members", 
-        "content_type": 14
-    }
-},
-{
-    "pk": 42, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentmembers", 
-        "name": "Can delete content members", 
-        "content_type": 14
-    }
-},
-{
-    "pk": 43, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "add_contentrevision", 
-        "name": "Can add content revision", 
-        "content_type": 15
-    }
-},
-{
-    "pk": 44, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "change_contentrevision", 
-        "name": "Can change content revision", 
-        "content_type": 15
-    }
-},
-{
-    "pk": 45, 
-    "model": "auth.permission", 
-    "fields": {
-        "codename": "delete_contentrevision", 
-        "name": "Can delete content revision", 
-        "content_type": 15
-    }
-},
-{
-    "pk": 1, 
-    "model": "auth.user", 
-    "fields": {
-        "username": "jonf", 
-        "first_name": "", 
-        "last_name": "", 
-        "is_active": true, 
-        "is_superuser": true, 
-        "is_staff": true, 
-        "last_login": "2014-01-21T22:59:57.895Z", 
-        "groups": [], 
-        "user_permissions": [], 
-        "password": "pbkdf2_sha256$12000$MbLvKcj51NEn$vkpGTpKhykiGYJJeigSaDrQz5sqOe+ErkcCBxJWSwwg=", 
-        "email": "jfriedman@motherjones.com", 
-        "date_joined": "2014-01-21T22:59:57.895Z"
-    }
-},
-{
-    "pk": 2, 
-    "model": "auth.user", 
-    "fields": {
-        "username": "testuser", 
-        "first_name": "", 
-        "last_name": "", 
-        "is_active": true, 
-        "is_superuser": false, 
-        "is_staff": false, 
-        "last_login": "2014-01-24T01:22:30.276Z", 
-        "groups": [], 
-        "user_permissions": [], 
-        "password": "pbkdf2_sha256$12000$SBaT02xJCybw$byaaFlXQ/hb9Q+I3rRsO/f0hxrIbbJEJdzPoRlTtKec=", 
-        "email": "fake@email-address.com", 
-        "date_joined": "2014-01-24T01:22:30.276Z"
     }
 }
 ]
