@@ -60,8 +60,10 @@ class Content(models.Model):
             new_metadata = cur_rev.metadata
         except ContentRevision.DoesNotExist:
             cur_rev_num = 0
+            new_data = None
+            new_metadata = self.metadata
 
-            if not data or not metadata:
+            if not data:
                 raise ValueError(
                     'both metadata and data must be provided for 1st revision'
                 )
@@ -105,10 +107,20 @@ class Content(models.Model):
 
         attribute.save()
         return attribute
+    
+    def get_attribute(self, attribute_name):
+        """Retrieve the `Content` object attached to this one by the
+        attribute name.
+
+        :param attribute_name: name of the attribute 
+        :type attribute_name: str
+        :rtype: `Content`
+        """
+        raise NotImplementedError
 
     def new_member(self, child, index=None):
-        """Add an existing :py:class:`Content` object entry to the ordered list
-        of members for this one. By default, this will simply append the child
+        """Add an existing `Content` object entry to the ordered list of
+        members for this one. By default, this will simply append the child
         object to the list, but the user can specify the order if they so
         wish.
 
@@ -117,6 +129,15 @@ class Content(models.Model):
         :param index: (optional) the position within the list to put the child
                       in
         :type index: integer
+        """
+        raise NotImplementedError
+
+    def get_member(self, index):
+        """Retrieve a specific member.
+
+        :param index: the index of the member
+        :type index: int
+        :rtype: :py:class:`Content`
         """
         raise NotImplementedError
 
