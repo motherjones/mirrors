@@ -8,32 +8,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'ContentMembers'
-        db.delete_table('mirrors_contentmembers')
-
-        # Adding model 'ContentMember'
-        db.create_table('mirrors_contentmember', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='members', to=orm['mirrors.Content'])),
-            ('child', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['mirrors.Content'])),
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal('mirrors', ['ContentMember'])
-
+        db.rename_table('mirrors_contentmembers','mirrors_contentmember')
 
     def backwards(self, orm):
-        # Adding model 'ContentMembers'
-        db.create_table('mirrors_contentmembers', (
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(related_name='members', to=orm['mirrors.Content'])),
-            ('child', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['mirrors.Content'])),
-        ))
-        db.send_create_signal('mirrors', ['ContentMembers'])
-
-        # Deleting model 'ContentMember'
-        db.delete_table('mirrors_contentmember')
-
+        db.rename_table('mirrors_contentmember','mirrors_contentmembers')
 
     models = {
         'mirrors.content': {
