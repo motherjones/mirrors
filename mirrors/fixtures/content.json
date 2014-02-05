@@ -112,6 +112,76 @@
     }
 },
 {
+    "pk": 10, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-03T22:24:19.937Z", 
+        "slug": "content-member-1", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "content member 1"
+        }
+    }
+},
+{
+    "pk": 11, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-03T22:24:27.547Z", 
+        "slug": "content-member-2", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "content member 2"
+        }
+    }
+},
+{
+    "pk": 12, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-03T22:24:35.907Z", 
+        "slug": "content-member-3", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "content member 3"
+        }
+    }
+},
+{
+    "pk": 13, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-03T22:24:46.843Z", 
+        "slug": "content-member-4", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "content member 4"
+        }
+    }
+},
+{
+    "pk": 14, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-03T22:25:16.867Z", 
+        "slug": "content-with-a-bunch-of-members", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "content with a bunch of members"
+        }
+    }
+},
+{
     "pk": 1, 
     "model": "mirrors.contentattribute", 
     "fields": {
@@ -123,7 +193,7 @@
 },
 {
     "pk": 3, 
-    "model": "mirrors.contentmembers", 
+    "model": "mirrors.contentmember", 
     "fields": {
         "order": 500000000, 
         "parent": 7, 
@@ -132,11 +202,47 @@
 },
 {
     "pk": 4, 
-    "model": "mirrors.contentmembers", 
+    "model": "mirrors.contentmember", 
     "fields": {
         "order": 750000000, 
         "parent": 7, 
         "child": 9
+    }
+},
+{
+    "pk": 7, 
+    "model": "mirrors.contentmember", 
+    "fields": {
+        "order": 500000000, 
+        "parent": 14, 
+        "child": 10
+    }
+},
+{
+    "pk": 8, 
+    "model": "mirrors.contentmember", 
+    "fields": {
+        "order": 750000000, 
+        "parent": 14, 
+        "child": 11
+    }
+},
+{
+    "pk": 9, 
+    "model": "mirrors.contentmember", 
+    "fields": {
+        "order": 875000000, 
+        "parent": 14, 
+        "child": 12
+    }
+},
+{
+    "pk": 10, 
+    "model": "mirrors.contentmember", 
+    "fields": {
+        "order": 937500000, 
+        "parent": 14, 
+        "child": 13
     }
 },
 {

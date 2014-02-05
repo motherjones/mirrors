@@ -1,3 +1,5 @@
+import sys 
+
 from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
@@ -98,16 +100,16 @@ class Content(models.Model):
         attribute = ContentAttribute()
 
         try:
-            attribute = self.attributes.get(name=name)
+            self.attributes.get(parent=self, name=name).delete()
         except ContentAttribute.DoesNotExist:
-            attribute.name = name
-            attribute.parent = self
+            pass
 
-        attribute.child = child
+        return ContentAttribute.objects.create(
+            name=name,
+            parent=self,
+            child=child
+        )
 
-        attribute.save()
-        return attribute
-    
     def get_attribute(self, attribute_name):
         """Retrieve the `Content` object attached to this one by the
         attribute name.
@@ -116,7 +118,12 @@ class Content(models.Model):
         :type attribute_name: str
         :rtype: `Content`
         """
-        raise NotImplementedError
+        try:
+            attr = ContentAttribute.objects.get(parent=self,
+                                                name=attribute_name)
+            return attr.child
+        except ContentAttribute.DoesNotExist:
+            raise KeyError("no such attribute '{}'".format(attribute_name))
 
     def new_member(self, child, index=None):
         """Add an existing `Content` object entry to the ordered list of
@@ -124,13 +131,49 @@ class Content(models.Model):
         object to the list, but the user can specify the order if they so
         wish.
 
+        Elements inserted into the list at index `n` will shift all elements
+        back by one.
+
         :param child: the child `Content` object
         :type child: `Content`
         :param index: (optional) the position within the list to put the child
                       in
         :type index: integer
         """
-        raise NotImplementedError
+        count = self.members.count()
+
+        if index == None:
+            new_index = count
+        else:
+            new_index = index
+
+        indices = []
+
+        l_el_ord = 0
+        r_el_ord = ContentMember.max_index
+
+        if new_index < 0 or new_index > count:
+            raise IndexError('index provided is out of bounds')
+
+        if new_index == count:
+            if count > 0:
+                l_el_ord = self.members.order_by('order').last().order
+        else:
+            if new_index == 0:
+                r_el_ord = self.members.order_by('order').first().order
+            else:
+                indices = [ m.order for m in self.members.order_by('order')]
+
+                l_el_ord = indices[new_index-1]
+                r_el_ord = indices[new_index]
+
+        new_order = (l_el_ord + r_el_ord) / 2
+
+        return ContentMember.objects.create(
+            parent=self,
+            child=child,
+            order=new_order
+        )
 
     def get_member(self, index):
         """Retrieve a specific member.
@@ -139,7 +182,12 @@ class Content(models.Model):
         :type index: int
         :rtype: :py:class:`Content`
         """
-        raise NotImplementedError
+        # TODO implement Content.get_member
+        if index < 0 or index > self.members.count():
+            raise IndexError('member index out of bounds')
+
+        member = self.members.order_by('order')[index:index+1].first()
+        return member.child
 
 
 class ContentAttribute(models.Model):
@@ -153,7 +201,7 @@ class ContentAttribute(models.Model):
     added_time = models.DateTimeField(auto_now_add=True)
 
 
-class ContentMembers(models.Model):
+class ContentMember(models.Model):
     """Ordered list of :py:class:`Content` objects that belong to another
     `Content` object.
     """
