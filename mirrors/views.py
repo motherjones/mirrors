@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from mirrors.models import Content, ContentMembers, ContentAttribute
+from mirrors.models import Content, ContentMember, ContentAttribute
 from mirrors.models import ContentRevision
 from mirrors.serializers import ContentSerializer
 

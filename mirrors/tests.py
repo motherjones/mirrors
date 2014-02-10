@@ -7,8 +7,8 @@ from django.db import transaction
 from django.test import TestCase, Client
 
 from mirrors import urls as content_url
-#from mirrors.models import Content, ContentRevision
-#from mirrors.models import ContentAttribute, ContentMember
+from mirrors.models import Content, ContentRevision
+from mirrors.models import ContentAttribute, ContentMember
 from mirrors.models import *
 
 
