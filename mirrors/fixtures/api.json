@@ -1,0 +1,126 @@
+[
+{
+    "pk": 1, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "test-schema", 
+        "publish_date": "2014-01-30T19:32:34.555Z", 
+        "slug": "test-content-1", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "author one", 
+            "title": "test content 1"
+        }
+    }
+},
+{
+    "pk": 15, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:01:24.061Z", 
+        "slug": "test-content-with-multiple-levels", 
+        "content_type": "none", 
+        "metadata": {
+            "title": "test content with children with children of their own", 
+            "author": "bobby tables"
+        }
+    }
+},
+{
+    "pk": 16, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:03:10.332Z", 
+        "slug": "test-content-with-multiple-levels-sub-1", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content with children with children of their own sub-1"
+        }
+    }
+},
+{
+    "pk": 17, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-content-with-multiple-levels-sub-2", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "bobby tables", 
+            "title": "test content with children with children of their own sub-2"
+        }
+    }
+},
+{
+    "pk": 18, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:03:54.924Z", 
+        "slug": "test-content-with-multiple-levels-sub-1-1", 
+        "content_type": "none", 
+        "metadata": {
+            "title": "test content with children with children of their own sub-1-1", 
+            "author": "bobby tables"
+        }
+    }
+},
+{
+    "pk": 19, 
+    "model": "mirrors.content", 
+    "fields": {
+        "schema_name": "{\"schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:04:11.612Z", 
+        "slug": "test-content-with-multiple-levels-sub-1-2", 
+        "content_type": "none", 
+        "metadata": {
+            "title": "test content with children with children of their own sub-1-2", 
+            "author": "bobby tables"
+        }
+    }
+},
+{
+    "pk": 2, 
+    "model": "mirrors.contentattribute", 
+    "fields": {
+        "added_time": "2014-02-06T00:11:48.615Z", 
+        "name": "sub-1", 
+        "parent": 19, 
+        "child": 16
+    }
+},
+{
+    "pk": 3, 
+    "model": "mirrors.contentattribute", 
+    "fields": {
+        "added_time": "2014-02-06T00:11:58.299Z", 
+        "name": "sub-2", 
+        "parent": 19, 
+        "child": 17
+    }
+},
+{
+    "pk": 4, 
+    "model": "mirrors.contentattribute", 
+    "fields": {
+        "added_time": "2014-02-06T00:13:27.482Z", 
+        "name": "sub-1", 
+        "parent": 16, 
+        "child": 18
+    }
+},
+{
+    "pk": 5, 
+    "model": "mirrors.contentattribute", 
+    "fields": {
+        "added_time": "2014-02-06T00:13:35.474Z", 
+        "name": "sub-2", 
+        "parent": 16, 
+        "child": 19
+    }
+}
+]
