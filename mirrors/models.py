@@ -1,5 +1,5 @@
 import re
-import sys 
+import sys
 
 from django.dispatch import receiver
 from django.db import models
@@ -122,7 +122,7 @@ class Content(models.Model):
         """Retrieve the `Content` object attached to this one by the
         attribute name.
 
-        :param attribute_name: name of the attribute 
+        :param attribute_name: name of the attribute
         :type attribute_name: str
         :rtype: `Content`
         """
@@ -150,7 +150,7 @@ class Content(models.Model):
         """
         count = self.members.count()
 
-        if index == None:
+        if index is None:
             new_index = count
         else:
             new_index = index
@@ -170,7 +170,7 @@ class Content(models.Model):
             if new_index == 0:
                 r_el_ord = self.members.order_by('order').first().order
             else:
-                indices = [ m.order for m in self.members.order_by('order')]
+                indices = [m.order for m in self.members.order_by('order')]
 
                 l_el_ord = indices[new_index-1]
                 r_el_ord = indices[new_index]
