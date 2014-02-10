@@ -1,3 +1,4 @@
+import re
 import sys 
 
 from django.dispatch import receiver
@@ -90,13 +91,20 @@ class Content(models.Model):
         """Add a new named attribute to the :py:class:`Content` object. This
         will overwrite any old attributes that may have already existed.
 
-        :param name: the attribute's name
+        :param name: the attribute's name, which can only contain alphanumeric
+                     characters as well as the - and _ characters.
         :type name: string
         :param child: the `Content` object to associate with that name
         :type child: `Content`
 
         :rtype: :py:class:`ContentAttribute`
         """
+        if not child or child == self:
+            raise ValueError('child cannot be None or self')
+
+        if not re.match('[a-zA-Z0-9_-]+', name):
+            raise KeyError('invalid attribute name')
+
         attribute = ContentAttribute()
 
         try:
