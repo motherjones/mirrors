@@ -8,6 +8,7 @@ Contents:
 
    mirrors/models
    mirrors/tests
+   api_spec
 
 Documentation Todo List
 =======================
