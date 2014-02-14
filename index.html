@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mirrors by motherjones</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Mirrors</h1>
+        <p>The Mirrors content store</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/motherjones/mirrors" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/motherjones/mirrors/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/motherjones/mirrors/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>
+<a name="mirrors" class="anchor" href="#mirrors"><span class="octicon octicon-link"></span></a>Mirrors</h1>
+
+<p>It's some kind of content store.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>Python 3</li>
+<li>Postgres 9.2+</li>
+<li>Some python packages:
+
+<ul>
+<li>Django</li>
+<li>South</li>
+<li>django-jsonfield</li>
+<li>psycopg2</li>
+<li>Sphinx</li>
+</ul>
+</li>
+</ul><p>If you want to have an easier time of it just run <code>pip install -r
+./requirements.txt</code>. In the future we'll probably make some kind of automated
+environment setup.</p>
+
+<h2>
+<a name="running" class="anchor" href="#running"><span class="octicon octicon-link"></span></a>Running</h2>
+
+<p>Before doing anything other than installing all of the requirements, remember to
+set up your database. Edit <code>mirrors/settings.py</code> to reflect your database
+settings and then do this:</p>
+
+<pre><code>$ python ./manage.py syncdb
+  [...]
+$ python ./manage.py migrate
+</code></pre>
+
+<h2>
+<a name="tests" class="anchor" href="#tests"><span class="octicon octicon-link"></span></a>Tests</h2>
+
+<p>To run the tests just do this:</p>
+
+<pre><code>$ coverage run --source='.' --omit='*migrations*' manage.py test
+$ coverage report
+</code></pre>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/motherjones">motherjones</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
