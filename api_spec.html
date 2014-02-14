@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mirrors REST API spec &mdash; Mirrors 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mirrors 0.0.1 documentation" href="index.html" />
+    <link rel="prev" title="Tests" href="mirrors/tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mirrors/tests.html" title="Tests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mirrors-rest-api-spec">
+<h1>Mirrors REST API spec<a class="headerlink" href="#mirrors-rest-api-spec" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="components">
+<h2>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="crud-operations">
+<h3>CRUD Operations<a class="headerlink" href="#crud-operations" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="reading">
+<h4>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h4>
+<p>All information associated with a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> object except for the
+actual binary data itself.</p>
+<p>It will return a JSON object with this format:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of schema&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;title&gt;&#39;</span><span class="p">,</span>
+        <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="s">&#39;description&#39;</span>
+    <span class="p">},</span>
+    <span class="s">&#39;attribute_1&#39;</span><span class="p">:</span> <span class="n">component_1</span><span class="p">,</span>
+    <span class="s">&#39;attribute_2&#39;</span><span class="p">:</span> <span class="n">component_2</span><span class="p">,</span>
+    <span class="s">&#39;attribute_n&#39;</span><span class="p">:</span> <span class="n">component_n</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Attributes and their use are described in <a class="reference internal" href="#attributes-section"><em>Attributes</em></a>.</p>
+<p>A standard <em>404</em> response is returned if no <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> exists
+with that slug.</p>
+</div>
+<div class="section" id="creating">
+<h4>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h4>
+<p>Creating new <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects is done through a <tt class="docutils literal"><span class="pre">PUT</span></tt> request
+against <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>, where slug-id is the (you guessed it!) desired
+slug. The minimum expected data should look like this:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of component schema&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span><span class="p">,</span>
+                  <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A successful operation will return a <em>201</em> response and the resource
+representation of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> currently exists in the database,
+as it would be appear if the user issued a <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/component/&lt;slug&gt;</span></tt> query.</p>
+<p>If the slug provided is already in use, a <em>409</em> response will be returned.</p>
+</div>
+<div class="section" id="updating">
+<h4>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h4>
+<p>Changes to a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> resource are made by submitting a <tt class="docutils literal"><span class="pre">PATCH</span></tt>
+query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>. Multiple fields can be changed at once.
+Attributes can not be altered at this end point, though. The expected data
+takes the form</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;&lt;field name&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;new value&gt;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Multiple fileds and new values can be specified in this dictionary.</p>
+<p>After a successful update, a <em>200</em> HTTP response is returned along with the
+current state of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>.</p>
+</div>
+<div class="section" id="deleting">
+<h4>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h4>
+<p>Deleting a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> resource is achieved by submitting a
+<tt class="docutils literal"><span class="pre">DELETE</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;</span></tt>.</p>
+<p>After a successful delete, a <em>204</em> response is returned.</p>
+</div>
+</div>
+<div class="section" id="attributes">
+<span id="attributes-section"></span><h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<p>Simple named attributes which refer to a single <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> object
+come in the following form:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_object</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>However if an attribute contains a list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects the
+returned value will come in <em>this</em> form:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="p">[</span> <span class="n">component_object_1</span><span class="p">,</span>
+               <span class="n">component_object_2</span><span class="p">,</span>
+               <span class="n">component_object_n</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h4>Reading<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>Reading an attribute is as simple as making a <tt class="docutils literal"><span class="pre">GET</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>. If there is no attribute
+by that name, a <em>404</em> response is returned.</p>
+</div>
+<div class="section" id="id2">
+<h4>Creating<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with a JSON object of the
+following form:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the component you
+wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to 0.</p>
+<p>If you issue multiple <tt class="docutils literal"><span class="pre">PUT</span></tt> requests using the name attribute name, but
+different values for the weight, you will end up with an attribute that will
+return an order list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects.</p>
+<p>Successful requests will result in a <em>201</em> response along with the new resource
+in correct JSON form.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Attribute names have the same constraints as slugs.</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h4>Updating<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>You can&#8217;t update an attribute. Delete it, and then re-create it with the new
+data.</p>
+</div>
+<div class="section" id="id4">
+<h4>Deleting<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>To delete <strong>all</strong> of the contents of an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>. If you want to delete a
+specific ordered element in an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;/&lt;index&gt;</span></tt>, where index is the
+location of the element in that list.</p>
+<p>Attempting to delete a nonexistent attribute or a nonexistent attribute element
+will result in a <em>404</em> response.</p>
+<p>A successful delete will return a <em>204</em> responsen.</p>
+</div>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h4>Reading<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>To get at the data of a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, issue a <tt class="docutils literal"><span class="pre">GET</span></tt> query to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/data</span></tt>. The data will be returned with a <em>200</em> response
+code, and the content type header set appropriately (eg <tt class="docutils literal"><span class="pre">'image/png'</span></tt> if the data
+represented by the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is a png file).</p>
+<p>If no data exists yet, a <em>404</em> response will be returned.</p>
+</div>
+<div class="section" id="creating-updating">
+<h4>Creating/Updating<a class="headerlink" href="#creating-updating" title="Permalink to this headline">¶</a></h4>
+<p>Both creating and updating the data for a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is done by the
+same method. Issuing a <tt class="docutils literal"><span class="pre">PUT</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/data</span></tt> where the
+request body is the data itself.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="urls">
+<h1>URLs<a class="headerlink" href="#urls" title="Permalink to this headline">¶</a></h1>
+<div class="code highlight-python"><div class="highlight"><pre>/content                             GET, PUT, PATCH, DELETE do nothing
+                                     POST creates new Content item
+
+/content/:slug-id                    GET Content object data as JSON
+                                     PUT Create new Content object with name :slug-id as the slug
+                                     PATCH, POST, and DELETE work as normal
+
+/content/:slug-id/data               GET retrieves the current version of the actual data in the Content object
+                                     PUT, POST update the current data, adding a new revision
+
+/content/:slug-id/rev                GET retrieves revision information and returns it as JSON
+
+/content/:slug-id/rev/:rev-id        GET retrieves the data in the Content object from that particular revision
+
+/content/:slug-id/attribute          GET retrieve a list of all attribute names for that Content object
+
+/content/:slug-id/attribute/:attr-id PUT Create a new attribute with the name :attr-id
+                                     GET equivalent to GETting the actual content referenced by the attribute
+                                     PUT, PATCH, and DELETE work as normal
+
+/content/:slug-id/member             POST Create a new member
+
+/content/:slug-id/member/:index      PUT create or replace a member
+                                     GET get member info
+                                     DELETE, PATCH work as normal (use PATCH to move elements)
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mirrors REST API spec</a><ul>
+<li><a class="reference internal" href="#components">Components</a><ul>
+<li><a class="reference internal" href="#crud-operations">CRUD Operations</a><ul>
+<li><a class="reference internal" href="#reading">Reading</a></li>
+<li><a class="reference internal" href="#creating">Creating</a></li>
+<li><a class="reference internal" href="#updating">Updating</a></li>
+<li><a class="reference internal" href="#deleting">Deleting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#id1">Reading</a></li>
+<li><a class="reference internal" href="#id2">Creating</a></li>
+<li><a class="reference internal" href="#id3">Updating</a></li>
+<li><a class="reference internal" href="#id4">Deleting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data">Data</a><ul>
+<li><a class="reference internal" href="#id5">Reading</a></li>
+<li><a class="reference internal" href="#creating-updating">Creating/Updating</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#urls">URLs</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mirrors/tests.html"
+                        title="previous chapter">Tests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_spec.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="mirrors/tests.html" title="Tests"
+             >previous</a> |</li>
+        <li><a href="index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mother Jones Tech Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
