@@ -19,8 +19,10 @@ It will return a JSON object with this format:
 
  {
      'slug': '<slug>',
+     'url': '<canonical URL of  component>',
      'content_type': '<http content type>',
      'schema_name': '<name of schema>',
+     'content': '<canonical URL of component data>',
      'metadata': {
          'title': '<title>',
 	 'description': 'description'
@@ -49,7 +51,7 @@ slug. The minimum expected data should look like this:
      'content_type': '<http content type>',
      'schema_name': '<name of component schema>',
      'metadata': { '<metadata field 1>': '<value>',
-                   '<metadata field 1>': '<value>' }
+                   '<metadata field 2>': '<value>' }
  }
 
 A successful operation will return a *201* response and the resource
@@ -189,34 +191,3 @@ Creating/Updating
 Both creating and updating the data for a :py:class:`Component` is done by the
 same method. Issuing a ``PUT`` query to ``/component/<slug>/data`` where the
 request body is the data itself.
-
-URLs
-====
-
-.. code::
-
- /content                             GET, PUT, PATCH, DELETE do nothing
-                                      POST creates new Content item
-
- /content/:slug-id                    GET Content object data as JSON
-                                      PUT Create new Content object with name :slug-id as the slug
-                                      PATCH, POST, and DELETE work as normal
-
- /content/:slug-id/data               GET retrieves the current version of the actual data in the Content object
-                                      PUT, POST update the current data, adding a new revision
-
- /content/:slug-id/rev                GET retrieves revision information and returns it as JSON
-
- /content/:slug-id/rev/:rev-id        GET retrieves the data in the Content object from that particular revision
-
- /content/:slug-id/attribute          GET retrieve a list of all attribute names for that Content object
-
- /content/:slug-id/attribute/:attr-id PUT Create a new attribute with the name :attr-id
-                                      GET equivalent to GETting the actual content referenced by the attribute
-                                      PUT, PATCH, and DELETE work as normal
-
- /content/:slug-id/member             POST Create a new member
-
- /content/:slug-id/member/:index      PUT create or replace a member
-                                      GET get member info
-                                      DELETE, PATCH work as normal (use PATCH to move elements)
