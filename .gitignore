@@ -3,3 +3,5 @@
 *.swp
 __pycache__/*
 .coverage
+docs/_build/*
+mirrors.egg-info/*
