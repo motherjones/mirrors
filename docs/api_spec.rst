@@ -38,6 +38,14 @@ Attributes and their use are described in :ref:`attributes-section`.
 A standard *404* response is returned if no :py:class:`Component` exists
 with that slug.
 
+.. note ::
+   There are some standard metadata attributes which will be yound in more or
+   less all :py:class:`Component` objects. ``title`` and ``description`` are
+   two of them.
+
+   One attribute, ``force_template`` allows a Component to force the front end
+   to display it using a specified template.
+
 
 Creating
 """"""""
