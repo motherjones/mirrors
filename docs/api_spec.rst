@@ -178,7 +178,7 @@ location of the element in that list.
 Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a *404* response.
 
-A successful delete will return a *204* responsen.
+A successful delete will return a *204* response.
 
 
 Data
@@ -200,3 +200,76 @@ Creating/Updating
 Both creating and updating the data for a :py:class:`Component` is done by the
 same method. Issuing a ``PUT`` query to ``/component/<slug>/data`` where the
 request body is the data itself.
+
+Scheduler
+---------
+
+Reservations
+^^^^^^^^^^^^
+
+Creating a Reservation
+""""""""""""""""""""""
+
+A component can be scheduled for publishing by issuing a ``POST`` request to
+``/scheduler/`` with the slug and the time that it should be published at in
+the format of an ISO timestamp.
+
+.. code:: json
+ 
+ {
+     'slug': '<slug name>',
+     'datetime': '<timestamp>'
+ }
+
+If the slug or timestamp is invalid, a *400* response will be returned.
+
+A successful scheduling will result in a :py:class:`Reservation` object being
+returned with a *200* code.
+
+.. code:: json
+
+ {
+     'slug': '<slug name>',
+     'datetime': '<timestamp>',
+     'reservation': '<uuid>'
+ }
+
+Changing a Reservation
+""""""""""""""""""""""
+
+A ``PATCH`` request made to ``/scheduler/<reservation id>`` can be used to
+update the time when a component will be published, but only that. The response
+will look like this:
+
+.. code:: json
+
+ {
+     'slug': '<slug name>',
+     'datetime': '<timestamp>',
+     'reservation': '<uuid>'
+ }
+
+and come with a *200* response code.
+
+Deleting a Reservation
+""""""""""""""""""""""
+
+Issue a ``DELETE`` request to ``/scheduler/<reservation id>``. Status code
+*204* will be returned.
+
+Getting the Schedule
+^^^^^^^^^^^^^^^^^^^^
+
+Whenever the schedule is queried, the result is a list of
+:py:class:`Reservation` objects in JSON format.
+
+For a Day
+"""""""""
+
+Issue a ``GET`` request to ``/scheduler/?date=<day>``.
+
+For a Range
+"""""""""""
+
+Issue a ``GET`` request to ``/scheduler/?start=<day>&end=<day>``, where the day is the
+date you wish to check.
