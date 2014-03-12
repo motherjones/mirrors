@@ -18,19 +18,19 @@ It will return a JSON object with this format:
 .. code:: json
 
  {
-     'slug': '<slug>',
-     'url': '<canonical URL of component>',
-     'data_uri': '<canonical URL of component data>',
-     'content_type': '<http content type>',
-     'schema_name': '<name of schema>',
-     'content': '<canonical URL of component data>',
-     'metadata': {
-         'title': '<title>',
-	 'description': 'description'
-     },
-     'attribute_1': component_1,
-     'attribute_2': component_2,
-     'attribute_n': component_n
+   'slug': '<slug>',
+   'url': '<canonical URL of component>',
+   'data_uri': '<canonical URL of component data>',
+   'content_type': '<http content type>',
+   'schema_name': '<name of schema>',
+   'content': '<canonical URL of component data>',
+   'metadata': {
+     'title': '<title>',
+     'description': 'description'
+   },
+   'attribute_1': component_1,
+   'attribute_2': component_2,
+   'attribute_n': component_n
  }
 
 Attributes and their use are described in :ref:`attributes-section`.
@@ -57,10 +57,10 @@ slug. The minimum expected data should look like this:
 .. code:: json
 
  {
-     'content_type': '<http content type>',
-     'schema_name': '<name of component schema>',
-     'metadata': { '<metadata field 1>': '<value>',
-                   '<metadata field 2>': '<value>' }
+   'content_type': '<http content type>',
+   'schema_name': '<name of component schema>',
+   'metadata': { '<metadata field 1>': '<value>',
+                 '<metadata field 2>': '<value>' }
  }
 
 A successful operation will return a *201* response and the resource
@@ -81,7 +81,7 @@ takes the form
 .. code:: json
 
  {
-     '<field name>': '<new value>'
+   '<field name>': '<new value>'
  }
 
 Multiple fileds and new values can be specified in this dictionary.
@@ -109,9 +109,9 @@ come in the following form:
 .. code:: json
 
  {
-     'parent': '<parent slug>',
-     'name': '<attribute name>',
-     'value': component_object
+   'parent': '<parent slug>',
+   'name': '<attribute name>',
+   'value': component_object
  }
 
 However if an attribute contains a list of :py:class:`Component` objects the
@@ -120,11 +120,11 @@ returned value will come in *this* form:
 .. code:: json
 
  {
-     'parent': '<parent slug>',
-     'name': '<attribute name>',
-     'value': [ component_object_1,
-                component_object_2,
-		component_object_n ]
+   'parent': '<parent slug>',
+   'name': '<attribute name>',
+   'value': [ component_object_1,
+              component_object_2,
+              component_object_n ]
  }
 
 Reading
@@ -144,8 +144,8 @@ following form:
 .. code:: json
 
  {
-     'component': '<component slug>',
-     'weight': 0
+   'component': '<component slug>',
+   'weight': 0
  }
 
 The value for the field ``component`` should be the slug of the component you
@@ -217,8 +217,8 @@ the format of an ISO timestamp.
 .. code:: json
  
  {
-     'slug': '<slug name>',
-     'datetime': '<timestamp>'
+   'slug': '<slug name>',
+   'datetime': '<timestamp>'
  }
 
 If the slug or timestamp is invalid, a *400* response will be returned.
@@ -229,9 +229,9 @@ returned with a *200* code.
 .. code:: json
 
  {
-     'slug': '<slug name>',
-     'datetime': '<timestamp>',
-     'reservation': '<uuid>'
+   'slug': '<slug name>',
+   'datetime': '<timestamp>',
+   'reservation': '<uuid>'
  }
 
 Changing a Reservation
@@ -244,9 +244,9 @@ will look like this:
 .. code:: json
 
  {
-     'slug': '<slug name>',
-     'datetime': '<timestamp>',
-     'reservation': '<uuid>'
+   'slug': '<slug name>',
+   'datetime': '<timestamp>',
+   'reservation': '<uuid>'
  }
 
 and come with a *200* response code.
