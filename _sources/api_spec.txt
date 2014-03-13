@@ -18,22 +18,33 @@ It will return a JSON object with this format:
 .. code:: json
 
  {
-     'slug': '<slug>',
-     'content_type': '<http content type>',
-     'schema_name': '<name of schema>',
-     'metadata': {
-         'title': '<title>',
-	 'description': 'description'
-     },
-     'attribute_1': component_1,
-     'attribute_2': component_2,
-     'attribute_n': component_n
+   'slug': '<slug>',
+   'url': '<canonical URL of component>',
+   'data_uri': '<canonical URL of component data>',
+   'content_type': '<http content type>',
+   'schema_name': '<name of schema>',
+   'content': '<canonical URL of component data>',
+   'metadata': {
+     'title': '<title>',
+     'description': 'description'
+   },
+   'attribute_1': component_1,
+   'attribute_2': component_2,
+   'attribute_n': component_n
  }
 
 Attributes and their use are described in :ref:`attributes-section`.
 
 A standard *404* response is returned if no :py:class:`Component` exists
 with that slug.
+
+.. note ::
+   There are some standard metadata attributes which will be yound in more or
+   less all :py:class:`Component` objects. ``title`` and ``description`` are
+   two of them.
+
+   One attribute, ``force_template`` allows a Component to force the front end
+   to display it using a specified template.
 
 
 Creating
@@ -46,10 +57,10 @@ slug. The minimum expected data should look like this:
 .. code:: json
 
  {
-     'content_type': '<http content type>',
-     'schema_name': '<name of component schema>',
-     'metadata': { '<metadata field 1>': '<value>',
-                   '<metadata field 1>': '<value>' }
+   'content_type': '<http content type>',
+   'schema_name': '<name of component schema>',
+   'metadata': { '<metadata field 1>': '<value>',
+                 '<metadata field 2>': '<value>' }
  }
 
 A successful operation will return a *201* response and the resource
@@ -70,7 +81,7 @@ takes the form
 .. code:: json
 
  {
-     '<field name>': '<new value>'
+   '<field name>': '<new value>'
  }
 
 Multiple fileds and new values can be specified in this dictionary.
@@ -98,9 +109,9 @@ come in the following form:
 .. code:: json
 
  {
-     'parent': '<parent slug>',
-     'name': '<attribute name>',
-     'value': component_object
+   'parent': '<parent slug>',
+   'name': '<attribute name>',
+   'value': component_object
  }
 
 However if an attribute contains a list of :py:class:`Component` objects the
@@ -109,11 +120,11 @@ returned value will come in *this* form:
 .. code:: json
 
  {
-     'parent': '<parent slug>',
-     'name': '<attribute name>',
-     'value': [ component_object_1,
-                component_object_2,
-		component_object_n ]
+   'parent': '<parent slug>',
+   'name': '<attribute name>',
+   'value': [ component_object_1,
+              component_object_2,
+              component_object_n ]
  }
 
 Reading
@@ -133,8 +144,8 @@ following form:
 .. code:: json
 
  {
-     'component': '<component slug>',
-     'weight': 0
+   'component': '<component slug>',
+   'weight': 0
  }
 
 The value for the field ``component`` should be the slug of the component you
@@ -167,7 +178,7 @@ location of the element in that list.
 Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a *404* response.
 
-A successful delete will return a *204* responsen.
+A successful delete will return a *204* response.
 
 
 Data
@@ -190,33 +201,75 @@ Both creating and updating the data for a :py:class:`Component` is done by the
 same method. Issuing a ``PUT`` query to ``/component/<slug>/data`` where the
 request body is the data itself.
 
-URLs
-====
+Scheduler
+---------
 
-.. code::
+Reservations
+^^^^^^^^^^^^
 
- /content                             GET, PUT, PATCH, DELETE do nothing
-                                      POST creates new Content item
+Creating a Reservation
+""""""""""""""""""""""
 
- /content/:slug-id                    GET Content object data as JSON
-                                      PUT Create new Content object with name :slug-id as the slug
-                                      PATCH, POST, and DELETE work as normal
+A component can be scheduled for publishing by issuing a ``POST`` request to
+``/scheduler/`` with the slug and the time that it should be published at in
+the format of an ISO timestamp.
 
- /content/:slug-id/data               GET retrieves the current version of the actual data in the Content object
-                                      PUT, POST update the current data, adding a new revision
+.. code:: json
+ 
+ {
+   'slug': '<slug name>',
+   'datetime': '<timestamp>'
+ }
 
- /content/:slug-id/rev                GET retrieves revision information and returns it as JSON
+If the slug or timestamp is invalid, a *400* response will be returned.
 
- /content/:slug-id/rev/:rev-id        GET retrieves the data in the Content object from that particular revision
+A successful scheduling will result in a :py:class:`Reservation` object being
+returned with a *200* code.
 
- /content/:slug-id/attribute          GET retrieve a list of all attribute names for that Content object
+.. code:: json
 
- /content/:slug-id/attribute/:attr-id PUT Create a new attribute with the name :attr-id
-                                      GET equivalent to GETting the actual content referenced by the attribute
-                                      PUT, PATCH, and DELETE work as normal
+ {
+   'slug': '<slug name>',
+   'datetime': '<timestamp>',
+   'reservation': '<uuid>'
+ }
 
- /content/:slug-id/member             POST Create a new member
+Changing a Reservation
+""""""""""""""""""""""
 
- /content/:slug-id/member/:index      PUT create or replace a member
-                                      GET get member info
-                                      DELETE, PATCH work as normal (use PATCH to move elements)
+A ``PATCH`` request made to ``/scheduler/<reservation id>`` can be used to
+update the time when a component will be published, but only that. The response
+will look like this:
+
+.. code:: json
+
+ {
+   'slug': '<slug name>',
+   'datetime': '<timestamp>',
+   'reservation': '<uuid>'
+ }
+
+and come with a *200* response code.
+
+Deleting a Reservation
+""""""""""""""""""""""
+
+Issue a ``DELETE`` request to ``/scheduler/<reservation id>``. Status code
+*204* will be returned.
+
+Getting the Schedule
+^^^^^^^^^^^^^^^^^^^^
+
+Whenever the schedule is queried, the result is a list of
+:py:class:`Reservation` objects in JSON format.
+
+For a Day
+"""""""""
+
+Issue a ``GET`` request to ``/scheduler/?date=<day>``.
+
+For a Range
+"""""""""""
+
+Issue a ``GET`` request to ``/scheduler/?start=<day>&end=<day>``, where the day is the
+date you wish to check.

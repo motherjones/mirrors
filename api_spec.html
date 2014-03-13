@@ -34,6 +34,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="mirrors/tests.html" title="Tests"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
@@ -57,22 +60,33 @@
 actual binary data itself.</p>
 <p>It will return a JSON object with this format:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of schema&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;title&gt;&#39;</span><span class="p">,</span>
-        <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="s">&#39;description&#39;</span>
-    <span class="p">},</span>
-    <span class="s">&#39;attribute_1&#39;</span><span class="p">:</span> <span class="n">component_1</span><span class="p">,</span>
-    <span class="s">&#39;attribute_2&#39;</span><span class="p">:</span> <span class="n">component_2</span><span class="p">,</span>
-    <span class="s">&#39;attribute_n&#39;</span><span class="p">:</span> <span class="n">component_n</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;data_uri&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component data&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of schema&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;content&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component data&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;title&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="s">&#39;description&#39;</span>
+  <span class="p">},</span>
+  <span class="s">&#39;attribute_1&#39;</span><span class="p">:</span> <span class="n">component_1</span><span class="p">,</span>
+  <span class="s">&#39;attribute_2&#39;</span><span class="p">:</span> <span class="n">component_2</span><span class="p">,</span>
+  <span class="s">&#39;attribute_n&#39;</span><span class="p">:</span> <span class="n">component_n</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Attributes and their use are described in <a class="reference internal" href="#attributes-section"><em>Attributes</em></a>.</p>
 <p>A standard <em>404</em> response is returned if no <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> exists
 with that slug.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>There are some standard metadata attributes which will be yound in more or
+less all <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects. <tt class="docutils literal"><span class="pre">title</span></tt> and <tt class="docutils literal"><span class="pre">description</span></tt> are
+two of them.</p>
+<p class="last">One attribute, <tt class="docutils literal"><span class="pre">force_template</span></tt> allows a Component to force the front end
+to display it using a specified template.</p>
+</div>
 </div>
 <div class="section" id="creating">
 <h4>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h4>
@@ -80,10 +94,10 @@ with that slug.</p>
 against <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>, where slug-id is the (you guessed it!) desired
 slug. The minimum expected data should look like this:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of component schema&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span> <span class="p">}</span>
+  <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of component schema&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span><span class="p">,</span>
+                <span class="s">&#39;&lt;metadata field 2&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span> <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -99,7 +113,7 @@ query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&g
 Attributes can not be altered at this end point, though. The expected data
 takes the form</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;&lt;field name&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;new value&gt;&#39;</span>
+  <span class="s">&#39;&lt;field name&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;new value&gt;&#39;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -119,20 +133,20 @@ current state of the <tt class="xref py py-class docutils literal"><span class="
 <p>Simple named attributes which refer to a single <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> object
 come in the following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_object</span>
+  <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_object</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>However if an attribute contains a list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects the
 returned value will come in <em>this</em> form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="p">[</span> <span class="n">component_object_1</span><span class="p">,</span>
-               <span class="n">component_object_2</span><span class="p">,</span>
-               <span class="n">component_object_n</span> <span class="p">]</span>
+  <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;parent slug&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="p">[</span> <span class="n">component_object_1</span><span class="p">,</span>
+             <span class="n">component_object_2</span><span class="p">,</span>
+             <span class="n">component_object_n</span> <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -148,8 +162,8 @@ by that name, a <em>404</em> response is returned.</p>
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with a JSON object of the
 following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
-    <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">0</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -179,7 +193,7 @@ specific ordered element in an attribute, make a <tt class="docutils literal"><s
 location of the element in that list.</p>
 <p>Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a <em>404</em> response.</p>
-<p>A successful delete will return a <em>204</em> responsen.</p>
+<p>A successful delete will return a <em>204</em> response.</p>
 </div>
 </div>
 <div class="section" id="data">
@@ -200,35 +214,66 @@ request body is the data itself.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="urls">
-<h1>URLs<a class="headerlink" href="#urls" title="Permalink to this headline">¶</a></h1>
-<div class="code highlight-python"><div class="highlight"><pre>/content                             GET, PUT, PATCH, DELETE do nothing
-                                     POST creates new Content item
-
-/content/:slug-id                    GET Content object data as JSON
-                                     PUT Create new Content object with name :slug-id as the slug
-                                     PATCH, POST, and DELETE work as normal
-
-/content/:slug-id/data               GET retrieves the current version of the actual data in the Content object
-                                     PUT, POST update the current data, adding a new revision
-
-/content/:slug-id/rev                GET retrieves revision information and returns it as JSON
-
-/content/:slug-id/rev/:rev-id        GET retrieves the data in the Content object from that particular revision
-
-/content/:slug-id/attribute          GET retrieve a list of all attribute names for that Content object
-
-/content/:slug-id/attribute/:attr-id PUT Create a new attribute with the name :attr-id
-                                     GET equivalent to GETting the actual content referenced by the attribute
-                                     PUT, PATCH, and DELETE work as normal
-
-/content/:slug-id/member             POST Create a new member
-
-/content/:slug-id/member/:index      PUT create or replace a member
-                                     GET get member info
-                                     DELETE, PATCH work as normal (use PATCH to move elements)
+<div class="section" id="scheduler">
+<h2>Scheduler<a class="headerlink" href="#scheduler" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reservations">
+<h3>Reservations<a class="headerlink" href="#reservations" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="creating-a-reservation">
+<h4>Creating a Reservation<a class="headerlink" href="#creating-a-reservation" title="Permalink to this headline">¶</a></h4>
+<p>A component can be scheduled for publishing by issuing a <tt class="docutils literal"><span class="pre">POST</span></tt> request to
+<tt class="docutils literal"><span class="pre">/scheduler/</span></tt> with the slug and the time that it should be published at in
+the format of an ISO timestamp.</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;datetime&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp&gt;&#39;</span>
+<span class="p">}</span>
 </pre></div>
+</div>
+<p>If the slug or timestamp is invalid, a <em>400</em> response will be returned.</p>
+<p>A successful scheduling will result in a <tt class="xref py py-class docutils literal"><span class="pre">Reservation</span></tt> object being
+returned with a <em>200</em> code.</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;datetime&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;reservation&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;uuid&gt;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="changing-a-reservation">
+<h4>Changing a Reservation<a class="headerlink" href="#changing-a-reservation" title="Permalink to this headline">¶</a></h4>
+<p>A <tt class="docutils literal"><span class="pre">PATCH</span></tt> request made to <tt class="docutils literal"><span class="pre">/scheduler/&lt;reservation</span> <span class="pre">id&gt;</span></tt> can be used to
+update the time when a component will be published, but only that. The response
+will look like this:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;datetime&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;reservation&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;uuid&gt;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>and come with a <em>200</em> response code.</p>
+</div>
+<div class="section" id="deleting-a-reservation">
+<h4>Deleting a Reservation<a class="headerlink" href="#deleting-a-reservation" title="Permalink to this headline">¶</a></h4>
+<p>Issue a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to <tt class="docutils literal"><span class="pre">/scheduler/&lt;reservation</span> <span class="pre">id&gt;</span></tt>. Status code
+<em>204</em> will be returned.</p>
+</div>
+</div>
+<div class="section" id="getting-the-schedule">
+<h3>Getting the Schedule<a class="headerlink" href="#getting-the-schedule" title="Permalink to this headline">¶</a></h3>
+<p>Whenever the schedule is queried, the result is a list of
+<tt class="xref py py-class docutils literal"><span class="pre">Reservation</span></tt> objects in JSON format.</p>
+<div class="section" id="for-a-day">
+<h4>For a Day<a class="headerlink" href="#for-a-day" title="Permalink to this headline">¶</a></h4>
+<p>Issue a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/scheduler/?date=&lt;day&gt;</span></tt>.</p>
+</div>
+<div class="section" id="for-a-range">
+<h4>For a Range<a class="headerlink" href="#for-a-range" title="Permalink to this headline">¶</a></h4>
+<p>Issue a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/scheduler/?start=&lt;day&gt;&amp;end=&lt;day&gt;</span></tt>, where the day is the
+date you wish to check.</p>
+</div>
+</div>
 </div>
 </div>
 
@@ -263,9 +308,22 @@ request body is the data itself.</p>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#scheduler">Scheduler</a><ul>
+<li><a class="reference internal" href="#reservations">Reservations</a><ul>
+<li><a class="reference internal" href="#creating-a-reservation">Creating a Reservation</a></li>
+<li><a class="reference internal" href="#changing-a-reservation">Changing a Reservation</a></li>
+<li><a class="reference internal" href="#deleting-a-reservation">Deleting a Reservation</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#urls">URLs</a></li>
+<li><a class="reference internal" href="#getting-the-schedule">Getting the Schedule</a><ul>
+<li><a class="reference internal" href="#for-a-day">For a Day</a></li>
+<li><a class="reference internal" href="#for-a-range">For a Range</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
   <h4>Previous topic</h4>
@@ -299,6 +357,9 @@ request body is the data itself.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="mirrors/tests.html" title="Tests"
              >previous</a> |</li>
