@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from mirrors import urls as content_url
+from mirrors.models import Content, ContentRevision
+from mirrors.models import ContentAttribute, ContentMember
 from mirrors.models import *
 
 
@@ -133,7 +135,7 @@ class ContentAttributeTests(MirrorsTestCase):
         with self.assertRaises(KeyError):
             c_2 = c.get_attribute('no-such-attribute')
 
-    def test_new_attribute(self):
+    def test_new_attribute_nonexistent(self):
         c = Content.objects.get(slug='test-content-with-attributes')
         c_2 = Content.objects.get(slug='test-content-1')
 
@@ -269,181 +271,3 @@ class URLTests(MirrorsTestCase):
         self.assertEqual(reverse('mirrors.views.get_content_revision_data',
                                  args=('slug', 1)),
                          '/slug/revision/1/data')
-
-
-class RESTAPITests(APITestCase):
-    fixtures = ['api.json', 'users.json']
-
-    def setUp(self):
-        self.token = Token.objects.get(user__username='test_admin')
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-        self.client_noauth = APIClient()
-
-    def test_get_no_auth(self):
-        url = reverse('view-content', kwargs={
-            'content_slug': 'test-content-1'
-        })
-        res = self.client_noauth.get(url)
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    ### tests against /content ###############################################
-    def test_get_content_list(self):
-        url = reverse('view-content')
-        res = self.client.get(url)
-        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    ### tests against /content/<slug-id> #####################################
-    def test_get_content(self):
-        url = reverse('view-content', kwargs={
-            'content_slug': 'test-content-1'
-        })
-        res = self.client.get(url)
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'slug': 'test-content-1',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test content 1'
-            },
-            'attributes': {},
-            'members': []
-        })
-
-    def test_get_nonexistent_content(self):
-        url = reverse('view-content', kwargs={
-            'content_slug': 'no-such-content'
-        })
-        res = self.client.get(url)
-
-        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_put_content(self):
-        put_data = {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test content 1'
-            }
-        }
-        expected_resp_data = {
-            'slug': 'new-content',
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test content 1'
-            },
-            'attributes': {},
-            'members': []
-        }
-
-        url = reverse('view-content', kwargs={'content_slug': 'new-content'})
-        res = self.client.put(url, put_data, format='json')
-
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(res.data, expected_resp_data)
-
-    def test_put_conflicting_name_content(self):
-        self.fail('not implemented yet')
-
-    def test_post_to_content(self):
-        self.fail('not implemented yet')
-
-    def test_patch_content(self):
-        self.fail('not implemented yet')
-
-    def test_patch_content_no_changes(self):
-        self.fail('not implemented yet')
-
-    def test_delete_content(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/data ################################
-    def test_get_content_data(self):
-        self.fail('not implemented yet')
-
-    def test_get_content_without_data(self):
-        self.fail('not implemented yet')
-
-    def test_put_content_data(self):
-        self.fail('not implemented yet')
-
-    def test_post_content_data(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/rev #################################
-    def test_get_revision_list(self):
-        self.fail('not implemented yet')
-
-    def test_post_revision_list(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/rev/<rev-num> #######################
-    def test_get_revision(self):
-        self.fail('not implemented yet')
-
-    def test_get_404_revision(self):
-        self.fail('not implemented yet')
-
-    def test_delete_revision(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/attribute ###########################
-    def test_get_attribute_list(self):
-        self.fail('not implementeyet')
-
-    def test_get_empty_attribute_list(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/attribute/<attr-name> ############3##
-    def test_put_new_attribute(self):
-        self.fail('not implemented yet')
-
-    def test_get_attribute(self):
-        self.fail('not implemented yet')
-
-    def test_put_conflicting_attribute(self):
-        self.fail('not implemented yet')
-
-    def test_get_404_attribute(self):
-        self.fail('not implemented yet')
-
-    def test_delete_attribute(self):
-        self.fail('not implemented yet')
-
-    def test_patch_attribute(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/member ##############################
-    def test_get_member_list(self):
-        self.fail('not implemented yet')
-
-    def test_post_member(self):
-        self.fail('not implemented yet')
-
-    ### tests against /content/<slug-id>/member/<member-index> ###############
-    def test_get_member(self):
-        self.fail('not implemented yet')
-
-    def test_get_404_member(self):
-        self.fail('not implemented yet')
-
-    def test_put_new_member(self):
-        self.fail('not implemented yet')
-
-    def test_put_overwrite_member(self):
-        self.fail('not implemented yet')
-
-    def test_patch_member(self):
-        self.fail('not implemented yet')
-
-    def test_delete_member(self):
-        self.fail('not implemented yet')
