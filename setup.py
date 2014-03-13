@@ -11,5 +11,4 @@ setup(name='mirrors',
       # PyPI stuff, if the time ever comes
       author='Mikela Clemmons, Jon Friedman',
       author_email='mclemmons@motherjones.com, jfriedman@motherjones.com',
-      long_description=open('README.md').read(),
-)
+      long_description=open('README.md').read())
