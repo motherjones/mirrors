@@ -5,20 +5,20 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from mirrors.models import *
-from mirrors.serializers import ContentSerializer
+from mirrors.serializers import ComponentSerializer
 
 
-def get_content(request, slug):
+def get_component(request, slug):
     raise NotImplementedError
 
 
-def get_content_data(request, slug):
+def get_component_data(request, slug):
     raise NotImplementedError
 
 
-def get_content_revision(request, slug, revision):
+def get_component_revision(request, slug, revision):
     raise NotImplementedError
 
 
-def get_content_revision_data(request, slug, revision):
+def get_component_revision_data(request, slug, revision):
     raise NotImplementedError

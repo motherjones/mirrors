@@ -9,10 +9,10 @@ from django.utils import timezone
 from jsonfield import JSONField
 
 
-class Content(models.Model):
-    """A piece of content.
+class Component(models.Model):
+    """A component
 
-    .. todo:: Write real documentation for content.Content
+    .. todo:: Write real documentation for mirrors.Component
     """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField()
@@ -34,7 +34,7 @@ class Content(models.Model):
             return None
 
     def new_revision(self, data=None, metadata=None):
-        """Create a new revision for this :py:class:`Content` object. If the
+        """Create a new revision for this :py:class:`Component` object. If the
         data is not in the correct format it will attempt to convert it into a
         bytes object.
 
@@ -46,7 +46,7 @@ class Content(models.Model):
         :param metadata: the new metadata
         :type metadata: `dict`
 
-        :rtype: :py:class:`ContentRevision`
+        :rtype: :py:class:`ComponentRevision`
         :raises: `ValueError`
         """
         if not data and not metadata:
@@ -61,7 +61,7 @@ class Content(models.Model):
 
             new_data = cur_rev.data
             new_metadata = cur_rev.metadata
-        except ContentRevision.DoesNotExist:
+        except ComponentRevision.DoesNotExist:
             cur_rev_num = 0
             new_data = None
             new_metadata = self.metadata
@@ -76,28 +76,28 @@ class Content(models.Model):
         if metadata:
             new_metadata = metadata
 
-        new_rev = ContentRevision.objects.create(
+        new_rev = ComponentRevision.objects.create(
             revision_number=cur_rev_num+1,
             data=data,
             diff=None,  # figure this out later
             metadata=metadata,
             revision_date=timezone.now(),
-            content=self
+            component=self
         )
 
         return new_rev
 
     def new_attribute(self, name, child):
-        """Add a new named attribute to the :py:class:`Content` object. This
+        """Add a new named attribute to the :py:class:`Component` object. This
         will overwrite any old attributes that may have already existed.
 
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
         :type name: string
-        :param child: the `Content` object to associate with that name
-        :type child: `Content`
+        :param child: the `Component` object to associate with that name
+        :type child: `Component`
 
-        :rtype: :py:class:`ContentAttribute`
+        :rtype: :py:class:`ComponentAttribute`
         """
         if not child or child == self:
             raise ValueError('child cannot be None or self')
@@ -105,36 +105,36 @@ class Content(models.Model):
         if not re.match('[a-zA-Z0-9_-]+', name):
             raise KeyError('invalid attribute name')
 
-        attribute = ContentAttribute()
+        attribute = ComponentAttribute()
 
         try:
             self.attributes.get(parent=self, name=name).delete()
-        except ContentAttribute.DoesNotExist:
+        except ComponentAttribute.DoesNotExist:
             pass
 
-        return ContentAttribute.objects.create(
+        return ComponentAttribute.objects.create(
             name=name,
             parent=self,
             child=child
         )
 
     def get_attribute(self, attribute_name):
-        """Retrieve the `Content` object attached to this one by the
+        """Retrieve the `Component` object attached to this one by the
         attribute name.
 
         :param attribute_name: name of the attribute
         :type attribute_name: str
-        :rtype: `Content`
+        :rtype: `Component`
         """
         try:
-            attr = ContentAttribute.objects.get(parent=self,
-                                                name=attribute_name)
+            attr = ComponentAttribute.objects.get(parent=self,
+                                                  name=attribute_name)
             return attr.child
-        except ContentAttribute.DoesNotExist:
+        except ComponentAttribute.DoesNotExist:
             raise KeyError("no such attribute '{}'".format(attribute_name))
 
     def new_member(self, child, index=None):
-        """Add an existing `Content` object entry to the ordered list of
+        """Add an existing `Component` object entry to the ordered list of
         members for this one. By default, this will simply append the child
         object to the list, but the user can specify the order if they so
         wish.
@@ -142,8 +142,8 @@ class Content(models.Model):
         Elements inserted into the list at index `n` will shift all elements
         back by one.
 
-        :param child: the child `Content` object
-        :type child: `Content`
+        :param child: the child `Component` object
+        :type child: `Component`
         :param index: (optional) the position within the list to put the child
                       in
         :type index: integer
@@ -158,7 +158,7 @@ class Content(models.Model):
         indices = []
 
         l_el_ord = 0
-        r_el_ord = ContentMember.max_index
+        r_el_ord = ComponentMember.max_index
 
         if new_index < 0 or new_index > count:
             raise IndexError('index provided is out of bounds')
@@ -177,7 +177,7 @@ class Content(models.Model):
 
         new_order = (l_el_ord + r_el_ord) / 2
 
-        return ContentMember.objects.create(
+        return ComponentMember.objects.create(
             parent=self,
             child=child,
             order=new_order
@@ -188,9 +188,9 @@ class Content(models.Model):
 
         :param index: the index of the member
         :type index: int
-        :rtype: :py:class:`Content`
+        :rtype: :py:class:`Component`
         """
-        # TODO implement Content.get_member
+        # TODO implement Component.get_member
         if index < 0 or index > self.members.count():
             raise IndexError('member index out of bounds')
 
@@ -198,32 +198,32 @@ class Content(models.Model):
         return member.child
 
 
-class ContentAttribute(models.Model):
-    """Named attributes that associate :py:class:`Content` objects with
-    other `Content` objects.
+class ComponentAttribute(models.Model):
+    """Named attributes that associate :py:class:`Component` objects with
+    other `Component` objects.
     """
-    parent = models.ForeignKey('Content', related_name='attributes')
-    child = models.ForeignKey('Content')
+    parent = models.ForeignKey('Component', related_name='attributes')
+    child = models.ForeignKey('Component')
     name = models.CharField(max_length=255)
 
     added_time = models.DateTimeField(auto_now_add=True)
 
 
-class ContentMember(models.Model):
-    """Ordered list of :py:class:`Content` objects that belong to another
-    `Content` object.
+class ComponentMember(models.Model):
+    """Ordered list of :py:class:`Component` objects that belong to another
+    `Component` object.
     """
     max_index = 1000000000
 
-    parent = models.ForeignKey('Content', related_name='members')
-    child = models.ForeignKey('Content')
+    parent = models.ForeignKey('Component', related_name='members')
+    child = models.ForeignKey('Component')
     order = models.IntegerField(default=0)
 
 
-class ContentRevision(models.Model):
-    """A revision of the data contained by a :py:class:Content object.
+class ComponentRevision(models.Model):
+    """A revision of the data contained by a :py:class:Component object.
 
-    .. todo:: Write real documentation for content.ContentRevision
+    .. todo:: Write real documentation for mirrors.ComponentRevision
     """
     data = models.BinaryField()
     diff = models.BinaryField(null=True, blank=True)
@@ -232,4 +232,4 @@ class ContentRevision(models.Model):
     revision_date = models.DateTimeField(auto_now_add=True)
     revision_number = models.IntegerField(default=1)
 
-    content = models.ForeignKey('Content', related_name='revisions')
+    component = models.ForeignKey('Component', related_name='revisions')
