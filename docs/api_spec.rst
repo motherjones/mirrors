@@ -164,8 +164,30 @@ in correct JSON form.
 Updating
 """"""""
 
-You can't update an attribute. Delete it, and then re-create it with the new
-data.
+When you make a ``PUT`` to an attribute including a component that already
+exists such as in this example:
+
+.. code:: json
+
+ {
+   'component': 'my-fancy-component',
+   'weight': 9999
+ }
+
+followed by another ``PUT`` request...
+
+.. code:: json
+
+ {
+   'component': 'my-fancy-component',
+   'weight': 150
+ }
+
+The attribute will be updated in place. This will work whether the attribute
+has a single component in it or if it has a list.
+
+.. warning:: To entirely replace the contents of an attribute, you must delete
+             it first, and then re-create it.
 
 Deleting
 """"""""
