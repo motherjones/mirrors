@@ -145,11 +145,12 @@ following form:
 
  {
    'component': '<component slug>',
-   'weight': 0
+   'weight': 9999
  }
 
-The value for the field ``component`` should be the slug of the component you
-wish to associate with the name. ``weight`` is optional and will default to 0.
+The value for the field ``component`` should be the slug of the Component you
+wish to associate with the name. ``weight`` is optional and will default to
+9999 in order to have the effect of appending the Component to the list.
 
 If you issue multiple ``PUT`` requests using the name attribute name, but
 different values for the weight, you will end up with an attribute that will
