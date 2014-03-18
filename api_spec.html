@@ -213,6 +213,63 @@ same method. Issuing a <tt class="docutils literal"><span class="pre">PUT</span>
 request body is the data itself.</p>
 </div>
 </div>
+<div class="section" id="locking">
+<h3>Locking<a class="headerlink" href="#locking" title="Permalink to this headline">¶</a></h3>
+<p>To prevent simultaneous editing of the same component, creating conflicting
+changes, it is possible to lock them to prevent changes being made by anybody
+other than the user who locked it initially.</p>
+<p>The locks themselves can be of any period of time, but they default to 30
+minutes long.</p>
+<div class="section" id="checking-lock-status">
+<h4>Checking lock status<a class="headerlink" href="#checking-lock-status" title="Permalink to this headline">¶</a></h4>
+<p>To see whether or not a component is currently locked, make a <tt class="docutils literal"><span class="pre">GET</span></tt> request
+to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt>, which will result in a JSON object like the
+following if the component is locked:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;locked&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s">&#39;locked_by&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;username of locker&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;locked_at&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of creation of lock&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;lock_ends_at&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of creation of lock&gt;&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The response will also come along with a <em>200</em> status code.</p>
+<p>If the component is unlocked, the response will be a <em>404</em>.</p>
+</div>
+<div class="section" id="making-a-lock">
+<h4>Making a lock<a class="headerlink" href="#making-a-lock" title="Permalink to this headline">¶</a></h4>
+<p>To create a lock make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt> with JSON data in
+the following format:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;locked&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s">&#39;lock_duration&#39;</span><span class="p">:</span> <span class="n">duration_in_minutes</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">lock_duration</span></tt> is optional and the duration will default to 30
+minutes when not specified.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The currently logged in user account will be recorded as having made
+the lock in the database.</p>
+</div>
+<p>If the lock is successful, you will receive a response with a <em>201</em> status code
+along with data that matches what you would get if you issued a <tt class="docutils literal"><span class="pre">GET</span></tt>
+statement to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt>.</p>
+<p>If there is already a lock in place then you will get a response with a <em>409</em>
+response.</p>
+</div>
+<div class="section" id="breaking-a-lock">
+<h4>Breaking a lock<a class="headerlink" href="#breaking-a-lock" title="Permalink to this headline">¶</a></h4>
+<p>Sometimes you need to break the lock. Make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt> and the current lock will be removed. You will
+receive a <em>204</em> response if the lock is successfully broken. If there is no
+lock, you will get a <em>404</em> response.</p>
+</div>
+</div>
 </div>
 <div class="section" id="scheduler">
 <h2>Scheduler<a class="headerlink" href="#scheduler" title="Permalink to this headline">¶</a></h2>
@@ -304,6 +361,12 @@ date you wish to check.</p>
 <li><a class="reference internal" href="#data">Data</a><ul>
 <li><a class="reference internal" href="#id5">Reading</a></li>
 <li><a class="reference internal" href="#creating-updating">Creating/Updating</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#locking">Locking</a><ul>
+<li><a class="reference internal" href="#checking-lock-status">Checking lock status</a></li>
+<li><a class="reference internal" href="#making-a-lock">Making a lock</a></li>
+<li><a class="reference internal" href="#breaking-a-lock">Breaking a lock</a></li>
 </ul>
 </li>
 </ul>

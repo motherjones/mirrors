@@ -201,6 +201,74 @@ Both creating and updating the data for a :py:class:`Component` is done by the
 same method. Issuing a ``PUT`` query to ``/component/<slug>/data`` where the
 request body is the data itself.
 
+
+Locking
+^^^^^^^
+
+To prevent simultaneous editing of the same component, creating conflicting
+changes, it is possible to lock them to prevent changes being made by anybody
+other than the user who locked it initially.
+
+The locks themselves can be of any period of time, but they default to 30
+minutes long.
+
+Checking lock status
+""""""""""""""""""""
+
+To see whether or not a component is currently locked, make a ``GET`` request
+to ``/component/<slug>/lock``, which will result in a JSON object like the
+following if the component is locked:
+
+.. code:: json
+
+ {
+   'locked': true,
+   'locked_by': '<username of locker>',
+   'locked_at': '<timestamp of creation of lock>',
+   'lock_ends_at': '<timestamp of creation of lock>',
+ }
+
+The response will also come along with a *200* status code.
+
+If the component is unlocked, the response will be a *404*.
+
+
+Making a lock
+"""""""""""""
+
+To create a lock make a ``PUT`` to ``/component/<slug>/lock`` with JSON data in
+the following format:
+
+.. code:: json
+
+  {
+    'locked': true,
+    'lock_duration': duration_in_minutes
+  }
+
+
+.. note:: ``lock_duration`` is optional and the duration will default to 30
+          minutes when not specified.
+
+.. note:: The currently logged in user account will be recorded as having made
+          the lock in the database.
+
+If the lock is successful, you will receive a response with a *201* status code
+along with data that matches what you would get if you issued a ``GET``
+statement to ``/component/<slug>/lock``.
+
+If there is already a lock in place then you will get a response with a *409*
+response.
+
+Breaking a lock
+"""""""""""""""
+
+Sometimes you need to break the lock. Make a ``DELETE`` request to
+``/component/<slug>/lock`` and the current lock will be removed. You will
+receive a *204* response if the lock is successfully broken. If there is no
+lock, you will get a *404* response.
+
+
 Scheduler
 ---------
 
@@ -273,3 +341,4 @@ For a Range
 
 Issue a ``GET`` request to ``/scheduler/?start=<day>&end=<day>``, where the day is the
 date you wish to check.
+
