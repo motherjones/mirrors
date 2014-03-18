@@ -18,7 +18,7 @@ It will return a JSON object with this format:
 .. code:: json
 
  {
-   'slug': '<slug>',
+   'slug': '<slug-id>',
    'url': '<canonical URL of component>',
    'data_uri': '<canonical URL of component data>',
    'content_type': '<http content type>',
@@ -51,8 +51,8 @@ Creating
 """"""""
 
 Creating new :py:class:`Component` objects is done through a ``PUT`` request
-against ``/component/<slug-id>``, where slug-id is the (you guessed it!) desired
-slug. The minimum expected data should look like this:
+against ``/component/<slug-id>``, where slug-id is the (you guessed it!)
+desired slug. The minimum expected data should look like this:
 
 .. code:: json
 
@@ -65,7 +65,7 @@ slug. The minimum expected data should look like this:
 
 A successful operation will return a *201* response and the resource
 representation of the :py:class:`Component` currently exists in the database,
-as it would be appear if the user issued a ``GET /component/<slug>`` query.
+as it would be appear if the user issued a ``GET /component/<slug-id>`` query.
 
 If the slug provided is already in use, a *409* response will be returned.
 
@@ -93,7 +93,7 @@ current state of the :py:class:`Component`.
 Deleting
 """"""""
 Deleting a :py:class:`Component` resource is achieved by submitting a
-``DELETE`` query to ``/component/<slug>``.
+``DELETE`` query to ``/component/<slug-id>``.
 
 After a successful delete, a *204* response is returned.
 
@@ -188,9 +188,9 @@ Reading
 """""""
 
 To get at the data of a :py:class:`Component`, issue a ``GET`` query to
-``/component/<slug>/data``. The data will be returned with a *200* response
-code, and the content type header set appropriately (eg ``'image/png'`` if the data
-represented by the :py:class:`Component` is a png file).
+``/component/<slug-id>/data``. The data will be returned with a *200* response
+code, and the content type header set appropriately (eg ``'image/png'`` if the
+data represented by the :py:class:`Component` is a png file).
 
 If no data exists yet, a *404* response will be returned.
 
@@ -198,8 +198,76 @@ Creating/Updating
 """""""""""""""""
 
 Both creating and updating the data for a :py:class:`Component` is done by the
-same method. Issuing a ``PUT`` query to ``/component/<slug>/data`` where the
+same method. Issuing a ``PUT`` query to ``/component/<slug-id>/data`` where the
 request body is the data itself.
+
+
+Locking
+^^^^^^^
+
+To prevent simultaneous editing of the same component, creating conflicting
+changes, it is possible to lock them to prevent changes being made by anybody
+other than the user who locked it initially.
+
+The locks themselves can be of any period of time, but they default to 30
+minutes long.
+
+Checking lock status
+""""""""""""""""""""
+
+To see whether or not a component is currently locked, make a ``GET`` request
+to ``/component/<slug-id>/lock``, which will result in a JSON object like the
+following if the component is locked:
+
+.. code:: json
+
+ {
+   'locked': true,
+   'locked_by': '<username of locker>',
+   'locked_at': '<timestamp of creation of lock>',
+   'lock_ends_at': '<timestamp of creation of lock>',
+ }
+
+The response will also come along with a *200* status code.
+
+If the component is unlocked, the response will be a *404*.
+
+
+Making a lock
+"""""""""""""
+
+To create a lock make a ``PUT`` to ``/component/<slug-id>/lock`` with JSON data in
+the following format:
+
+.. code:: json
+
+  {
+    'locked': true,
+    'lock_duration': duration_in_minutes
+  }
+
+
+.. note:: ``lock_duration`` is optional and the duration will default to 30
+          minutes when not specified.
+
+.. note:: The currently logged in user account will be recorded as having made
+          the lock in the database.
+
+If the lock is successful, you will receive a response with a *201* status code
+along with data that matches what you would get if you issued a ``GET``
+statement to ``/component/<slug-id>/lock``.
+
+If there is already a lock in place then you will get a response with a *409*
+response.
+
+Breaking a lock
+"""""""""""""""
+
+Sometimes you need to break the lock. Make a ``DELETE`` request to
+``/component/<slug-id>/lock`` and the current lock will be removed. You will
+receive a *204* response if the lock is successfully broken. If there is no
+lock, you will get a *404* response.
+
 
 Scheduler
 ---------
@@ -273,3 +341,4 @@ For a Range
 
 Issue a ``GET`` request to ``/scheduler/?start=<day>&end=<day>``, where the day is the
 date you wish to check.
+
