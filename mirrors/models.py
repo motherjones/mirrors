@@ -87,116 +87,61 @@ class Component(models.Model):
 
         return new_rev
 
-    def new_attribute(self, name, child):
+    def new_attribute(self, name, child, weight=9999):
         """Add a new named attribute to the :py:class:`Component` object. This
-        will overwrite any old attributes that may have already existed.
-
+        will overwrite an attribute if the child is unchanged. However, if the
+        child has a different slug, then the attribute will be converted into
+        an ordered list and the child component added to it.
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
         :type name: string
         :param child: the `Component` object to associate with that name
         :type child: `Component`
+        :param weight: the weight of the child within the ordered list, if the
+                       attribue is one
+        :type weight: int
 
-        :rtype: :py:class:`ComponentAttribute`
+        :rtype: :py:class:`ComponentAttribute` or a list
+
         """
+
         if not child or child == self:
             raise ValueError('child cannot be None or self')
 
         if not re.match('[a-zA-Z0-9_-]+', name):
             raise KeyError('invalid attribute name')
 
-        attribute = ComponentAttribute()
+        if self.attributes.filter(name=name).count() == 1:
+            attr = self.attributes.get(name=name)
+            if attr.child == child:
+                # in-place update of the attribute
+                attr.delete()
 
-        try:
-            self.attributes.get(parent=self, name=name).delete()
-        except ComponentAttribute.DoesNotExist:
-            pass
-
-        return ComponentAttribute.objects.create(
-            name=name,
+        new_attr = ComponentAttribute.create(
             parent=self,
-            child=child
+            child=child,
+            weight=weight
         )
+
+        return new_attr
 
     def get_attribute(self, attribute_name):
         """Retrieve the `Component` object attached to this one by the
-        attribute name.
+        attribute name if it is a regular attribute, or a list if it contains
+        more than one
 
         :param attribute_name: name of the attribute
         :type attribute_name: str
-        :rtype: `Component`
+        :rtype: `Component` or list
         """
-        try:
-            attr = ComponentAttribute.objects.get(parent=self,
-                                                  name=attribute_name)
-            return attr.child
-        except ComponentAttribute.DoesNotExist:
+        attrs = self.attributes.filter(name=attribute_name)
+
+        if attrs.count() == 0:
             raise KeyError("no such attribute '{}'".format(attribute_name))
-
-    def new_member(self, child, index=None):
-        """Add an existing `Component` object entry to the ordered list of
-        members for this one. By default, this will simply append the child
-        object to the list, but the user can specify the order if they so
-        wish.
-
-        Elements inserted into the list at index `n` will shift all elements
-        back by one.
-
-        :param child: the child `Component` object
-        :type child: `Component`
-        :param index: (optional) the position within the list to put the child
-                      in
-        :type index: integer
-        """
-        count = self.members.count()
-
-        if index is None:
-            new_index = count
-        else:
-            new_index = index
-
-        indices = []
-
-        l_el_ord = 0
-        r_el_ord = ComponentMember.max_index
-
-        if new_index < 0 or new_index > count:
-            raise IndexError('index provided is out of bounds')
-
-        if new_index == count:
-            if count > 0:
-                l_el_ord = self.members.order_by('order').last().order
-        else:
-            if new_index == 0:
-                r_el_ord = self.members.order_by('order').first().order
-            else:
-                indices = [m.order for m in self.members.order_by('order')]
-
-                l_el_ord = indices[new_index-1]
-                r_el_ord = indices[new_index]
-
-        new_order = (l_el_ord + r_el_ord) / 2
-
-        return ComponentMember.objects.create(
-            parent=self,
-            child=child,
-            order=new_order
-        )
-
-    def get_member(self, index):
-        """Retrieve a specific member.
-
-        :param index: the index of the member
-        :type index: int
-        :rtype: :py:class:`Component`
-        """
-        # TODO implement Component.get_member
-        if index < 0 or index > self.members.count():
-            raise IndexError('member index out of bounds')
-
-        member = self.members.order_by('order')[index:index+1].first()
-        return member.child
-
+        elif attrs.count() == 1:
+            return attrs.first()
+        elif attrs.count() > 1:
+            return list(attrs.order_by('weight'))
 
 class ComponentAttribute(models.Model):
     """Named attributes that associate :py:class:`Component` objects with
@@ -205,19 +150,9 @@ class ComponentAttribute(models.Model):
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
     name = models.CharField(max_length=255)
+    weight = models.IntegerField(null=Falsen)
 
     added_time = models.DateTimeField(auto_now_add=True)
-
-
-class ComponentMember(models.Model):
-    """Ordered list of :py:class:`Component` objects that belong to another
-    `Component` object.
-    """
-    max_index = 1000000000
-
-    parent = models.ForeignKey('Component', related_name='members')
-    child = models.ForeignKey('Component')
-    order = models.IntegerField(default=0)
 
 
 class ComponentRevision(models.Model):

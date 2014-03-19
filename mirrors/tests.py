@@ -145,14 +145,6 @@ class ComponentAttributeTests(MirrorsTestCase):
         ca = ComponentAttribute.objects.get(parent=c, child=c_2)
         self.assertEqual(ca.name, 'new_attribute_name')
 
-    def test_new_attribute_overwrite(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
-        c_2 = Component.objects.get(slug='test-component-1')
-        c.new_attribute('subcomponent', c_2)
-
-        ca = ComponentAttribute.objects.get(parent=c, child=c_2)
-        self.assertEqual(ca.name, 'subcomponent')
-
     def test_new_attribute_None_child(self):
         c = Component.objects.get(slug='test-component-with-attributes')
 
@@ -174,6 +166,14 @@ class ComponentAttributeTests(MirrorsTestCase):
 
         with self.assertRaises(KeyError):
             c.new_attribute('snth$', c_2)
+
+    def test_new_attribute_creates_list(self):
+        c = Component.objects.get(slug='test-component-with-attributes')
+        c_2 = Component.objects.get(slug='test-component-1')
+
+        c.new_attribute('subcomponent', c_2)
+
+        self.assertEqual(c.attributes.filter(name='subcomponent').count() == 2)
 
 
 class URLTests(MirrorsTestCase):
@@ -276,19 +276,89 @@ class RESTAPITests(APITestCase):
         self.assertEqual(res.data, expected_resp_data)
 
     def test_put_conflicting_name_component(self):
-        self.fail('not implemented yet')
+        put_data = {
+            'schema_name': 'test-schema',
+            'publish_date': '2014-01-30T19:32:34.555Z',
+            'content_type': 'none',
+            'metadata': {
+                'author': 'author one',
+                'title': 'test component 1'
+            }
+        }
 
-    def test_post_to_component(self):
-        self.fail('not implemented yet')
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'test-component-1'})
+        res = self.client.put(url, put_data, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_409_CONFLICT)
 
     def test_patch_component(self):
-        self.fail('not implemented yet')
+        patch_data = {
+            'content_type': 'article'
+        }
+        expected_resp_data = {
+            'schema_name': 'test-schema',
+            'publish_date': '2014-01-30T19:32:34.555Z',
+            'slug': 'test-component-1',
+            'content_type': 'article',
+            'metadata': {
+                'author': 'author one',
+                'title': 'test component 1'
+            }
+        }
+
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'test-component-1'})
+        res = self.client.patch(url, patch_data, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, expected_resp_data)
+
+    def test_patch_404_component(self):
+        patch_data = {
+            'content_type': 'article'
+        }
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'no-such-component'})
+        res = self.client.patch(url, patch_data, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch_component_no_changes(self):
-        self.fail('not implemented yet')
+        patch_data = {
+            'content_type': 'none'
+        }
+        expected_resp_data = {
+            'schema_name': 'test-schema',
+            'publish_date': '2014-01-30T19:32:34.555Z',
+            'slug': 'test-component-1',
+            'content_type': 'none',
+            'metadata': {
+                'author': 'author one',
+                'title': 'test component 1'
+            }
+        }
+
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'test-component-1'})
+        res = self.client.patch(url, patch_data, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, expected_resp_data)
 
     def test_delete_component(self):
-        self.fail('not implemented yet')
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'test-component-1'})
+        res = self.client.patch(url, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_404_component(self):
+        url = reverse('view-component',
+                      kwargs={'component_slug': 'no-such-component'})
+        res = self.client.delete(url, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     ### tests against /component/<slug-id>/data
     def test_get_component_data(self):
