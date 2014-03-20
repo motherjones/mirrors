@@ -150,7 +150,7 @@ class ComponentAttribute(models.Model):
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
     name = models.CharField(max_length=255)
-    weight = models.IntegerField(null=Falsen)
+    weight = models.IntegerField(null=False)
 
     added_time = models.DateTimeField(auto_now_add=True)
 
