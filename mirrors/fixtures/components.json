@@ -8,8 +8,22 @@
         "slug": "test-component-1", 
         "content_type": "none", 
         "metadata": {
-            "author": "author one", 
-            "title": "test component 1"
+            "title": "test compontent one", 
+            "author": "author one"
+        }
+    }
+},
+{
+    "pk": 2, 
+    "model": "mirrors.component", 
+    "fields": {
+        "schema_name": "name", 
+        "publish_date": "2014-02-06T00:03:10.332Z", 
+        "slug": "test-component-with-multiple-level", 
+        "content_type": "none", 
+        "metadata": {
+            "title": "test component with children with children of their own sub-1", 
+            "author": "bobby tables"
         }
     }
 },
@@ -17,13 +31,13 @@
     "pk": 3, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "test-schema-with-attributes", 
-        "publish_date": "2014-01-30T20:14:13.307Z", 
-        "slug": "test-component-with-attributes", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:54.924Z", 
+        "slug": "test-component-with-multiple-levels-sub-1-1", 
         "content_type": "none", 
         "metadata": {
-            "author": "author one", 
-            "title": "test component 1"
+            "author": "bobby tables", 
+            "title": "test component with children with children of their own sub-1-1"
         }
     }
 },
@@ -31,13 +45,13 @@
     "pk": 4, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "test-schema-an-attribute", 
-        "publish_date": "2014-01-30T20:15:40.482Z", 
-        "slug": "test-component-with-attributes-sub-1", 
+        "schema_name": "schema\": \"schema name\"}", 
+        "publish_date": "2014-02-06T00:04:11.612Z", 
+        "slug": "test-component-with-multiple-levels-sub-1-2", 
         "content_type": "none", 
         "metadata": {
-            "author": "author one", 
-            "title": "test component 1"
+            "author": "bobby tables", 
+            "title": "test component with children with children of their own sub-1-2"
         }
     }
 },
@@ -45,13 +59,13 @@
     "pk": 5, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-01-30T22:10:17.662Z", 
-        "slug": "test-component-with-no-revisions", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:10.332Z", 
+        "slug": "test-component-with-multiple-levels-sub-1", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "test component with no revisions"
+            "title": "test component with children with children of their own sub-1", 
+            "author": "bobby tables"
         }
     }
 },
@@ -59,13 +73,13 @@
     "pk": 6, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-01-30T23:51:45.293Z", 
-        "slug": "test-component-with-no-members", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-with-multiple-levels-sub-2", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "test component with no members"
+            "title": "test component with children with children of their own sub-2", 
+            "author": "bobby tables"
         }
     }
 },
@@ -73,13 +87,13 @@
     "pk": 7, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-01-30T23:53:19.948Z", 
-        "slug": "test-component-with-members", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-with-one-attribute", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "test component with members"
+            "title": "test component with a single named attribute", 
+            "author": "bobby tables"
         }
     }
 },
@@ -87,13 +101,13 @@
     "pk": 8, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-01-30T23:53:43.308Z", 
-        "slug": "test-component-member_1", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "attribute-1", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "test component member 1"
+            "title": "test attribute component number 1", 
+            "author": "bobby tables"
         }
     }
 },
@@ -101,13 +115,13 @@
     "pk": 9, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-01-30T23:53:51.412Z", 
-        "slug": "test-component-member_2", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "attribute-2", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "test component member 2"
+            "title": "test attribute component number 2", 
+            "author": "bobby tables"
         }
     }
 },
@@ -115,13 +129,13 @@
     "pk": 10, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-02-03T22:24:19.937Z", 
-        "slug": "component-member-1", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "attribute-3", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "component member 1"
+            "title": "test attribute component number 3", 
+            "author": "bobby tables"
         }
     }
 },
@@ -129,13 +143,13 @@
     "pk": 11, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-02-03T22:24:27.547Z", 
-        "slug": "component-member-2", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "component-with-list-attribute", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "component member 2"
+            "title": "component with a list-styled attribute", 
+            "author": "bobby tables"
         }
     }
 },
@@ -143,13 +157,13 @@
     "pk": 12, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-02-03T22:24:35.907Z", 
-        "slug": "component-member-3", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "component-with-binary-data", 
         "content_type": "none", 
         "metadata": {
             "author": "bobby tables", 
-            "title": "component member 3"
+            "title": "component with binary content"
         }
     }
 },
@@ -157,13 +171,13 @@
     "pk": 13, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-02-03T22:24:46.843Z", 
-        "slug": "component-member-4", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-with-no-revisions", 
         "content_type": "none", 
         "metadata": {
             "author": "bobby tables", 
-            "title": "component member 4"
+            "title": "component data that has no revisions"
         }
     }
 },
@@ -171,85 +185,76 @@
     "pk": 14, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "{\"schema\": \"schema name\"}", 
-        "publish_date": "2014-02-03T22:25:16.867Z", 
-        "slug": "component-with-a-bunch-of-members", 
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-with-multiple-revisions", 
         "content_type": "none", 
         "metadata": {
-            "author": "bobby tables", 
-            "title": "component with a bunch of members"
+            "title": "component data that has multiple revisions", 
+            "author": "bobby tables"
         }
     }
 },
 {
-    "pk": 1, 
+    "pk": 2, 
     "model": "mirrors.componentattribute", 
     "fields": {
-        "added_time": "2014-01-30T00:00:00Z", 
-        "name": "subcomponent", 
-        "parent": 3, 
-        "child": 4
-    }
-},
-{
-    "pk": 3, 
-    "model": "mirrors.componentmember", 
-    "fields": {
-        "order": 500000000, 
-        "parent": 7, 
-        "child": 8
+        "added_time": "2014-03-20T20:45:44.330Z", 
+        "weight": -1, 
+        "name": "regular-attr", 
+        "parent": 4, 
+        "child": 5
     }
 },
 {
     "pk": 4, 
-    "model": "mirrors.componentmember", 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "order": 750000000, 
-        "parent": 7, 
-        "child": 9
+        "added_time": "2014-03-20T21:08:28.095Z", 
+        "weight": 500, 
+        "name": "sub-1", 
+        "parent": 5, 
+        "child": 5
     }
 },
 {
     "pk": 7, 
-    "model": "mirrors.componentmember", 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "order": 500000000, 
-        "parent": 14, 
-        "child": 10
+        "added_time": "2014-03-20T22:22:30.447Z", 
+        "weight": 500, 
+        "name": "my_list_attr", 
+        "parent": 11, 
+        "child": 8
     }
 },
 {
     "pk": 8, 
-    "model": "mirrors.componentmember", 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "order": 750000000, 
-        "parent": 14, 
-        "child": 11
+        "added_time": "2014-03-20T22:22:42.680Z", 
+        "weight": 10, 
+        "name": "my_list_attr", 
+        "parent": 11, 
+        "child": 9
     }
 },
 {
     "pk": 9, 
-    "model": "mirrors.componentmember", 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "order": 875000000, 
-        "parent": 14, 
-        "child": 12
-    }
-},
-{
-    "pk": 10, 
-    "model": "mirrors.componentmember", 
-    "fields": {
-        "order": 937500000, 
-        "parent": 14, 
-        "child": 13
+        "added_time": "2014-03-20T22:22:57.084Z", 
+        "weight": 100, 
+        "name": "my_list_attr", 
+        "parent": 11, 
+        "child": 10
     }
 },
 {
     "pk": 1, 
     "model": "mirrors.componentrevision", 
     "fields": {
-        "component": 4, 
+        "component": 12,
         "revision_date": "2014-01-30T20:28:30.548Z", 
         "revision_number": 1, 
         "diff": null, 
@@ -264,7 +269,7 @@
     "pk": 4, 
     "model": "mirrors.componentrevision", 
     "fields": {
-        "component": 1, 
+        "component": 14, 
         "revision_date": "2014-01-30T21:54:13.416Z", 
         "revision_number": 1, 
         "diff": null, 
@@ -279,7 +284,7 @@
     "pk": 5, 
     "model": "mirrors.componentrevision", 
     "fields": {
-        "component": 1, 
+        "component": 14, 
         "revision_date": "2014-01-30T21:54:28.553Z", 
         "revision_number": 2, 
         "diff": null, 
