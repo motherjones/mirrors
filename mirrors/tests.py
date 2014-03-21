@@ -68,11 +68,11 @@ class MirrorsTestCase(TestCase):
             pass
 
 
-class ComponentTests(MirrorsTestCase):
+class ComponentDataTests(MirrorsTestCase):
     fixtures = ['components.json']
 
     def test_get_binary_data(self):
-        c = Component.objects.get(slug='test-component-1')
+        c = Component.objects.get(slug='test-component-with-multiple-revisions')
         self.assertEqual(c.binary_data, b'this is the second revision')
 
     def test_get_binary_data_failure(self):
@@ -124,17 +124,17 @@ class ComponentAttributeTests(MirrorsTestCase):
     fixtures = ['components.json']
 
     def test_get_attribute(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
-        c_2 = c.get_attribute('subcomponent')
-        self.assertEqual(c_2.slug, 'test-component-with-attributes-sub-1')
+        c = Component.objects.get(slug='test-component-with-multiple-levels-sub-1-2')
+        c_2 = c.get_attribute('regular_attr')
+        self.assertEqual(c_2.slug, 'test-component-with-multiple-levels-sub-1');
 
     def test_get_attribute_nonexistent(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
+        c = Component.objects.get(slug='test-component-1')
         with self.assertRaises(KeyError):
             c_2 = c.get_attribute('no-such-attribute')
 
     def test_new_attribute(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
+        c = Component.objects.get(slug='component-with-list-attribute')
         c_2 = Component.objects.get(slug='test-component-1')
 
         with self.assertRaises(ComponentAttribute.DoesNotExist):
@@ -142,302 +142,320 @@ class ComponentAttributeTests(MirrorsTestCase):
 
         c.new_attribute('new_attribute_name', c_2)
 
-        ca = ComponentAttribute.objects.get(parent=c, child=c_2)
+        ca = c.attributes.get(parent=c, child=c_2)
         self.assertEqual(ca.name, 'new_attribute_name')
 
     def test_new_attribute_None_child(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
+        c = Component.objects.get(slug='test-component-1')
 
         with self.assertRaises(ValueError):
             c.new_attribute('subcomponent', None)
 
     def test_new_attribute_self_child(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
+        c = Component.objects.get(slug='test-component-with-one-attribute')
 
         with self.assertRaises(ValueError):
-            c.new_attribute('subcomponent', c)
+            c.new_attribute('selfcomponent', c)
 
     def test_new_attribute_illegal_name(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
-        c_2 = Component.objects.get(slug='test-component-1')
+        c = Component.objects.get(slug='test-component-1')
+        c_2 = Component.objects.get(slug='attribute-1')
 
         with self.assertRaises(KeyError):
             c.new_attribute('s nstubcomponent', c_2)
 
         with self.assertRaises(KeyError):
+            c.new_attribute('-snth', c_2)
+
+        with self.assertRaises(KeyError):
             c.new_attribute('snth$', c_2)
 
+    def test_new_attribute_legal_names(self):
+        c = Component.objects.get(slug='test-component-1')
+        c_2 = Component.objects.get(slug='attribute-1')
+
+        c.new_attribute('x', c_2)
+        c.new_attribute('aoesnuthoaue', c_2)
+        c.new_attribute('23eonth8', c_2)
+        c.new_attribute('aeoutns-2342e', c_2)
+
+        self.assertEqual(c.attributes.filter(name='x').count(), 1)
+        self.assertEqual(c.attributes.filter(name='aoesnuthoaue').count(), 1)
+        self.assertEqual(c.attributes.filter(name='23eonth8').count(), 1)
+        self.assertEqual(c.attributes.filter(name='aeoutns-2342e').count(), 1)
+
+
     def test_new_attribute_creates_list(self):
-        c = Component.objects.get(slug='test-component-with-attributes')
-        c_2 = Component.objects.get(slug='test-component-1')
+        c = Component.objects.get(slug='test-component-with-one-attribute')
+        c_2 = Component.objects.get(slug='attribute-2')
 
-        c.new_attribute('subcomponent', c_2)
+        c.new_attribute('my_attribute', c_2, 50)
 
-        self.assertEqual(c.attributes.filter(name='subcomponent').count() == 2)
-
-
-class URLTests(MirrorsTestCase):
-    def test_component_urls(self):
-        self.assertEqual(reverse('mirrors.views.get_component',
-                                 args=('slug',)),
-                         '/slug')
-        self.assertEqual(reverse('mirrors.views.get_component_data',
-                                 args=('slug',)),
-                         '/slug/data')
-
-    def test_component_revision_urls(self):
-        self.assertEqual(reverse('mirrors.views.get_component_revision',
-                                 args=('slug', 1)),
-                         '/slug/revision/1')
-        self.assertEqual(reverse('mirrors.views.get_component_revision_data',
-                                 args=('slug', 1)),
-                         '/slug/revision/1/data')
+        self.assertEqual(c.attributes.filter(name='my_attribute').count(), 2)
 
 
-class RESTAPITests(APITestCase):
-    fixtures = ['api.json', 'users.json']
+# class URLTests(MirrorsTestCase):
+#     def test_component_urls(self):
+#         self.assertEqual(reverse('mirrors.views.get_component',
+#                                  args=('slug',)),
+#                          '/slug')
+#         self.assertEqual(reverse('mirrors.views.get_component_data',
+#                                  args=('slug',)),
+#                          '/slug/data')
 
-    def setUp(self):
-        self.token = Token.objects.get(user__username='test_admin')
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-        self.client_noauth = APIClient()
+#     def test_component_revision_urls(self):
+#         self.assertEqual(reverse('mirrors.views.get_component_revision',
+#                                  args=('slug', 1)),
+#                          '/slug/revision/1')
+#         self.assertEqual(reverse('mirrors.views.get_component_revision_data',
+#                                  args=('slug', 1)),
+#                          '/slug/revision/1/data')
 
-    def test_get_no_auth(self):
-        url = reverse('view-component', kwargs={
-            'component_slug': 'test-component-1'
-        })
-        res = self.client_noauth.get(url)
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    ### tests against /component
-    def test_get_component_list(self):
-        url = reverse('view-component')
-        res = self.client.get(url)
-        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+# class RESTAPITests(APITestCase):
+#     fixtures = ['api.json', 'users.json']
 
-    ### tests against /component/<slug-id>
-    def test_get_component(self):
-        url = reverse('view-component', kwargs={
-            'component_slug': 'test-component-1'
-        })
-        res = self.client.get(url)
+#     def setUp(self):
+#         self.token = Token.objects.get(user__username='test_admin')
+#         self.client = APIClient()
+#         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+#         self.client_noauth = APIClient()
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'slug': 'test-component-1',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            },
-            'attributes': {},
-            'members': []
-        })
+#     def test_get_no_auth(self):
+#         url = reverse('view-component', kwargs={
+#             'component_slug': 'test-component-1'
+#         })
+#         res = self.client_noauth.get(url)
+#         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_get_nonexistent_component(self):
-        url = reverse('view-component', kwargs={
-            'component_slug': 'no-such-component'
-        })
-        res = self.client.get(url)
+#     ### tests against /component
+#     def test_get_component_list(self):
+#         url = reverse('view-component')
+#         res = self.client.get(url)
+#         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+#     ### tests against /component/<slug-id>
+#     def test_get_component(self):
+#         url = reverse('view-component', kwargs={
+#             'component_slug': 'test-component-1'
+#         })
+#         res = self.client.get(url)
 
-    def test_put_component(self):
-        put_data = {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            }
-        }
-        expected_resp_data = {
-            'slug': 'new-component',
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            },
-            'attributes': {},
-            'members': []
-        }
+#         self.assertEqual(res.status_code, status.HTTP_200_OK)
+#         self.assertEqual(res.data, {
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'slug': 'test-component-1',
+#             'content_type': 'none',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             },
+#             'attributes': {},
+#             'members': []
+#         })
 
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'new-component'})
-        res = self.client.put(url, put_data, format='json')
+#     def test_get_nonexistent_component(self):
+#         url = reverse('view-component', kwargs={
+#             'component_slug': 'no-such-component'
+#         })
+#         res = self.client.get(url)
 
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(res.data, expected_resp_data)
+#         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_put_conflicting_name_component(self):
-        put_data = {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            }
-        }
+#     def test_put_component(self):
+#         put_data = {
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'content_type': 'none',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             }
+#         }
+#         expected_resp_data = {
+#             'slug': 'new-component',
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'content_type': 'none',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             },
+#             'attributes': {},
+#             'members': []
+#         }
 
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'test-component-1'})
-        res = self.client.put(url, put_data, format='json')
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'new-component'})
+#         res = self.client.put(url, put_data, format='json')
 
-        self.assertEqual(res.status_code, status.HTTP_409_CONFLICT)
+#         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+#         self.assertEqual(res.data, expected_resp_data)
 
-    def test_patch_component(self):
-        patch_data = {
-            'content_type': 'article'
-        }
-        expected_resp_data = {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'slug': 'test-component-1',
-            'content_type': 'article',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            }
-        }
+#     def test_put_conflicting_name_component(self):
+#         put_data = {
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'content_type': 'none',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             }
+#         }
 
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'test-component-1'})
-        res = self.client.patch(url, patch_data, format='json')
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'test-component-1'})
+#         res = self.client.put(url, put_data, format='json')
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, expected_resp_data)
+#         self.assertEqual(res.status_code, status.HTTP_409_CONFLICT)
 
-    def test_patch_404_component(self):
-        patch_data = {
-            'content_type': 'article'
-        }
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'no-such-component'})
-        res = self.client.patch(url, patch_data, format='json')
+#     def test_patch_component(self):
+#         patch_data = {
+#             'content_type': 'article'
+#         }
+#         expected_resp_data = {
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'slug': 'test-component-1',
+#             'content_type': 'article',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             }
+#         }
 
-        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'test-component-1'})
+#         res = self.client.patch(url, patch_data, format='json')
 
-    def test_patch_component_no_changes(self):
-        patch_data = {
-            'content_type': 'none'
-        }
-        expected_resp_data = {
-            'schema_name': 'test-schema',
-            'publish_date': '2014-01-30T19:32:34.555Z',
-            'slug': 'test-component-1',
-            'content_type': 'none',
-            'metadata': {
-                'author': 'author one',
-                'title': 'test component 1'
-            }
-        }
+#         self.assertEqual(res.status_code, status.HTTP_200_OK)
+#         self.assertEqual(res.data, expected_resp_data)
 
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'test-component-1'})
-        res = self.client.patch(url, patch_data, format='json')
+#     def test_patch_404_component(self):
+#         patch_data = {
+#             'content_type': 'article'
+#         }
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'no-such-component'})
+#         res = self.client.patch(url, patch_data, format='json')
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, expected_resp_data)
+#         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_component(self):
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'test-component-1'})
-        res = self.client.patch(url, format='json')
+#     def test_patch_component_no_changes(self):
+#         patch_data = {
+#             'content_type': 'none'
+#         }
+#         expected_resp_data = {
+#             'schema_name': 'test-schema',
+#             'publish_date': '2014-01-30T19:32:34.555Z',
+#             'slug': 'test-component-1',
+#             'content_type': 'none',
+#             'metadata': {
+#                 'author': 'author one',
+#                 'title': 'test component 1'
+#             }
+#         }
 
-        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'test-component-1'})
+#         res = self.client.patch(url, patch_data, format='json')
 
-    def test_delete_404_component(self):
-        url = reverse('view-component',
-                      kwargs={'component_slug': 'no-such-component'})
-        res = self.client.delete(url, format='json')
+#         self.assertEqual(res.status_code, status.HTTP_200_OK)
+#         self.assertEqual(res.data, expected_resp_data)
 
-        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+#     def test_delete_component(self):
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'test-component-1'})
+#         res = self.client.patch(url, format='json')
 
-    ### tests against /component/<slug-id>/data
-    def test_get_component_data(self):
-        self.fail('not implemented yet')
+#         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_get_component_without_data(self):
-        self.fail('not implemented yet')
+#     def test_delete_404_component(self):
+#         url = reverse('view-component',
+#                       kwargs={'component_slug': 'no-such-component'})
+#         res = self.client.delete(url, format='json')
 
-    def test_put_component_data(self):
-        self.fail('not implemented yet')
+#         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_component_data(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/data
+#     def test_get_component_data(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/rev
-    def test_get_revision_list(self):
-        self.fail('not implemented yet')
+#     def test_get_component_without_data(self):
+#         self.fail('not implemented yet')
 
-    def test_post_revision_list(self):
-        self.fail('not implemented yet')
+#     def test_put_component_data(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/rev/<rev-num>
-    def test_get_revision(self):
-        self.fail('not implemented yet')
+#     def test_post_component_data(self):
+#         self.fail('not implemented yet')
 
-    def test_get_404_revision(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/rev
+#     def test_get_revision_list(self):
+#         self.fail('not implemented yet')
 
-    def test_delete_revision(self):
-        self.fail('not implemented yet')
+#     def test_post_revision_list(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/attribute
-    def test_get_attribute_list(self):
-        self.fail('not implementeyet')
+#     ### tests against /component/<slug-id>/rev/<rev-num>
+#     def test_get_revision(self):
+#         self.fail('not implemented yet')
 
-    def test_get_empty_attribute_list(self):
-        self.fail('not implemented yet')
+#     def test_get_404_revision(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/attribute/<attr-name>
-    def test_put_new_attribute(self):
-        self.fail('not implemented yet')
+#     def test_delete_revision(self):
+#         self.fail('not implemented yet')
 
-    def test_get_attribute(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/attribute
+#     def test_get_attribute_list(self):
+#         self.fail('not implementeyet')
 
-    def test_put_conflicting_attribute(self):
-        self.fail('not implemented yet')
+#     def test_get_empty_attribute_list(self):
+#         self.fail('not implemented yet')
 
-    def test_get_404_attribute(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/attribute/<attr-name>
+#     def test_put_new_attribute(self):
+#         self.fail('not implemented yet')
 
-    def test_delete_attribute(self):
-        self.fail('not implemented yet')
+#     def test_get_attribute(self):
+#         self.fail('not implemented yet')
 
-    def test_patch_attribute(self):
-        self.fail('not implemented yet')
+#     def test_put_conflicting_attribute(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/member
-    def test_get_member_list(self):
-        self.fail('not implemented yet')
+#     def test_get_404_attribute(self):
+#         self.fail('not implemented yet')
 
-    def test_post_member(self):
-        self.fail('not implemented yet')
+#     def test_delete_attribute(self):
+#         self.fail('not implemented yet')
 
-    ### tests against /component/<slug-id>/member/<member-index>
-    def test_get_member(self):
-        self.fail('not implemented yet')
+#     def test_patch_attribute(self):
+#         self.fail('not implemented yet')
 
-    def test_get_404_member(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/member
+#     def test_get_member_list(self):
+#         self.fail('not implemented yet')
 
-    def test_put_new_member(self):
-        self.fail('not implemented yet')
+#     def test_post_member(self):
+#         self.fail('not implemented yet')
 
-    def test_put_overwrite_member(self):
-        self.fail('not implemented yet')
+#     ### tests against /component/<slug-id>/member/<member-index>
+#     def test_get_member(self):
+#         self.fail('not implemented yet')
 
-    def test_patch_member(self):
-        self.fail('not implemented yet')
+#     def test_get_404_member(self):
+#         self.fail('not implemented yet')
 
-    def test_delete_member(self):
-        self.fail('not implemented yet')
+#     def test_put_new_member(self):
+#         self.fail('not implemented yet')
+
+#     def test_put_overwrite_member(self):
+#         self.fail('not implemented yet')
+
+#     def test_patch_member(self):
+#         self.fail('not implemented yet')
+
+#     def test_delete_member(self):
+#         self.fail('not implemented yet')

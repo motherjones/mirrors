@@ -108,7 +108,7 @@ class Component(models.Model):
         if not child or child == self:
             raise ValueError('child cannot be None or self')
 
-        if not re.match('[a-zA-Z0-9_-]+', name):
+        if not re.match('^\w[-\w]*$', name):
             raise KeyError('invalid attribute name')
 
         if self.attributes.filter(name=name).count() == 1:
@@ -117,11 +117,12 @@ class Component(models.Model):
                 # in-place update of the attribute
                 attr.delete()
 
-        new_attr = ComponentAttribute.create(
+        new_attr = ComponentAttribute(
+            name=name,
             parent=self,
             child=child,
             weight=weight
-        )
+        ).save()
 
         return new_attr
 
@@ -139,9 +140,9 @@ class Component(models.Model):
         if attrs.count() == 0:
             raise KeyError("no such attribute '{}'".format(attribute_name))
         elif attrs.count() == 1:
-            return attrs.first()
+            return attrs.first().child
         elif attrs.count() > 1:
-            return list(attrs.order_by('weight'))
+            return [attr.child for attr in attrs.order_by('weight')]
 
 class ComponentAttribute(models.Model):
     """Named attributes that associate :py:class:`Component` objects with

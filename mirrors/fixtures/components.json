@@ -201,7 +201,7 @@
     "fields": {
         "added_time": "2014-03-20T20:45:44.330Z", 
         "weight": -1, 
-        "name": "regular-attr", 
+        "name": "regular_attr", 
         "parent": 4, 
         "child": 5
     }
@@ -251,10 +251,21 @@
     }
 },
 {
+    "pk": 10, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-03-21T20:03:12.343Z", 
+        "weight": -1, 
+        "name": "my_attribute", 
+        "parent": 7, 
+        "child": 8
+    }
+},
+{
     "pk": 1, 
     "model": "mirrors.componentrevision", 
     "fields": {
-        "component": 12,
+        "component": 12, 
         "revision_date": "2014-01-30T20:28:30.548Z", 
         "revision_number": 1, 
         "diff": null, 
