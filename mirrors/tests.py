@@ -85,7 +85,8 @@ class ComponentRevisionTests(MirrorsTestCase):
 
     def test_new_revision_first(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
-        c.new_revision(b'this is a new revision', json.dumps({
+
+        c.new_revision(data=b'this is a new revision', metadata=json.dumps({
             'title': 'test component with no revisions'
         }))
 
@@ -104,14 +105,18 @@ class ComponentRevisionTests(MirrorsTestCase):
             }))
 
     def test_new_revision_not_first(self):
-        c = Component.objects.get(slug='test-component-1')
+        c = Component.objects.get(slug='component-with-binary-data')
+        num_orig_components = c.revisions.count()
+
         cr = c.new_revision(b'this is a new revision', json.dumps({
             'title': 'test component with no revisions'
         }))
 
-        self.assertEqual(cr.component, c)
+
+        cr = c.revisions.all().order_by('-revision_number').first()
         self.assertEqual(cr.metadata['title'],
                          'test component with no revisions')
+        self.assertEqual(cr.revision_number, num_orig_components+1)
 
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
@@ -128,6 +133,12 @@ class ComponentAttributeTests(MirrorsTestCase):
         c_2 = c.get_attribute('regular_attr')
         self.assertEqual(c_2.slug, 'test-component-with-multiple-levels-sub-1');
 
+    def test_get_attribute_list(self):
+        c = Component.objects.get(slug='component-with-list-attribute')
+        attr_list = c.get_attribute('my_list_attr')
+
+        self.assertEqual(len(attr_list), 3)
+        
     def test_get_attribute_nonexistent(self):
         c = Component.objects.get(slug='test-component-1')
         with self.assertRaises(KeyError):

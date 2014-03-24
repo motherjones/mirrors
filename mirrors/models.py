@@ -52,16 +52,8 @@ class Component(models.Model):
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
 
-        cur_rev_num = self.revisions.aggregate(
-            Max('revision_number')
-        )['revision_number__max']
-
-        try:
-            cur_rev = self.revisions.get(revision_number=cur_rev_num)
-
-            new_data = cur_rev.data
-            new_metadata = cur_rev.metadata
-        except ComponentRevision.DoesNotExist:
+        cur_rev = self.revisions.all().order_by('-revision_number').first()
+        if not cur_rev:
             cur_rev_num = 0
             new_data = None
             new_metadata = self.metadata
@@ -70,6 +62,10 @@ class Component(models.Model):
                 raise ValueError(
                     'both metadata and data must be provided for 1st revision'
                 )
+        else:
+            cur_rev_num = cur_rev.revision_number
+            new_data = cur_rev.data
+            new_metadata = cur_rev.metadata
 
         if data:
             new_data = data
@@ -113,9 +109,6 @@ class Component(models.Model):
 
         if self.attributes.filter(name=name).count() == 1:
             attr = self.attributes.get(name=name)
-            if attr.child == child:
-                # in-place update of the attribute
-                attr.delete()
 
         new_attr = ComponentAttribute(
             name=name,
