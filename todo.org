@@ -1,0 +1,41 @@
+#+TODO: TODO(@) NEXT STARTED HOLD | DONE(@)
+#+TODO: WAITING(@)
+#+TODO: | CANCELED(@)
+
+* Tasks
+** Make the serializers
+*** DONE Create fixtures for the serializer tests
+    CLOSED: [2014-03-25 Tue 14:56]
+*** STARTED Write tests for the Component resource
+*** WAITING Build out a non-recursive version of the Component resource
+    As in, make something that returns null for attributes and [ ] for
+    attribute lists.
+*** WAITING Add recursiveness to the Component resource
+*** WAITING Make tests and fixtures for the Reservation resource
+*** WAITING Implement the Reservation resource
+    Depends on [[*Build%20the%20DB%20models%20for%20scheduler%20reservations][Build the DB models for scheduler reservations]]
+*** WAITING Implement the Lock resource
+    Depends on [[*Build%20wthe%20DB%20models%20for%20locking%20Components][Build wthe DB models for locking Components]]
+** Make the authentication and authorization code
+*** TODO Discuss our authentication method
+    - Internal openid vs. external openid/oauth/oauth2
+    - Just plain django auth?
+    - Other options?
+*** TODO Review the group types with Sam
+*** TODO Enable the admin app in mirrors for group work (?)
+*** WAITING Make a non-test fixture containing all of the groups
+** Make the scheduler
+*** DONE Spec out the scheduler API
+*** TODO Spec out the scheduler internals
+*** WAITING Build the DB models for scheduler reservations
+*** WAITING Write the script responsible for starting the scheduler itself
+*** Note: the scheduler isn't going to do anything interesting beyond just
+    triggering the publish process
+** Make the locking mechanism
+*** DONE Spec out the lock API
+*** TODO Decide on a particular way to handle locks on the back end
+*** WAITING Build wthe DB models for locking Components
+*** WAITING Make tests and fixtures for the Lock resource
+
+*** WAITING Write the API tests for locking Components
+*** WAITING Implement all tested features for locking Components
