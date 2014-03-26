@@ -23,7 +23,6 @@ It will return a JSON object with this format:
    'data_uri': '<canonical URL of component data>',
    'content_type': '<http content type>',
    'schema_name': '<name of schema>',
-   'content': '<canonical URL of component data>',
    'metadata': {
      'title': '<title>',
      'description': 'description'
