@@ -8,7 +8,7 @@ from django.test import TestCase, Client
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from mirrors import urls as content_url
 from mirrors.models import *
@@ -223,14 +223,48 @@ class ComponentAttributeTests(MirrorsTestCase):
 #                          '/slug/revision/1/data')
 
 
-# class RESTAPITests(APITestCase):
-#     fixtures = ['api.json', 'users.json']
+class RESTAPITests(APITestCase):
+    fixtures = ['users.json', 'serializer.json']
+    def setUp(self):
+        self.client = APIClient()
 
-#     def setUp(self):
-#         self.token = Token.objects.get(user__username='test_admin')
-#         self.client = APIClient()
-#         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-#         self.client_noauth = APIClient()
+    def test_get_component_resource(self):
+        res = self.client.get('/component/test-component-with-no-attributes')
+        
+        self.assertEqual(res.status_code, 200)
+
+        content = json.loads(res.content)
+        self.assertEqual(content['slug'], 'test-component-with-no-attributes')
+        self.assertEqual(
+            content['uri'],
+            '/component/test-component-with-no-attributes/data.md')
+        self.assertEqual(content['content_type'], 'application/x-markdown')                                 
+        self.assertEqual(content['schema_name'], 'article')
+        self.assertEqual(content['metadata'], {
+            "title": "test component with no attributes",
+            "description": "this is a test article"
+        })
+
+    def test_get_component_with_attribute(self):
+        res = self.client.get('/component/test-component-with-one-named-attribute')
+
+        self.assertEqual(res.status_code, 200)
+
+        content = json.loads(res.content)
+        self.assertEqual(content['slug'], 'test-component-with-one-named-attribute')
+        self.assertIn('my_named_attribute', content)
+        self.assertTrue(isinstance(content['my_named_attribute'], dict))
+        # TODO: test that the attribute is attribute-1
+
+    def test_get_component_with_attribute_list(self):
+        res = self.client.get('/component/test-component-with-list-attribute')
+        self.assertEqual(res.status_code, 200)
+
+        content = json.loads(res.content)
+        self.assertEqual(content['slug'], 'test-component-with-list-attribute')
+        self.assertIn('my_list_attribute', content)
+        self.assertTrue(isinstance(content['my_list_attribute'], list))
+        # TODO: test that the list is in the correct order
 
 #     def test_get_no_auth(self):
 #         url = reverse('view-component', kwargs={
