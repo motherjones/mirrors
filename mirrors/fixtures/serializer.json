@@ -3,13 +3,13 @@
     "pk": 17, 
     "model": "mirrors.component", 
     "fields": {
-        "schema_name": "schema name", 
+        "schema_name": "article", 
         "publish_date": "2014-02-06T00:03:40.660Z", 
         "slug": "test-component-with-no-attributes", 
         "content_type": "none", 
         "metadata": {
-            "author": "author one", 
-            "title": "test component with no attributes"
+            "title": "test component with no attributes",
+            "description": "this is a test article"
         }
     }
 },
@@ -103,7 +103,7 @@
     "fields": {
         "added_time": "2014-03-25T20:32:36.426Z", 
         "weight": -1, 
-        "name": "my-named-attribute", 
+        "name": "my_named_attribute", 
         "parent": 18, 
         "child": 19
     }
