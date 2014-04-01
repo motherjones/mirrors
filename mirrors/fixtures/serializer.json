@@ -6,7 +6,7 @@
         "schema_name": "article", 
         "publish_date": "2014-02-06T00:03:40.660Z", 
         "slug": "test-component-with-no-attributes", 
-        "content_type": "none", 
+        "content_type": "application/x-markdown", 
         "metadata": {
             "title": "test component with no attributes",
             "description": "this is a test article"
