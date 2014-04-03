@@ -1,11 +1,8 @@
 from django.conf.urls import patterns, url
+from mirrors import views
 
-urlpatterns = patterns(
-    'mirrors.views',
-    url(r'^(?P<slug>[-\w]+)$', 'get_component'),
-    url(r'^(?P<slug>[-\w]+)/data$', 'get_component_data'),
-    url(r'^(?P<slug>[-\w]+)/revision/(?P<revision>\d+)$',
-        'get_component_revision'),
-    url(r'^(?P<slug>[-\w]+)/revision/(?P<revision>\d+)/data$',
-        'get_component_revision_data'),
+urlpatterns = patterns('mirrors.views',
+    url(r'^component/(?P<slug>[-\w]+)$', 
+        views.ComponentDetail.as_view(),
+        name='component-detail'),
 )

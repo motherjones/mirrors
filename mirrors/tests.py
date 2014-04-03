@@ -8,7 +8,7 @@ from django.test import TestCase, Client
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from mirrors import urls as content_url
 from mirrors.views import ComponentDetail
@@ -215,7 +215,7 @@ class ComponentAttributeTests(MirrorsTestCase):
 
 
 class ComponentResourceTests(APITestCase):
-    fixtures = ['users.json', 'serializer.json']
+    fixtures = ['serializer.json']
 
     def _has_attribute(self, content, name):
         attributes = content['attributes']
@@ -229,7 +229,7 @@ class ComponentResourceTests(APITestCase):
             if attr['name'] == name:
                 return attr['value']
 
-    def test_get_component_resource(self):
+    def test_serialize_component_resource(self):
         c = Component.objects.get(slug='test-component-with-no-attributes')
         content = ComponentSerializer(c).data
 
@@ -244,7 +244,7 @@ class ComponentResourceTests(APITestCase):
             "description": "this is a test article"
         })
 
-    def test_get_component_with_attribute(self):
+    def test_serialize_component_with_attribute(self):
         c = Component.objects.get(
             slug='test-component-with-one-named-attribute')
         content = ComponentSerializer(c).data
@@ -257,7 +257,7 @@ class ComponentResourceTests(APITestCase):
         attribute = self._get_attribute(content, 'my_named_attribute')
         self.assertTrue(isinstance(attribute, dict))
 
-    def test_get_component_with_attribute_list(self):
+    def test_serialize_component_with_attribute_list(self):
         c = Component.objects.get(slug='test-component-with-list-attribute')
         content = ComponentSerializer(c).data
 
@@ -275,7 +275,7 @@ class ComponentResourceTests(APITestCase):
         for e in zip(found_slugs, expected_slugs):
             self.assertEqual(e[0], e[1])
 
-    def test_get_component_with_mixed_attributes(self):
+    def test_serialize_component_with_mixed_attributes(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
         content = ComponentSerializer(c).data
 
@@ -288,3 +288,40 @@ class ComponentResourceTests(APITestCase):
 
         self.assertTrue(isinstance(list_attr, list))
         self.assertEqual(len(list_attr), 2)
+
+
+class ComponentViewTest(APITestCase):
+    fixtures = ['users.json', 'serializer.json']
+
+    def test_get_component(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-one-named-attribute'
+        })
+            
+        res = self.client.get(url)        
+        self.assertTrue(status.is_success(res.status_code))
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertEqual(data['schema_name'], 'schema name')
+        self.assertEqual(data['publish_date'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(data['slug'], 'test-component-with-one-named-attribute')
+        self.assertEqual(data['content_type'], 'none')
+        self.assertEqual(data['metadata']['title'], 'test component with a single named attribute')
+        self.assertEqual(data['metadata']['author'], 'author one')
+        self.assertEqual(len(data['attributes']), 1)
+        self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
+        
+        attribute = data['attributes'][0]['value']
+        self.assertEqual(attribute['schema_name'], 'schema name')
+        self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(attribute['slug'], 'attribute-1')
+        self.assertEqual(attribute['content_type'], 'none')
+        self.assertEqual(attribute['metadata']['author'], 'attribute author')
+        self.assertEqual(attribute['metadata']['title'], 'attribute 1')
+        self.assertEqual(len(attribute['attributes']), 0)
+
+    def test_get_component_data(self):
+        self.fail('not yet implemented')
+
+    def test_get_component_revisions(self):
+        self.fail('not yet implemented')
