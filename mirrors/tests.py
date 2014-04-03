@@ -8,10 +8,12 @@ from django.test import TestCase, Client
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 
 from mirrors import urls as content_url
+from mirrors.views import ComponentDetail
 from mirrors.models import *
+from mirrors.serializers import *
 
 
 class MirrorsTestCase(TestCase):
@@ -72,12 +74,19 @@ class ComponentDataTests(MirrorsTestCase):
     fixtures = ['components.json']
 
     def test_get_binary_data(self):
-        c = Component.objects.get(slug='test-component-with-multiple-revisions')
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions')
         self.assertEqual(c.binary_data, b'this is the second revision')
 
     def test_get_binary_data_failure(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
         self.assertEqual(c.binary_data, None)
+
+    def test_get_data_uri(self):
+        c = Component.objects.get(slug='test-component-with-no-revisions')
+        url = c.data_uri
+        self.assertEqual(url,
+                         '/component/test-component-with-no-revisions/data')
 
 
 class ComponentRevisionTests(MirrorsTestCase):
@@ -112,7 +121,6 @@ class ComponentRevisionTests(MirrorsTestCase):
             'title': 'test component with no revisions'
         }))
 
-
         cr = c.revisions.all().order_by('-revision_number').first()
         self.assertEqual(cr.metadata['title'],
                          'test component with no revisions')
@@ -129,16 +137,18 @@ class ComponentAttributeTests(MirrorsTestCase):
     fixtures = ['components.json']
 
     def test_get_attribute(self):
-        c = Component.objects.get(slug='test-component-with-multiple-levels-sub-1-2')
+        c = Component.objects.get(
+            slug='test-component-with-multiple-levels-sub-1-2')
         c_2 = c.get_attribute('regular_attr')
-        self.assertEqual(c_2.slug, 'test-component-with-multiple-levels-sub-1');
+        self.assertEqual(c_2.slug,
+                         'test-component-with-multiple-levels-sub-1')
 
     def test_get_attribute_list(self):
         c = Component.objects.get(slug='component-with-list-attribute')
         attr_list = c.get_attribute('my_list_attr')
 
         self.assertEqual(len(attr_list), 3)
-        
+
     def test_get_attribute_nonexistent(self):
         c = Component.objects.get(slug='test-component-1')
         with self.assertRaises(KeyError):
@@ -195,7 +205,6 @@ class ComponentAttributeTests(MirrorsTestCase):
         self.assertEqual(c.attributes.filter(name='23eonth8').count(), 1)
         self.assertEqual(c.attributes.filter(name='aeoutns-2342e').count(), 1)
 
-
     def test_new_attribute_creates_list(self):
         c = Component.objects.get(slug='test-component-with-one-attribute')
         c_2 = Component.objects.get(slug='attribute-2')
@@ -205,40 +214,30 @@ class ComponentAttributeTests(MirrorsTestCase):
         self.assertEqual(c.attributes.filter(name='my_attribute').count(), 2)
 
 
-# class URLTests(MirrorsTestCase):
-#     def test_component_urls(self):
-#         self.assertEqual(reverse('mirrors.views.get_component',
-#                                  args=('slug',)),
-#                          '/slug')
-#         self.assertEqual(reverse('mirrors.views.get_component_data',
-#                                  args=('slug',)),
-#                          '/slug/data')
-
-#     def test_component_revision_urls(self):
-#         self.assertEqual(reverse('mirrors.views.get_component_revision',
-#                                  args=('slug', 1)),
-#                          '/slug/revision/1')
-#         self.assertEqual(reverse('mirrors.views.get_component_revision_data',
-#                                  args=('slug', 1)),
-#                          '/slug/revision/1/data')
-
-
-class RESTAPITests(APITestCase):
+class ComponentResourceTests(APITestCase):
     fixtures = ['users.json', 'serializer.json']
-    def setUp(self):
-        self.client = APIClient()
+
+    def _has_attribute(self, content, name):
+        attributes = content['attributes']
+        attr_names = [a['name'] for a in attributes]
+        return name in attr_names
+
+    def _get_attribute(self, content, name):
+        attributes = content['attributes']
+
+        for attr in attributes:
+            if attr['name'] == name:
+                return attr['value']
 
     def test_get_component_resource(self):
-        res = self.client.get('/component/test-component-with-no-attributes')
-        
-        self.assertEqual(res.status_code, 200)
+        c = Component.objects.get(slug='test-component-with-no-attributes')
+        content = ComponentSerializer(c).data
 
-        content = json.loads(res.content)
         self.assertEqual(content['slug'], 'test-component-with-no-attributes')
         self.assertEqual(
-            content['uri'],
-            '/component/test-component-with-no-attributes/data.md')
-        self.assertEqual(content['content_type'], 'application/x-markdown')                                 
+            content['data_uri'],
+            '/component/test-component-with-no-attributes/data')
+        self.assertEqual(content['content_type'], 'application/x-markdown')
         self.assertEqual(content['schema_name'], 'article')
         self.assertEqual(content['metadata'], {
             "title": "test component with no attributes",
@@ -246,22 +245,46 @@ class RESTAPITests(APITestCase):
         })
 
     def test_get_component_with_attribute(self):
-        res = self.client.get('/component/test-component-with-one-named-attribute')
+        c = Component.objects.get(
+            slug='test-component-with-one-named-attribute')
+        content = ComponentSerializer(c).data
 
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(content['slug'],
+                         'test-component-with-one-named-attribute')
+        self.assertIn('attributes', content)
+        self.assertTrue(self._has_attribute(content, 'my_named_attribute'))
 
-        content = json.loads(res.content)
-        self.assertEqual(content['slug'], 'test-component-with-one-named-attribute')
-        self.assertIn('my_named_attribute', content)
-        self.assertTrue(isinstance(content['my_named_attribute'], dict))
-        # TODO: test that the attribute is attribute-1
+        attribute = self._get_attribute(content, 'my_named_attribute')
+        self.assertTrue(isinstance(attribute, dict))
 
     def test_get_component_with_attribute_list(self):
-        res = self.client.get('/component/test-component-with-list-attribute')
-        self.assertEqual(res.status_code, 200)
+        c = Component.objects.get(slug='test-component-with-list-attribute')
+        content = ComponentSerializer(c).data
 
-        content = json.loads(res.content)
         self.assertEqual(content['slug'], 'test-component-with-list-attribute')
-        self.assertIn('my_list_attribute', content)
-        self.assertTrue(isinstance(content['my_list_attribute'], list))
-        # TODO: test that the list is in the correct order
+        self.assertTrue(self._has_attribute(content, 'my_list_attribute'))
+
+        attribute = self._get_attribute(content, 'my_list_attribute')
+
+        self.assertTrue(isinstance(attribute, list))
+        self.assertEqual(len(attribute), 3)
+
+        found_slugs = [x['slug'] for x in attribute]
+        expected_slugs = ['attribute-4', 'attribute-3', 'attribute-1']
+
+        for e in zip(found_slugs, expected_slugs):
+            self.assertEqual(e[0], e[1])
+
+    def test_get_component_with_mixed_attributes(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        content = ComponentSerializer(c).data
+
+        self.assertEqual(content['slug'], 'test-component-mixed-attributes')
+        self.assertTrue(self._has_attribute(content, 'my_list_attribute'))
+        self.assertTrue(self._has_attribute(content, 'my_attribute'))
+
+        list_attr = self._get_attribute(content, 'my_list_attribute')
+        named_attr = self._get_attribute(content, 'my_attribute')
+
+        self.assertTrue(isinstance(list_attr, list))
+        self.assertEqual(len(list_attr), 2)

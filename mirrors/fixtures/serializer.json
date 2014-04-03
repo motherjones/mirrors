@@ -8,8 +8,8 @@
         "slug": "test-component-with-no-attributes", 
         "content_type": "application/x-markdown", 
         "metadata": {
-            "title": "test component with no attributes",
-            "description": "this is a test article"
+            "description": "this is a test article", 
+            "title": "test component with no attributes"
         }
     }
 },
@@ -98,6 +98,20 @@
     }
 },
 {
+    "pk": 24, 
+    "model": "mirrors.component", 
+    "fields": {
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-mixed-attributes", 
+        "content_type": "none", 
+        "metadata": {
+            "author": "author two", 
+            "title": "component with both a list attribute and a regular attribute in it"
+        }
+    }
+},
+{
     "pk": 13, 
     "model": "mirrors.componentattribute", 
     "fields": {
@@ -139,6 +153,39 @@
         "name": "my_list_attribute", 
         "parent": 23, 
         "child": 19
+    }
+},
+{
+    "pk": 17, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-03T21:27:10.912Z", 
+        "weight": 50, 
+        "name": "my_list_attribute", 
+        "parent": 24, 
+        "child": 21
+    }
+},
+{
+    "pk": 18, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-03T21:27:14.720Z", 
+        "weight": 500, 
+        "name": "my_list_attribute", 
+        "parent": 24, 
+        "child": 19
+    }
+},
+{
+    "pk": 20, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-03T21:29:53.990Z", 
+        "weight": -1, 
+        "name": "my_attribute", 
+        "parent": 24, 
+        "child": 22
     }
 }
 ]

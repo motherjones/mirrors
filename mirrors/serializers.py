@@ -21,11 +21,12 @@ class ComponentSerializer(serializers.ModelSerializer):
 
             if isinstance(attr, list):
                 result.append({
-                    'name': n, 
-                    'value':[ComponentSerializer(a).data for a in attr]
+                    'name': n,
+                    'value': [ComponentSerializer(a).data for a in attr]
                 })
             else:
-                result.append(ComponentSerializer(attr).data)
+                result.append({'name': n,
+                               'value': ComponentSerializer(attr).data})
 
         return result
 
