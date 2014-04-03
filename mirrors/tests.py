@@ -297,20 +297,22 @@ class ComponentViewTest(APITestCase):
         url = reverse('component-detail', kwargs={
             'slug': 'test-component-with-one-named-attribute'
         })
-            
-        res = self.client.get(url)        
+
+        res = self.client.get(url)
         self.assertTrue(status.is_success(res.status_code))
 
         data = json.loads(res.content.decode('UTF-8'))
         self.assertEqual(data['schema_name'], 'schema name')
         self.assertEqual(data['publish_date'], '2014-02-06T00:03:40.660Z')
-        self.assertEqual(data['slug'], 'test-component-with-one-named-attribute')
+        self.assertEqual(data['slug'],
+                         'test-component-with-one-named-attribute')
         self.assertEqual(data['content_type'], 'none')
-        self.assertEqual(data['metadata']['title'], 'test component with a single named attribute')
+        self.assertEqual(data['metadata']['title'],
+                         'test component with a single named attribute')
         self.assertEqual(data['metadata']['author'], 'author one')
         self.assertEqual(len(data['attributes']), 1)
         self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
-        
+
         attribute = data['attributes'][0]['value']
         self.assertEqual(attribute['schema_name'], 'schema name')
         self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
