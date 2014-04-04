@@ -322,6 +322,14 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(attribute['metadata']['title'], 'attribute 1')
         self.assertEqual(len(attribute['attributes']), 0)
 
+    def test_get_404_component(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'no-such-component-here'
+        })
+
+        res = self.client.get(url)
+        self.assertTrue(res.status_code, 404)
+
     def test_get_component_data(self):
         self.fail('not yet implemented')
 
