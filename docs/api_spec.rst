@@ -36,8 +36,8 @@ It will return a JSON object with this format:
 
 Attributes and their use are described in :ref:`attributes-section`.
 
-A standard *404* response is returned if no :py:class:`Component` exists
-with that slug.
+A standard *404* response is returned if no :py:class:`Component` exists with
+that slug.
 
 .. note ::
    There are some standard metadata attributes which will be found in more or
@@ -69,6 +69,9 @@ desired slug. The minimum expected data should look like this:
 A successful operation will return a *201* response and the resource
 representation of the :py:class:`Component` currently exists in the database,
 as it would be appear if the user issued a ``GET /component/<slug-id>`` query.
+
+If the slug provided contains invalid characters, then a *406* response will be
+returned.
 
 If the slug provided is already in use, a *409* response will be returned.
 
