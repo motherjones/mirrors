@@ -164,6 +164,7 @@ class ComponentAttributeTests(MirrorsTestCase):
         c.new_attribute('new_attribute_name', c_2)
 
         ca = c.attributes.get(parent=c, child=c_2)
+        self.assertEqual(ca.weight, -1)
         self.assertEqual(ca.name, 'new_attribute_name')
 
     def test_new_attribute_None_child(self):

@@ -87,7 +87,7 @@ class Component(models.Model):
 
         return new_rev
 
-    def new_attribute(self, name, child, weight=9999):
+    def new_attribute(self, name, child, weight=-1):
         """Add a new named attribute to the :py:class:`Component` object. This
         will overwrite an attribute if the child is unchanged. However, if the
         child has a different slug, then the attribute will be converted into
