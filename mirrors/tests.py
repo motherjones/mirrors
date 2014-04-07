@@ -314,6 +314,29 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['metadata']['author'], 'author one')
         self.assertEqual(len(data['attributes']), 1)
         self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
+        
+        attribute = data['attributes'][0]['value']
+        self.assertEqual(attribute['schema_name'], 'schema name')
+        self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(attribute['slug'], 'attribute-1')
+        self.assertEqual(attribute['content_type'], 'none')
+        self.assertEqual(attribute['metadata']['author'], 'attribute author')
+        self.assertEqual(attribute['metadata']['title'], 'attribute 1')
+        self.assertEqual(len(attribute['attributes']), 0)
+
+    def test_get_404_component(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'no-such-component-here'
+        })
+
+        res = self.client.get(url)
+        self.assertTrue(res.status_code, 404)
+
+    def test_get_component_data(self):
+        self.fail('not yet implemented')
+
+    def test_get_component_revisions(self):
+        self.fail('not yet implemented')
 
 
 class ComponentsTestCase(TestCase):
