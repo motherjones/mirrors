@@ -13,6 +13,7 @@ from rest_framework.test import APITestCase
 from mirrors import urls as content_url
 from mirrors.models import *
 
+from mirrors import components 
 
 class MirrorsTestCase(TestCase):
     """This class adds the `assertRecursiveDictContains` function, which
@@ -470,3 +471,55 @@ class ComponentAttributeTests(MirrorsTestCase):
 
 #     def test_delete_member(self):
 #         self.fail('not implemented yet')
+
+class ComponentsTestCase(TestCase):
+    def test_attribute_to_dict(self):
+        alpha = ['a', 'b', 'c']
+        attribute = components.Attribute(*alpha, required=True)
+        _dict = dict(attribute)
+        for i, c in enumerate(_dict['anyOf']):
+            self.assertEqual(c['$ref'], alpha[i])
+
+    def test_list_attribute_to_dict(self):
+        alpha = ['a', 'b', 'c']
+        attribute = components.AttributeList(*alpha, required=True)
+        _dict = dict(attribute)
+        self.assertEqual(_dict['type'], 'array')
+        self.assertIsInstance(_dict['items']['anyOf'], list)
+                
+    def test_component_with_metadata(self):
+        for key in dir(components):
+            schema=getattr(components, key)
+            if isinstance(schema, type) and \
+            issubclass(schema, components.MetaData):
+                class Example(components.Component):
+                    id = 'example'
+                    title = 'Example Component'
+                    foo = schema()
+                
+                _dict = dict(Example())
+                self.assertEqual(
+                    _dict['properties']['metadata']['properties'].get('foo'),
+                    dict(schema()))
+
+    def test_component_with_attribute(self):
+        class Example(components.Component):
+            id = 'example'
+            title = 'Example Component'
+            foo = components.Attribute('example')
+        
+        _dict = Example()
+        foo = _dict['properties']['attributes']['properties'].get('foo')
+        self.assertEqual(foo,
+            components.Attribute('example'))
+
+    def test_component_with_attribute_list(self):
+        class Example(components.Component):
+            id = 'example'
+            title = 'Example Component'
+            foo = components.AttributeList('example')
+        
+        _dict = Example()
+        foo = _dict['properties']['attributes']['properties'].get('foo')
+        self.assertEqual(foo,
+            components.AttributeList('example'))
