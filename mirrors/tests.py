@@ -339,7 +339,7 @@ class ComponentsTestCase(TestCase):
                 class Example(components.Component):
                     id = 'example'
                     title = 'Example Component'
-                    foo = schema()
+                    foo = schema(required=True)
                 
                 _dict = dict(Example())
                 self.assertEqual(
@@ -350,10 +350,12 @@ class ComponentsTestCase(TestCase):
         class Example(components.Component):
             id = 'example'
             title = 'Example Component'
-            foo = components.Attribute('example')
+            foo = components.Attribute('example', required=True)
         
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
+        required = _dict['properties']['attributes']['required']
+        self.assertTrue('foo' in required) #TODO: Make test both true and false
         self.assertEqual(foo,
             components.Attribute('example'))
 
