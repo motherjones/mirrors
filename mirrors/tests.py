@@ -294,6 +294,15 @@ class ComponentResourceTests(APITestCase):
 class ComponentViewTest(APITestCase):
     fixtures = ['users.json', 'serializer.json']
 
+    def setUp(self):
+        self.valid_component = {
+            'content_type': 'application/x-markdown',
+            'schema_name': 'article',
+            'metadata': {
+                'title': 'Valid component'
+            }
+        }
+
     def test_get_component(self):
         url = reverse('component-detail', kwargs={
             'slug': 'test-component-with-one-named-attribute'
@@ -331,8 +340,76 @@ class ComponentViewTest(APITestCase):
         res = self.client.get(url)
         self.assertTrue(res.status_code, 404)
 
-    def test_get_component_data(self):
+    # def test_get_component_content_data(self):
+    #     self.fail('not yet implemented')
+
+    # def test_get_component_revisions(self):
+    #     self.fail('not yet implemented')
+
+    def test_put_new_component(self):
         self.fail('not yet implemented')
 
-    def test_get_component_revisions(self):
+    def test_put_new_component_invalid_name(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'this is not a valid slug!'
+        })
+
+        res = self.client.put(url, self.valid_component)
+        self.assertEqual(res.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_put_new_component_used_name(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-one-named-attribute'
+        })
+
+        res = self.client.put(url, self.valid_component)
+        self.assertEqual(res.status_code, status.HTTP_409_CONFLICT)
+
+    def test_patch_404_component(self):
+        url = reverse('component-detail', kwargs={
+            'slug': ''
+        })
+
+        res = self.client.patch(url+'/doesnt-exist', { 'content_type': 'text/plain'})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        content = ComponentSerializer(c).data
+
+    def test_patch_component_one_change(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'this-is-for-testing-on'
+        })
+
+        res = self.client.patch(url, {'content_type': 'text/plain'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = json.loads(res.content.decode('UTF-8'))
+
+        self.assertEqual(data['schema_name'], 'article')
+        self.assertEqual(data['content_type'], 'text/plain')
+        self.assertEqual(data['slug'], 'this-is-for-testing-on')
+        self.assertEqual(data['metadata']['title'], 'thing thing')
+
+    def test_patch_component_multiple_changes(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'this-is-for-testing-on'
+        })
+
+        res = self.client.patch(url, {
+            'content_type': 'text/plain',
+            'schema_name': 'patched'
+        })
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = json.loads(res.content.decode('UTF-8'))
+
+        self.assertEqual(data['schema_name'], 'patched')
+        self.assertEqual(data['content_type'], 'text/plain')
+        self.assertEqual(data['slug'], 'this-is-for-testing-on')
+        self.assertEqual(data['metadata']['title'], 'thing thing')
+
+    def test_patch_component_metadata(self):
+        self.fail('not yet implemented')
+
+    def test_delete_component(self):
+        self.fail('not yet implemented')
+
+    def test_delete_404_component(self):
         self.fail('not yet implemented')

@@ -112,6 +112,19 @@
     }
 },
 {
+    "pk": 25, 
+    "model": "mirrors.component", 
+    "fields": {
+        "schema_name": "article", 
+        "publish_date": null, 
+        "slug": "this-is-for-testing-on", 
+        "content_type": "application/json", 
+        "metadata": {
+            "title": "thing thing thing"
+        }
+    }
+},
+{
     "pk": 13, 
     "model": "mirrors.componentattribute", 
     "fields": {
