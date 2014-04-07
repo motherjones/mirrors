@@ -21,6 +21,10 @@ class Component(models.Model):
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     @property
+    def data_uri(self):
+        return "/component/{}/data".format(self.slug)
+
+    @property
     def binary_data(self):
         """Get the data from the most recent revision of the data.
 
@@ -83,7 +87,7 @@ class Component(models.Model):
 
         return new_rev
 
-    def new_attribute(self, name, child, weight=9999):
+    def new_attribute(self, name, child, weight=-1):
         """Add a new named attribute to the :py:class:`Component` object. This
         will overwrite an attribute if the child is unchanged. However, if the
         child has a different slug, then the attribute will be converted into
@@ -137,6 +141,7 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
+
 class ComponentAttribute(models.Model):
     """Named attributes that associate :py:class:`Component` objects with
     other `Component` objects.
@@ -144,7 +149,7 @@ class ComponentAttribute(models.Model):
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
     name = models.CharField(max_length=255)
-    weight = models.IntegerField(null=False)
+    weight = models.IntegerField(null=False, default=-1)
 
     added_time = models.DateTimeField(auto_now_add=True)
 

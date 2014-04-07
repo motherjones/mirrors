@@ -19,18 +19,19 @@ It will return a JSON object with this format:
 
  {
    'slug': '<slug-id>',
-   'url': '<canonical URL of component>',
-   'data_uri': '<canonical URL of component data>',
+   'uri': '<canonical URI of component>',
+   'data_uri': '<canonical URI of component data>',
    'content_type': '<http content type>',
    'schema_name': '<name of schema>',
-   'content': '<canonical URL of component data>',
    'metadata': {
      'title': '<title>',
      'description': 'description'
    },
-   'attribute_1': component_1,
-   'attribute_2': component_2,
-   'attribute_n': component_n
+   'attributes': [
+     { name: 'attribute_1', 'value': component_1 },
+     { name: 'attribute_2', 'value': component_2 },
+     { name: 'attribute_n', 'value': component_n }
+   ]
  }
 
 Attributes and their use are described in :ref:`attributes-section`.
@@ -39,12 +40,14 @@ A standard *404* response is returned if no :py:class:`Component` exists
 with that slug.
 
 .. note ::
-   There are some standard metadata attributes which will be yound in more or
+   There are some standard metadata attributes which will be found in more or
    less all :py:class:`Component` objects. ``title`` and ``description`` are
    two of them.
 
-   One attribute, ``force_template`` allows a Component to force the front end
-   to display it using a specified template.
+   The optional metadata field ``force_template`` allows a Component to force
+   the front end to display i
+
+   Both the url and the data_uri field start with the root 
 
 
 Creating
