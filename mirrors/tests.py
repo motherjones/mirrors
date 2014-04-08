@@ -314,7 +314,7 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['metadata']['author'], 'author one')
         self.assertEqual(len(data['attributes']), 1)
         self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
-        
+
         attribute = data['attributes'][0]['value']
         self.assertEqual(attribute['schema_name'], 'schema name')
         self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
