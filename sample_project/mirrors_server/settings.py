@@ -50,9 +50,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'mirrors.urls'
+ROOT_URLCONF = 'mirrors_server.urls'
 
-WSGI_APPLICATION = 'mirrors.wsgi.application'
+WSGI_APPLICATION = 'mirrors_server.wsgi.application'
 
 
 # Database
@@ -64,7 +64,7 @@ WSGI_APPLICATION = 'mirrors.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':  'mirrors',
+        'NAME':  'mirrors_sample_project',
         'HOST': '',
         'PORT': '',
         'USER': '',
