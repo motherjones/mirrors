@@ -17,8 +17,13 @@ class Component(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField()
     content_type = models.CharField(max_length=50, default='none')
-    publish_date = models.DateTimeField(null=True)
     schema_name = models.CharField(max_length=50, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    @property
 
     @property
     def data_uri(self):
