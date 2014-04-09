@@ -9,7 +9,7 @@ setup(name='mirrors',
           'coverage>=3.7.1',
           'psycopg2>=2.5.2',
           'Sphinx>=1.2.1',
-          'django-jsonfield>=0.9.12',
+          'jsonfield>=0.9.20',
           'djangorestframework>=2.3.12'
       ],
       #TODO: Add description, license, and classifiers
