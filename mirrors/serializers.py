@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import serializers
 from mirrors.models import Component, ComponentAttribute, ComponentRevision
 
@@ -9,8 +11,9 @@ class ComponentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Component
-        fields = ('slug', 'metadata', 'content_type', 'publish_date',
-                  'schema_name', 'revisions', 'data_uri', 'attributes')
+        fields = ('slug', 'metadata', 'content_type', 'created_at',
+                  'updated_at', 'schema_name', 'revisions', 'data_uri',
+                  'attributes')
 
     def _get_attributes(self, obj):
         result = []
@@ -29,6 +32,14 @@ class ComponentSerializer(serializers.ModelSerializer):
                                'value': ComponentSerializer(attr).data})
 
         return result
+
+    def transform_metadata(self, obj, value):
+        if isinstance(value, str):
+            return json.loads(value)
+        elif isinstance(value, dict):
+            return value
+        else:
+            raise ValueError()
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):

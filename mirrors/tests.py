@@ -1,3 +1,4 @@
+
 import json
 import hashlib
 
@@ -109,17 +110,15 @@ class ComponentRevisionTests(MirrorsTestCase):
         c = Component.objects.get(slug='test-component-with-no-revisions')
 
         with self.assertRaises(ValueError):
-            c.new_revision(metadata=json.dumps({
-                'title': 'this thing should fail!'
-            }))
+            c.new_revision(metadata={'title': 'this thing should fail!'})
 
     def test_new_revision_not_first(self):
         c = Component.objects.get(slug='component-with-binary-data')
         num_orig_components = c.revisions.count()
 
-        cr = c.new_revision(b'this is a new revision', json.dumps({
+        cr = c.new_revision(b'this is a new revision', {
             'title': 'test component with no revisions'
-        }))
+        })
 
         cr = c.revisions.all().order_by('-revision_number').first()
         self.assertEqual(cr.metadata['title'],
@@ -313,7 +312,8 @@ class ComponentViewTest(APITestCase):
 
         data = json.loads(res.content.decode('UTF-8'))
         self.assertEqual(data['schema_name'], 'schema name')
-        self.assertEqual(data['publish_date'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(data['created_at'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(data['updated_at'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(data['slug'],
                          'test-component-with-one-named-attribute')
         self.assertEqual(data['content_type'], 'none')
@@ -325,7 +325,8 @@ class ComponentViewTest(APITestCase):
 
         attribute = data['attributes'][0]['value']
         self.assertEqual(attribute['schema_name'], 'schema name')
-        self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(attribute['created_at'], '2014-02-06T00:03:40.660Z')
+        self.assertEqual(attribute['updated_at'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(attribute['slug'], 'attribute-1')
         self.assertEqual(attribute['content_type'], 'none')
         self.assertEqual(attribute['metadata']['author'], 'attribute author')
@@ -351,8 +352,9 @@ class ComponentViewTest(APITestCase):
 
     def test_put_new_component_invalid_name(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'this is not a valid slug!'
+             'slug': 'a'
         })
+        url = "{}not a valid slug".format(url[:-1])
 
         res = self.client.put(url, self.valid_component)
         self.assertEqual(res.status_code, status.HTTP_406_NOT_ACCEPTABLE)
@@ -367,12 +369,11 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_404_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': ''
+            'slug': 'no-such-component-here'
         })
 
         res = self.client.patch(url+'/doesnt-exist', { 'content_type': 'text/plain'})
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-        content = ComponentSerializer(c).data
 
     def test_patch_component_one_change(self):
         url = reverse('component-detail', kwargs={

@@ -22,9 +22,6 @@ class Component(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
-    @property
-
     @property
     def data_uri(self):
         return "/component/{}/data".format(self.slug)
