@@ -9,8 +9,8 @@ setup(name='mirrors',
         'djangorestframework>=2.3.12'
     ],
     extras_require = {
-        'development': ['Sphinx>=1.2.1', 'coverage']
-    }   
+        'development': ['Sphinx>=1.2.1', 'coverage'],
+    },   
     #TODO: Add description, license, and classifiers
     # PyPI stuff, if the time ever comes
     author='Mikela Clemmons, Jon Friedman',
