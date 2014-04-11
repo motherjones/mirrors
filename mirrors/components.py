@@ -2,8 +2,9 @@ class MetaData(dict):
     _dict={}
     def __init__(self, _dict=None, required=None):
         self.required = required
-        _dict = self._dict
-        self.update(_dict)
+        if _dict:
+            self._dict = _dict
+        self.update(self._dict)
 
 
 class StringSchema(MetaData):
@@ -11,6 +12,11 @@ class StringSchema(MetaData):
         'id': 'stringSchema',
         'type': 'string'
     }
+
+    def __init__(self, enum=None, required=None):
+        if enum:
+            self._dict['enum'] = enum
+        super(StringSchema, self).__init__(required=required)
 
 
 class SlugSchema(MetaData):
@@ -31,7 +37,7 @@ class EmailSchema(MetaData):
     _dict={
         'id': 'emailSchema',
         'type': 'string'
-    }
+        }
 
 
 class Attribute(dict):
@@ -58,7 +64,8 @@ class AttributeList(Attribute):
 
 class Component(dict):
     id='component'
-    title = 'base compononent schema'
+    schema_title = 'base compononent schema'
+    content_type = []
     
     def __init__(self):
         """
@@ -101,15 +108,14 @@ class Component(dict):
         }
         schema = {
             'schema': self.id,
-            'title': self.title,
+            'title': self.schema_title,
             'type': 'object',
-            'required': ['metadata', 'slug', 
-                'content_type', 'schema_name', 'uri'],
+            'required': ['metadata', 'slug', 'schema_name', 'uri'],
             'properties': {
                 'uri': StringSchema(),
                 'data_uri': StringSchema(),
                 'slug': SlugSchema(),
-                'content_type': StringSchema(),
+                'content_type': StringSchema(enum=self.content_type),
                 'schema_name': StringSchema(),
                 'metadata': metadata,
                 'attributes': attributes
