@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from mirrors.models import Component, ComponentAttribute, ComponentRevision
 
@@ -6,11 +7,15 @@ class ComponentSerializer(serializers.ModelSerializer):
     revisions = serializers.RelatedField(many=True)
     data_uri = serializers.URLField(read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
+    metadata = serializers.SerializerMethodField('_get_metadata')
 
     class Meta:
         model = Component
         fields = ('slug', 'metadata', 'content_type', 'publish_date',
                   'schema_name', 'revisions', 'data_uri', 'attributes')
+
+    def _get_metadata(self, obj):
+        return obj.metadata
 
     def _get_attributes(self, obj):
         result = []
