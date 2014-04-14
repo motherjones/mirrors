@@ -53,13 +53,14 @@ that slug.
 Creating
 """"""""
 
-Creating new :py:class:`Component` objects is done through a ``PUT`` request
-against ``/component/<slug-id>``, where slug-id is the (you guessed it!)
-desired slug. The minimum expected data should look like this:
+Creating new :py:class:`Component` objects is done through a ``POST`` request
+against ``/component``, desired slug. The minimum expected data should look
+like this:
 
 .. code:: json
 
  {
+   'slug': '<slug id>',
    'content_type': '<http content type>',
    'schema_name': '<name of component schema>',
    'metadata': { '<metadata field 1>': '<value>',
