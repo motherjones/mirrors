@@ -1,6 +1,7 @@
 import logging
 
-from django.http import Http404
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,3 +28,10 @@ class ComponentDetail(APIView):
         component = self.get_object(slug)
         serializer = ComponentSerializer(component)
         return Response(serializer.data)
+
+
+def component_data_uri(request, slug):    
+    asset = get_object_or_404(Component, slug=slug)
+    response = HttpResponse(asset.binary_data, mimetype=asset.content_type)
+    response['Content-Disposition'] = 'inline; filename=%s'%slug
+    return response
