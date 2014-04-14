@@ -1,12 +1,19 @@
 import json
+import logging
 
 from rest_framework import serializers
 from mirrors.models import Component, ComponentAttribute, ComponentRevision
 
+LOGGER = logging.getLogger(__name__)
+
 
 class ComponentSerializer(serializers.ModelSerializer):
-    revisions = serializers.RelatedField(many=True)
+    #slug = serializers.CharField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+    metadata = serializers.CharField(required=False)
     data_uri = serializers.URLField(read_only=True)
+    revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
 
     class Meta:
@@ -14,6 +21,20 @@ class ComponentSerializer(serializers.ModelSerializer):
         fields = ('slug', 'metadata', 'content_type', 'created_at',
                   'updated_at', 'schema_name', 'revisions', 'data_uri',
                   'attributes')
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            instance.content_type = attrs.get('content_type', instance.content_type)
+            instance.schema_name = attrs.get('schema_name', instance.schema_name)
+            instance.metadata = attrs.get('metadata', instance.metadata)
+            
+            return instance
+
+        return Component(**attrs)
 
     def _get_attributes(self, obj):
         result = []
@@ -33,13 +54,11 @@ class ComponentSerializer(serializers.ModelSerializer):
 
         return result
 
-    def transform_metadata(self, obj, value):
-        if isinstance(value, str):
-            return json.loads(value)
-        elif isinstance(value, dict):
-            return value
-        else:
-            raise ValueError()
+    # def transform_metadata(self, obj, value):
+    #     if isinstance(value, str):
+    #         LOGGER.error('transform: type={}, value {}'.format(value.__class__,value))
+    #         return json.loads(value)
+    #     return value
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):

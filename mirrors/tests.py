@@ -3,7 +3,7 @@ import json
 import hashlib
 
 from django.core.management import call_command
-from django.core.urlresolvers import resolve, reverse
+from django.core.urlresolvers import resolve, reverse, NoReverseMatch
 from django.db import transaction
 from django.test import TestCase, Client
 
@@ -85,9 +85,15 @@ class ComponentDataTests(MirrorsTestCase):
 
     def test_get_data_uri(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
-        url = c.data_uri
+        url = Component.data_uri.__get__(c)
         self.assertEqual(url,
                          '/component/test-component-with-no-revisions/data')
+
+    def test_get_str(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions')
+        self.assertEqual(c.__str__(),
+                         'test-component-with-multiple-revisions')
 
 
 class ComponentRevisionTests(MirrorsTestCase):
@@ -121,6 +127,7 @@ class ComponentRevisionTests(MirrorsTestCase):
         })
 
         cr = c.revisions.all().order_by('-revision_number').first()
+
         self.assertEqual(cr.metadata['title'],
                          'test component with no revisions')
         self.assertEqual(cr.revision_number, num_orig_components+1)
@@ -297,9 +304,9 @@ class ComponentViewTest(APITestCase):
         self.valid_component = {
             'content_type': 'application/x-markdown',
             'schema_name': 'article',
-            'metadata': {
+            'metadata': json.dumps({
                 'title': 'Valid component'
-            }
+            })
         }
 
     def test_get_component(self):
@@ -311,6 +318,7 @@ class ComponentViewTest(APITestCase):
         self.assertTrue(status.is_success(res.status_code))
 
         data = json.loads(res.content.decode('UTF-8'))
+
         self.assertEqual(data['schema_name'], 'schema name')
         self.assertEqual(data['created_at'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(data['updated_at'], '2014-02-06T00:03:40.660Z')
@@ -341,38 +349,62 @@ class ComponentViewTest(APITestCase):
         res = self.client.get(url)
         self.assertTrue(res.status_code, 404)
 
-    # def test_get_component_content_data(self):
-    #     self.fail('not yet implemented')
+    def test_post_new_component(self):
+        url = reverse('component-list')
+        self.valid_component['slug'] = 'my-new-slug'
 
-    # def test_get_component_revisions(self):
-    #     self.fail('not yet implemented')
+        res = self.client.post(url, self.valid_component)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
-    def test_put_new_component(self):
-        self.fail('not yet implemented')
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertEqual(data['schema_name'], 'article')
+        self.assertEqual(data['content_type'], 'application/x-markdown')
+        self.assertEqual(data['slug'], 'my-new-slug')
+        self.assertEqual(data['metadata']['title'], 'Valid component')
 
-    def test_put_new_component_invalid_name(self):
-        url = reverse('component-detail', kwargs={
-             'slug': 'a'
-        })
-        url = "{}not a valid slug".format(url[:-1])
+    def test_post_new_component_used_name(self):
+        url = reverse('component-list')
+        self.valid_component['slug'] = 'this-is-for-testing-on'
 
-        res = self.client.put(url, self.valid_component)
-        self.assertEqual(res.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        res = self.client.post(url, self.valid_component)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_put_new_component_used_name(self):
-        url = reverse('component-detail', kwargs={
-            'slug': 'test-component-with-one-named-attribute'
-        })
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('slug', data)
+        self.assertEqual(data['slug'], ['Component with this Slug already exists.'])
 
-        res = self.client.put(url, self.valid_component)
-        self.assertEqual(res.status_code, status.HTTP_409_CONFLICT)
+
+    def test_post_new_component_missing_data(self):
+        url = reverse('component-list')
+
+        res = self.client.post(url, self.valid_component)
+        print('data: {}'.format(res.content.decode('UTF-8')))
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        data = json.loads(res.content.decode('UTF-8'))
+
+        self.assertEqual(len(data.keys()), 1)
+        self.assertIn('slug', data)
+        self.assertEqual(data['slug'], ['This field is required.'])
+
+    def test_post_new_component_invalid_name(self):
+        url = reverse('component-list')
+        self.valid_component['slug'] = 'not a valid slug'
+        res = self.client.post(url, self.valid_component)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('slug', data)
+        self.assertEqual(len(data.keys()), 1)
+        self.assertEqual(data['slug'], ["Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."])
 
     def test_patch_404_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'no-such-component-here'
+            'slug': 'doesnt-exist'
         })
 
-        res = self.client.patch(url+'/doesnt-exist', { 'content_type': 'text/plain'})
+        res = self.client.patch(url,{'content_type': 'text/plain'})
+
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch_component_one_change(self):
@@ -387,7 +419,7 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['schema_name'], 'article')
         self.assertEqual(data['content_type'], 'text/plain')
         self.assertEqual(data['slug'], 'this-is-for-testing-on')
-        self.assertEqual(data['metadata']['title'], 'thing thing')
+        self.assertEqual(data['metadata']['title'], 'thing thing thing')
 
     def test_patch_component_multiple_changes(self):
         url = reverse('component-detail', kwargs={
@@ -398,19 +430,42 @@ class ComponentViewTest(APITestCase):
             'content_type': 'text/plain',
             'schema_name': 'patched'
         })
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
 
         self.assertEqual(data['schema_name'], 'patched')
         self.assertEqual(data['content_type'], 'text/plain')
         self.assertEqual(data['slug'], 'this-is-for-testing-on')
-        self.assertEqual(data['metadata']['title'], 'thing thing')
+        self.assertEqual(data['metadata']['title'], 'thing thing thing')
 
     def test_patch_component_metadata(self):
-        self.fail('not yet implemented')
+        url = reverse('component-detail', kwargs={
+            'slug': 'this-is-for-testing-on'
+        })
+
+        res = self.client.patch(url, data={
+            'metadata': json.dumps({'title': 'updated thing'})
+        })
+        print("data ", res.content.decode('UTF-8'))
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = json.loads(res.content.decode('UTF-8'))
+
+        self.assertEqual(data['metadata']['title'], 'updated thing')
 
     def test_delete_component(self):
-        self.fail('not yet implemented')
+        url = reverse('component-detail', kwargs={
+            'slug': 'this-is-for-testing-on'
+        })
+
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_404_component(self):
-        self.fail('not yet implemented')
+        url = reverse('component-detail', kwargs={
+            'slug': 'doesnt-exist'
+        })
+
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)

@@ -8,14 +8,13 @@ from django.utils import timezone
 
 from jsonfield import JSONField
 
-
 class Component(models.Model):
     """A component
 
     .. todo:: Write real documentation for mirrors.Component
     """
     slug = models.SlugField(max_length=100, unique=True)
-    metadata = JSONField()
+    metadata = JSONField(default={})
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
@@ -54,6 +53,7 @@ class Component(models.Model):
 
         :rtype: :py:class:`ComponentRevision`
         :raises: `ValueError`
+
         """
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
@@ -94,6 +94,7 @@ class Component(models.Model):
         will overwrite an attribute if the child is unchanged. However, if the
         child has a different slug, then the attribute will be converted into
         an ordered list and the child component added to it.
+
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
         :type name: string
@@ -143,6 +144,9 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
+    def __str__(self):
+        return self.slug
+
 
 class ComponentAttribute(models.Model):
     """Named attributes that associate :py:class:`Component` objects with
@@ -163,7 +167,7 @@ class ComponentRevision(models.Model):
     """
     data = models.BinaryField()
     diff = models.BinaryField(null=True, blank=True)
-    metadata = JSONField()
+    metadata = JSONField(default={})
 
     revision_date = models.DateTimeField(auto_now_add=True)
     revision_number = models.IntegerField(default=1)

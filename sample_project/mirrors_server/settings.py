@@ -58,9 +58,6 @@ WSGI_APPLICATION = 'mirrors.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-# please remember to *not* leave your DB password in source
-# control!
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -69,6 +66,29 @@ DATABASES = {
         'PORT': '',
         'USER': '',
         'PASSWORD': '',
+    }
+}
+
+
+# Logging
+# https://docs.djangoproject.com/en/1.6/topics/logging/
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log')
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propogate': True
+        }
     }
 }
 
