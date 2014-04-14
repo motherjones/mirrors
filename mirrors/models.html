@@ -80,30 +80,15 @@
 <dt id="mirrors.models.Component.get_attribute">
 <tt class="descname">get_attribute</tt><big>(</big><em>attribute_name</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.get_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the <cite>Component</cite> object attached to this one by the
-attribute name.</p>
+attribute name if it is a regular attribute, or a list if it contains
+more than one</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attribute_name</strong> (<em>str</em>) &#8211; name of the attribute</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Component</cite></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="mirrors.models.Component.get_member">
-<tt class="descname">get_member</tt><big>(</big><em>index</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.get_member" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve a specific member.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>int</em>) &#8211; the index of the member</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Component</cite> or list</td>
 </tr>
 </tbody>
 </table>
@@ -111,9 +96,11 @@ attribute name.</p>
 
 <dl class="method">
 <dt id="mirrors.models.Component.new_attribute">
-<tt class="descname">new_attribute</tt><big>(</big><em>name</em>, <em>child</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.new_attribute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">new_attribute</tt><big>(</big><em>name</em>, <em>child</em>, <em>weight=-1</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.new_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new named attribute to the <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> object. This
-will overwrite any old attributes that may have already existed.</p>
+will overwrite an attribute if the child is unchanged. However, if the
+child has a different slug, then the attribute will be converted into
+an ordered list and the child component added to it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -122,34 +109,12 @@ will overwrite any old attributes that may have already existed.</p>
 <li><strong>name</strong> (<em>string</em>) &#8211; the attribute&#8217;s name, which can only contain alphanumeric
 characters as well as the - and _ characters.</li>
 <li><strong>child</strong> (<cite>Component</cite>) &#8211; the <cite>Component</cite> object to associate with that name</li>
+<li><strong>weight</strong> (<em>int</em>) &#8211; the weight of the child within the ordered list, if the
+attribue is one</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mirrors.models.ComponentAttribute" title="mirrors.models.ComponentAttribute"><tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="mirrors.models.Component.new_member">
-<tt class="descname">new_member</tt><big>(</big><em>child</em>, <em>index=None</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.new_member" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add an existing <cite>Component</cite> object entry to the ordered list of
-members for this one. By default, this will simply append the child
-object to the list, but the user can specify the order if they so
-wish.</p>
-<p>Elements inserted into the list at index <cite>n</cite> will shift all elements
-back by one.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>child</strong> (<cite>Component</cite>) &#8211; the child <cite>Component</cite> object</li>
-<li><strong>index</strong> (<em>integer</em>) &#8211; (optional) the position within the list to put the child
-in</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mirrors.models.ComponentAttribute" title="mirrors.models.ComponentAttribute"><tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt></a> or a list</p>
 </td>
 </tr>
 </tbody>
@@ -191,13 +156,6 @@ being changed.</p>
 <em class="property">class </em><tt class="descclassname">mirrors.models.</tt><tt class="descname">ComponentAttribute</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.models.ComponentAttribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Named attributes that associate <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> objects with
 other <cite>Component</cite> objects.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="mirrors.models.ComponentMember">
-<em class="property">class </em><tt class="descclassname">mirrors.models.</tt><tt class="descname">ComponentMember</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.models.ComponentMember" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ordered list of <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> objects that belong to another
-<cite>Component</cite> object.</p>
 </dd></dl>
 
 <dl class="class">

@@ -60,40 +60,43 @@
 actual binary data itself.</p>
 <p>It will return a JSON object with this format:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;data_uri&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component data&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug-id&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;uri&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URI of component&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;data_uri&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URI of component data&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of schema&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;content&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;canonical URL of component data&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
     <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;title&gt;&#39;</span><span class="p">,</span>
     <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="s">&#39;description&#39;</span>
   <span class="p">},</span>
-  <span class="s">&#39;attribute_1&#39;</span><span class="p">:</span> <span class="n">component_1</span><span class="p">,</span>
-  <span class="s">&#39;attribute_2&#39;</span><span class="p">:</span> <span class="n">component_2</span><span class="p">,</span>
-  <span class="s">&#39;attribute_n&#39;</span><span class="p">:</span> <span class="n">component_n</span>
+  <span class="s">&#39;attributes&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="s">&#39;attribute_1&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_1</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="s">&#39;attribute_2&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="s">&#39;attribute_n&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">component_n</span> <span class="p">}</span>
+  <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Attributes and their use are described in <a class="reference internal" href="#attributes-section"><em>Attributes</em></a>.</p>
-<p>A standard <em>404</em> response is returned if no <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> exists
-with that slug.</p>
+<p>A standard <em>404</em> response is returned if no <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> exists with
+that slug.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>There are some standard metadata attributes which will be yound in more or
+<p>There are some standard metadata attributes which will be found in more or
 less all <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects. <tt class="docutils literal"><span class="pre">title</span></tt> and <tt class="docutils literal"><span class="pre">description</span></tt> are
 two of them.</p>
-<p class="last">One attribute, <tt class="docutils literal"><span class="pre">force_template</span></tt> allows a Component to force the front end
-to display it using a specified template.</p>
+<p>The optional metadata field <tt class="docutils literal"><span class="pre">force_template</span></tt> allows a Component to force
+the front end to display i</p>
+<p class="last">Both the url and the data_uri field start with the root</p>
 </div>
 </div>
 <div class="section" id="creating">
 <h4>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h4>
-<p>Creating new <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects is done through a <tt class="docutils literal"><span class="pre">PUT</span></tt> request
-against <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>, where slug-id is the (you guessed it!) desired
-slug. The minimum expected data should look like this:</p>
+<p>Creating new <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects is done through a <tt class="docutils literal"><span class="pre">POST</span></tt> request
+against <tt class="docutils literal"><span class="pre">/component</span></tt>, desired slug. The minimum expected data should look
+like this:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;slug&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;slug id&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;content_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;http content type&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;schema_name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;name of component schema&gt;&#39;</span><span class="p">,</span>
   <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;&lt;metadata field 1&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;value&gt;&#39;</span><span class="p">,</span>
@@ -103,7 +106,9 @@ slug. The minimum expected data should look like this:</p>
 </div>
 <p>A successful operation will return a <em>201</em> response and the resource
 representation of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> currently exists in the database,
-as it would be appear if the user issued a <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/component/&lt;slug&gt;</span></tt> query.</p>
+as it would be appear if the user issued a <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/component/&lt;slug-id&gt;</span></tt> query.</p>
+<p>If the slug provided contains invalid characters, then a <em>406</em> response will be
+returned.</p>
 <p>If the slug provided is already in use, a <em>409</em> response will be returned.</p>
 </div>
 <div class="section" id="updating">
@@ -124,7 +129,7 @@ current state of the <tt class="xref py py-class docutils literal"><span class="
 <div class="section" id="deleting">
 <h4>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h4>
 <p>Deleting a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> resource is achieved by submitting a
-<tt class="docutils literal"><span class="pre">DELETE</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;</span></tt>.</p>
+<tt class="docutils literal"><span class="pre">DELETE</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>.</p>
 <p>After a successful delete, a <em>204</em> response is returned.</p>
 </div>
 </div>
@@ -163,12 +168,13 @@ by that name, a <em>404</em> response is returned.</p>
 following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
   <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the component you
-wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to 0.</p>
+<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the Component you
+wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to
+9999 in order to have the effect of appending the Component to the list.</p>
 <p>If you issue multiple <tt class="docutils literal"><span class="pre">PUT</span></tt> requests using the name attribute name, but
 different values for the weight, you will end up with an attribute that will
 return an order list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects.</p>
@@ -181,8 +187,28 @@ in correct JSON form.</p>
 </div>
 <div class="section" id="id3">
 <h4>Updating<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p>You can&#8217;t update an attribute. Delete it, and then re-create it with the new
-data.</p>
+<p>When you make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to an attribute including a component that already
+exists such as in this example:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>followed by another <tt class="docutils literal"><span class="pre">PUT</span></tt> request...</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">150</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The attribute will be updated in place. This will work whether the attribute
+has a single component in it or if it has a list.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">To entirely replace the contents of an attribute, you must delete
+it first, and then re-create it.</p>
+</div>
 </div>
 <div class="section" id="id4">
 <h4>Deleting<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
@@ -201,15 +227,15 @@ will result in a <em>404</em> response.</p>
 <div class="section" id="id5">
 <h4>Reading<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
 <p>To get at the data of a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, issue a <tt class="docutils literal"><span class="pre">GET</span></tt> query to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/data</span></tt>. The data will be returned with a <em>200</em> response
-code, and the content type header set appropriately (eg <tt class="docutils literal"><span class="pre">'image/png'</span></tt> if the data
-represented by the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is a png file).</p>
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/data</span></tt>. The data will be returned with a <em>200</em> response
+code, and the content type header set appropriately (eg <tt class="docutils literal"><span class="pre">'image/png'</span></tt> if the
+data represented by the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is a png file).</p>
 <p>If no data exists yet, a <em>404</em> response will be returned.</p>
 </div>
 <div class="section" id="creating-updating">
 <h4>Creating/Updating<a class="headerlink" href="#creating-updating" title="Permalink to this headline">¶</a></h4>
 <p>Both creating and updating the data for a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is done by the
-same method. Issuing a <tt class="docutils literal"><span class="pre">PUT</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/data</span></tt> where the
+same method. Issuing a <tt class="docutils literal"><span class="pre">PUT</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/data</span></tt> where the
 request body is the data itself.</p>
 </div>
 </div>
@@ -223,7 +249,7 @@ minutes long.</p>
 <div class="section" id="checking-lock-status">
 <h4>Checking lock status<a class="headerlink" href="#checking-lock-status" title="Permalink to this headline">¶</a></h4>
 <p>To see whether or not a component is currently locked, make a <tt class="docutils literal"><span class="pre">GET</span></tt> request
-to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt>, which will result in a JSON object like the
+to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/lock</span></tt>, which will result in a JSON object like the
 following if the component is locked:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
   <span class="s">&#39;locked&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
@@ -238,7 +264,7 @@ following if the component is locked:</p>
 </div>
 <div class="section" id="making-a-lock">
 <h4>Making a lock<a class="headerlink" href="#making-a-lock" title="Permalink to this headline">¶</a></h4>
-<p>To create a lock make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt> with JSON data in
+<p>To create a lock make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/lock</span></tt> with JSON data in
 the following format:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
   <span class="s">&#39;locked&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
@@ -258,14 +284,14 @@ the lock in the database.</p>
 </div>
 <p>If the lock is successful, you will receive a response with a <em>201</em> status code
 along with data that matches what you would get if you issued a <tt class="docutils literal"><span class="pre">GET</span></tt>
-statement to <tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt>.</p>
+statement to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/lock</span></tt>.</p>
 <p>If there is already a lock in place then you will get a response with a <em>409</em>
 response.</p>
 </div>
 <div class="section" id="breaking-a-lock">
 <h4>Breaking a lock<a class="headerlink" href="#breaking-a-lock" title="Permalink to this headline">¶</a></h4>
 <p>Sometimes you need to break the lock. Make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/lock</span></tt> and the current lock will be removed. You will
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/lock</span></tt> and the current lock will be removed. You will
 receive a <em>204</em> response if the lock is successfully broken. If there is no
 lock, you will get a <em>404</em> response.</p>
 </div>
