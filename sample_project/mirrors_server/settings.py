@@ -50,9 +50,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'mirrors.urls'
+ROOT_URLCONF = 'mirrors_server.urls'
 
-WSGI_APPLICATION = 'mirrors.wsgi.application'
+WSGI_APPLICATION = 'mirrors_server.wsgi.application'
 
 
 # Database

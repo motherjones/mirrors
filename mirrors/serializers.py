@@ -8,13 +8,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ComponentSerializer(serializers.ModelSerializer):
-    #slug = serializers.CharField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
-    metadata = serializers.CharField(required=False)
     data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
+    metadata = serializers.SerializerMethodField('_get_metadata')
 
     class Meta:
         model = Component
@@ -35,30 +34,22 @@ class ComponentSerializer(serializers.ModelSerializer):
             return instance
 
         return Component(**attrs)
+    def _get_metadata(self, obj):
+        return obj.metadata
 
     def _get_attributes(self, obj):
-        result = []
+        result = {}
         attribute_names = [o.name for o in obj.attributes.distinct('name')]
 
         for n in attribute_names:
             attr = obj.get_attribute(n)
 
             if isinstance(attr, list):
-                result.append({
-                    'name': n,
-                    'value': [ComponentSerializer(a).data for a in attr]
-                })
+                result[n] = [ComponentSerializer(a).data for a in attr]
             else:
-                result.append({'name': n,
-                               'value': ComponentSerializer(attr).data})
+                result[n] = ComponentSerializer(attr).data
 
         return result
-
-    # def transform_metadata(self, obj, value):
-    #     if isinstance(value, str):
-    #         LOGGER.error('transform: type={}, value {}'.format(value.__class__,value))
-    #         return json.loads(value)
-    #     return value
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):

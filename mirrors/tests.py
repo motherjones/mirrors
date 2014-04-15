@@ -1,9 +1,8 @@
-
 import json
 import hashlib
 
 from django.core.management import call_command
-from django.core.urlresolvers import resolve, reverse, NoReverseMatch
+from django.core.urlresolvers import resolve, reverse
 from django.db import transaction
 from django.test import TestCase, Client
 
@@ -16,6 +15,7 @@ from mirrors.views import ComponentDetail
 from mirrors.models import *
 from mirrors.serializers import *
 
+from mirrors import components 
 
 class MirrorsTestCase(TestCase):
     """This class adds the `assertRecursiveDictContains` function, which
@@ -85,7 +85,7 @@ class ComponentDataTests(MirrorsTestCase):
 
     def test_get_data_uri(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
-        url = Component.data_uri.__get__(c)
+        url = c.data_uri
         self.assertEqual(url,
                          '/component/test-component-with-no-revisions/data')
 
@@ -127,7 +127,6 @@ class ComponentRevisionTests(MirrorsTestCase):
         })
 
         cr = c.revisions.all().order_by('-revision_number').first()
-
         self.assertEqual(cr.metadata['title'],
                          'test component with no revisions')
         self.assertEqual(cr.revision_number, num_orig_components+1)
@@ -225,16 +224,10 @@ class ComponentResourceTests(APITestCase):
     fixtures = ['serializer.json']
 
     def _has_attribute(self, content, name):
-        attributes = content['attributes']
-        attr_names = [a['name'] for a in attributes]
-        return name in attr_names
+        return name in content['attributes'].keys()
 
     def _get_attribute(self, content, name):
-        attributes = content['attributes']
-
-        for attr in attributes:
-            if attr['name'] == name:
-                return attr['value']
+        return content['attributes'][name]
 
     def test_serialize_component_resource(self):
         c = Component.objects.get(slug='test-component-with-no-attributes')
@@ -318,7 +311,6 @@ class ComponentViewTest(APITestCase):
         self.assertTrue(status.is_success(res.status_code))
 
         data = json.loads(res.content.decode('UTF-8'))
-
         self.assertEqual(data['schema_name'], 'schema name')
         self.assertEqual(data['created_at'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(data['updated_at'], '2014-02-06T00:03:40.660Z')
@@ -329,9 +321,9 @@ class ComponentViewTest(APITestCase):
                          'test component with a single named attribute')
         self.assertEqual(data['metadata']['author'], 'author one')
         self.assertEqual(len(data['attributes']), 1)
-        self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
+        self.assertIn('my_named_attribute', data['attributes'])
 
-        attribute = data['attributes'][0]['value']
+        attribute = data['attributes']['my_named_attribute']
         self.assertEqual(attribute['schema_name'], 'schema name')
         self.assertEqual(attribute['created_at'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(attribute['updated_at'], '2014-02-06T00:03:40.660Z')
@@ -360,6 +352,9 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['schema_name'], 'article')
         self.assertEqual(data['content_type'], 'application/x-markdown')
         self.assertEqual(data['slug'], 'my-new-slug')
+
+        self.assertIn('metadata', data)
+        data = json.loads(data['metadata'])
         self.assertEqual(data['metadata']['title'], 'Valid component')
 
     def test_post_new_component_used_name(self):
@@ -378,7 +373,7 @@ class ComponentViewTest(APITestCase):
         url = reverse('component-list')
 
         res = self.client.post(url, self.valid_component)
-        print('data: {}'.format(res.content.decode('UTF-8')))
+
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         data = json.loads(res.content.decode('UTF-8'))
 
@@ -447,7 +442,6 @@ class ComponentViewTest(APITestCase):
         res = self.client.patch(url, data={
             'metadata': json.dumps({'title': 'updated thing'})
         })
-        print("data ", res.content.decode('UTF-8'))
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
@@ -469,3 +463,58 @@ class ComponentViewTest(APITestCase):
 
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+class ComponentsTestCase(TestCase):
+    def test_attribute_to_dict(self):
+        alpha = ['a', 'b', 'c']
+        attribute = components.Attribute(*alpha, required=True)
+        _dict = dict(attribute)
+        for i, c in enumerate(_dict['anyOf']):
+            self.assertEqual(c['$ref'], alpha[i])
+
+    def test_list_attribute_to_dict(self):
+        alpha = ['a', 'b', 'c']
+        attribute = components.AttributeList(*alpha, required=True)
+        _dict = dict(attribute)
+        self.assertEqual(_dict['type'], 'array')
+        self.assertIsInstance(_dict['items']['anyOf'], list)
+                
+    def test_component_with_metadata(self):
+        for key in dir(components):
+            schema=getattr(components, key)
+            if isinstance(schema, type) and \
+            issubclass(schema, components.MetaData):
+                class Example(components.Component):
+                    id = 'example'
+                    title = 'Example Component'
+                    foo = schema(required=True)
+                
+                _dict = dict(Example())
+                self.assertEqual(
+                    _dict['properties']['metadata']['properties'].get('foo'),
+                    dict(schema()))
+
+    def test_component_with_attribute(self):
+        class Example(components.Component):
+            id = 'example'
+            title = 'Example Component'
+            foo = components.Attribute('example', required=True)
+        
+        _dict = Example()
+        foo = _dict['properties']['attributes']['properties'].get('foo')
+        required = _dict['properties']['attributes']['required']
+        self.assertTrue('foo' in required) #TODO: Make test both true and false
+        self.assertEqual(foo,
+            components.Attribute('example'))
+
+    def test_component_with_attribute_list(self):
+        class Example(components.Component):
+            id = 'example'
+            title = 'Example Component'
+            foo = components.AttributeList('example')
+        
+        _dict = Example()
+        foo = _dict['properties']['attributes']['properties'].get('foo')
+        self.assertEqual(foo,
+            components.AttributeList('example'))
+

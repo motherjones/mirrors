@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
@@ -23,7 +24,7 @@ class Component(models.Model):
 
     @property
     def data_uri(self):
-        return "/component/{}/data".format(self.slug)
+        return reverse('component-data-uri', kwargs={'slug': self.slug})
 
     @property
     def binary_data(self):
