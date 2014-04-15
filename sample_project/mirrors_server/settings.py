@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'mirrors_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':  'mirrors',
+        'NAME':  'mirrors_sample_project',
         'HOST': '',
         'PORT': '',
         'USER': '',
