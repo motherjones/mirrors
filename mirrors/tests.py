@@ -128,7 +128,8 @@ class ComponentRevisionTests(MirrorsTestCase):
         })
 
         cr = c.revisions.all().order_by('-revision_number').first()
-        self.assertEqual(cr.metadata['title'],
+        metadata = json.loads(cr.metadata)
+        self.assertEqual(metadata['title'],
                          'test component with no revisions')
         self.assertEqual(cr.revision_number, num_orig_components+1)
 
