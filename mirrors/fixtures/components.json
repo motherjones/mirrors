@@ -196,6 +196,20 @@
     }
 },
 {
+    "pk": 15, 
+    "model": "mirrors.component", 
+    "fields": {
+        "schema_name": "schema name", 
+        "publish_date": "2014-02-06T00:03:40.660Z", 
+        "slug": "test-component-with-list-one-attribute",
+        "content_type": "none", 
+        "metadata": {
+            "title": "component data that has one list attribute containing a single element",
+            "author": "bobby tables"
+        }
+    }
+},
+{
     "pk": 2, 
     "model": "mirrors.componentattribute", 
     "fields": {
@@ -258,6 +272,17 @@
         "weight": -1, 
         "name": "my_attribute", 
         "parent": 7, 
+        "child": 8
+    }
+},
+{
+    "pk": 11, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-03-21T20:03:12.343Z", 
+        "weight": 10, 
+        "name": "my_single_list-attr", 
+        "parent": 15, 
         "child": 8
     }
 },
