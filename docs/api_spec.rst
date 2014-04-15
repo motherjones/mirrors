@@ -27,11 +27,11 @@ It will return a JSON object with this format:
      'title': '<title>',
      'description': 'description'
    },
-   'attributes': [
-     { name: 'attribute_1', 'value': component_1 },
-     { name: 'attribute_2', 'value': component_2 },
-     { name: 'attribute_n', 'value': component_n }
-   ]
+   'attributes': {
+     attribute_1: component_1,
+     attribute_2: component_2,
+     attribute_n: component_n
+   }
  }
 
 Attributes and their use are described in :ref:`attributes-section`.
