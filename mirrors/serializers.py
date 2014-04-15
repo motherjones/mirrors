@@ -18,20 +18,16 @@ class ComponentSerializer(serializers.ModelSerializer):
         return obj.metadata
 
     def _get_attributes(self, obj):
-        result = []
+        result = {}
         attribute_names = [o.name for o in obj.attributes.distinct('name')]
 
         for n in attribute_names:
             attr = obj.get_attribute(n)
 
             if isinstance(attr, list):
-                result.append({
-                    'name': n,
-                    'value': [ComponentSerializer(a).data for a in attr]
-                })
+                result[n] = [ComponentSerializer(a).data for a in attr]
             else:
-                result.append({'name': n,
-                               'value': ComponentSerializer(attr).data})
+                result[n] = ComponentSerializer(attr).data
 
         return result
 

@@ -220,16 +220,10 @@ class ComponentResourceTests(APITestCase):
     fixtures = ['serializer.json']
 
     def _has_attribute(self, content, name):
-        attributes = content['attributes']
-        attr_names = [a['name'] for a in attributes]
-        return name in attr_names
+        return name in content['attributes'].keys()
 
     def _get_attribute(self, content, name):
-        attributes = content['attributes']
-
-        for attr in attributes:
-            if attr['name'] == name:
-                return attr['value']
+        return content['attributes'][name]
 
     def test_serialize_component_resource(self):
         c = Component.objects.get(slug='test-component-with-no-attributes')
@@ -313,9 +307,9 @@ class ComponentViewTest(APITestCase):
                          'test component with a single named attribute')
         self.assertEqual(data['metadata']['author'], 'author one')
         self.assertEqual(len(data['attributes']), 1)
-        self.assertEqual(data['attributes'][0]['name'], 'my_named_attribute')
+        self.assertIn('my_named_attribute', data['attributes'])
 
-        attribute = data['attributes'][0]['value']
+        attribute = data['attributes']['my_named_attribute']
         self.assertEqual(attribute['schema_name'], 'schema name')
         self.assertEqual(attribute['publish_date'], '2014-02-06T00:03:40.660Z')
         self.assertEqual(attribute['slug'], 'attribute-1')
