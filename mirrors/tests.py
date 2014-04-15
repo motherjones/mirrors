@@ -15,7 +15,8 @@ from mirrors.views import ComponentDetail
 from mirrors.models import *
 from mirrors.serializers import *
 
-from mirrors import components 
+from mirrors import components
+
 
 class MirrorsTestCase(TestCase):
     """This class adds the `assertRecursiveDictContains` function, which
@@ -366,8 +367,8 @@ class ComponentViewTest(APITestCase):
 
         data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('slug', data)
-        self.assertEqual(data['slug'], ['Component with this Slug already exists.'])
-
+        self.assertEqual(data['slug'],
+                         ['Component with this Slug already exists.'])
 
     def test_post_new_component_missing_data(self):
         url = reverse('component-list')
@@ -391,14 +392,16 @@ class ComponentViewTest(APITestCase):
         data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('slug', data)
         self.assertEqual(len(data.keys()), 1)
-        self.assertEqual(data['slug'], ["Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."])
+        self.assertEqual(data['slug'],
+                         ["Enter a valid 'slug' consisting of letters, "
+                          "numbers, underscores or hyphens."])
 
     def test_patch_404_component(self):
         url = reverse('component-detail', kwargs={
             'slug': 'doesnt-exist'
         })
 
-        res = self.client.patch(url,{'content_type': 'text/plain'})
+        res = self.client.patch(url, {'content_type': 'text/plain'})
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -464,6 +467,7 @@ class ComponentViewTest(APITestCase):
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class ComponentsTestCase(TestCase):
     def test_attribute_to_dict(self):
         alpha = ['a', 'b', 'c']
@@ -478,17 +482,17 @@ class ComponentsTestCase(TestCase):
         _dict = dict(attribute)
         self.assertEqual(_dict['type'], 'array')
         self.assertIsInstance(_dict['items']['anyOf'], list)
-                
+
     def test_component_with_metadata(self):
         for key in dir(components):
-            schema=getattr(components, key)
+            schema = getattr(components, key)
             if isinstance(schema, type) and \
-            issubclass(schema, components.MetaData):
+               issubclass(schema, components.MetaData):
                 class Example(components.Component):
                     id = 'example'
                     title = 'Example Component'
                     foo = schema(required=True)
-                
+
                 _dict = dict(Example())
                 self.assertEqual(
                     _dict['properties']['metadata']['properties'].get('foo'),
@@ -499,22 +503,19 @@ class ComponentsTestCase(TestCase):
             id = 'example'
             title = 'Example Component'
             foo = components.Attribute('example', required=True)
-        
+
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
         required = _dict['properties']['attributes']['required']
-        self.assertTrue('foo' in required) #TODO: Make test both true and false
-        self.assertEqual(foo,
-            components.Attribute('example'))
+        self.assertTrue('foo' in required)  # TODO: Make test both true & false
+        self.assertEqual(foo, components.Attribute('example'))
 
     def test_component_with_attribute_list(self):
         class Example(components.Component):
             id = 'example'
             title = 'Example Component'
             foo = components.AttributeList('example')
-        
+
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
-        self.assertEqual(foo,
-            components.AttributeList('example'))
-
+        self.assertEqual(foo, components.AttributeList('example'))

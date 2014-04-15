@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
+
 class Component(models.Model):
     """A component
 

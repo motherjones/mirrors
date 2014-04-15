@@ -22,6 +22,7 @@ class ComponentList(mixins.CreateModelMixin,
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
 class ComponentDetail(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
@@ -51,14 +52,16 @@ class ComponentDetail(mixins.RetrieveModelMixin,
             new_metadata[k] = patch_metadata.get(k, old_metadata[k])
         metadata = {'metadata': json.dumps(new_metadata)}
 
-        serializer = ComponentSerializer(component, data=new_metadata, partial=True)
+        serializer = ComponentSerializer(component,
+                                         data=new_metadata,
+                                         partial=True)
         import pdb
         #pdb.set_trace()
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-            
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
@@ -68,8 +71,8 @@ class ComponentDetail(mixins.RetrieveModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-def component_data_uri(request, slug):    
+def component_data_uri(request, slug):
     asset = get_object_or_404(Component, slug=slug)
     response = HttpResponse(asset.binary_data, mimetype=asset.content_type)
-    response['Content-Disposition'] = 'inline; filename=%s'%slug
+    response['Content-Disposition'] = 'inline; filename=%s' % slug
     return response

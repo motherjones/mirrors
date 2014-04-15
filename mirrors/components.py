@@ -1,5 +1,6 @@
 class MetaData(dict):
-    _dict={}
+    _dict = {}
+
     def __init__(self, _dict=None, required=None):
         self.required = required
         if _dict:
@@ -8,7 +9,7 @@ class MetaData(dict):
 
 
 class StringSchema(MetaData):
-    _dict={
+    _dict = {
         'id': 'stringSchema',
         'type': 'string'
     }
@@ -27,14 +28,14 @@ class SlugSchema(MetaData):
 
 
 class UriSchema(MetaData):
-    _dict={
+    _dict = {
         'id': 'uriSchema',
         'type': 'string'
     }
 
 
 class EmailSchema(MetaData):
-    _dict={
+    _dict = {
         'id': 'emailSchema',
         'type': 'string'
         }
@@ -43,30 +44,30 @@ class EmailSchema(MetaData):
 class Attribute(dict):
     def template(self):
         return {
-                'anyOf': [
-                    {'$ref': c} for c in self.components
-                ]
-            }
+            'anyOf': [
+                {'$ref': c} for c in self.components
+            ]
+        }
 
     def __init__(self, *args, required=None):
-        self.components=args
-        self.required=required
+        self.components = args
+        self.required = required
         self.update(self.template())
 
 
 class AttributeList(Attribute):
     def template(self):
         return {
-                'type': 'array',
-                'items': super(AttributeList, self).template()
-            }
+            'type': 'array',
+            'items': super(AttributeList, self).template()
+        }
 
 
 class Component(dict):
-    id='component'
+    id = 'component'
     schema_title = 'base compononent schema'
     content_type = []
-    
+
     def __init__(self):
         """
         TODO: Split this up into modules and private/public
@@ -93,7 +94,7 @@ class Component(dict):
             'properties': metadata,
             'required': required_metadata
         }
-        attributes= {
+        attributes = {
             'type': 'object',
             'properties': attributes,
             'required': required_attributes,
@@ -103,7 +104,7 @@ class Component(dict):
                     'items': {
                         '$ref': 'component'
                     }
-                }] 
+                }]
             }
         }
         schema = {

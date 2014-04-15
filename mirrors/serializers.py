@@ -27,13 +27,16 @@ class ComponentSerializer(serializers.ModelSerializer):
         an existing model instance, or create a new model instance.
         """
         if instance is not None:
-            instance.content_type = attrs.get('content_type', instance.content_type)
-            instance.schema_name = attrs.get('schema_name', instance.schema_name)
+            instance.content_type = attrs.get('content_type',
+                                              instance.content_type)
+            instance.schema_name = attrs.get('schema_name',
+                                             instance.schema_name)
             instance.metadata = attrs.get('metadata', instance.metadata)
-            
+
             return instance
 
         return Component(**attrs)
+
     def _get_metadata(self, obj):
         return obj.metadata
 
