@@ -98,6 +98,7 @@ class Component(models.Model):
 
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
+
         :type name: string
         :param child: the `Component` object to associate with that name
         :type child: `Component`
