@@ -13,7 +13,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
-    metadata = serializers.SerializerMethodField('_get_metadata')
+    #metadata = serializers.SerializerMethodField('_get_metadata')
 
     class Meta:
         model = Component
@@ -37,8 +37,11 @@ class ComponentSerializer(serializers.ModelSerializer):
 
         return Component(**attrs)
 
-    def _get_metadata(self, obj):
-        return obj.metadata
+    def transform_metadata(self, obj, val):
+        if isinstance(val, str):
+            return json.loads(val)
+        else:
+            return val
 
     def _get_attributes(self, obj):
         result = {}

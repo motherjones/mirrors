@@ -85,10 +85,13 @@ class ComponentDataTests(MirrorsTestCase):
         self.assertEqual(c.binary_data, None)
 
     def test_get_data_uri(self):
+        expected_url = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-no-revisions'
+        }) + '/data'
+
         c = Component.objects.get(slug='test-component-with-no-revisions')
         url = c.data_uri
-        self.assertEqual(url,
-                         '/component/test-component-with-no-revisions/data')
+        self.assertEqual(url, expected_url)
 
     def test_get_str(self):
         c = Component.objects.get(
@@ -128,7 +131,7 @@ class ComponentRevisionTests(MirrorsTestCase):
         })
 
         cr = c.revisions.all().order_by('-revision_number').first()
-        metadata = json.loads(cr.metadata)
+        metadata = cr.metadata
         self.assertEqual(metadata['title'],
                          'test component with no revisions')
         self.assertEqual(cr.revision_number, num_orig_components+1)
@@ -235,10 +238,12 @@ class ComponentResourceTests(APITestCase):
         c = Component.objects.get(slug='test-component-with-no-attributes')
         content = ComponentSerializer(c).data
 
+        expected_url = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-no-attributes'
+        }) + '/data'
+
         self.assertEqual(content['slug'], 'test-component-with-no-attributes')
-        self.assertEqual(
-            content['data_uri'],
-            '/component/test-component-with-no-attributes/data')
+        self.assertEqual(content['data_uri'], expected_url)
         self.assertEqual(content['content_type'], 'application/x-markdown')
         self.assertEqual(content['schema_name'], 'article')
         self.assertEqual(content['metadata'], {
@@ -357,7 +362,7 @@ class ComponentViewTest(APITestCase):
 
         self.assertIn('metadata', data)
         data = json.loads(data['metadata'])
-        self.assertEqual(data['metadata']['title'], 'Valid component')
+        self.assertEqual(data['title'], 'Valid component')
 
     def test_post_new_component_used_name(self):
         url = reverse('component-list')
@@ -443,10 +448,11 @@ class ComponentViewTest(APITestCase):
             'slug': 'this-is-for-testing-on'
         })
 
-        res = self.client.patch(url, data={
+        res = self.client.patch(url, {
             'metadata': json.dumps({'title': 'updated thing'})
         })
 
+        
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
 

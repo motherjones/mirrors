@@ -39,24 +39,27 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     def patch(self, request, *args, **kwargs):
         data = request.DATA
 
-        if 'metadata' in data and isinstance(data['metadata'], str):
-            data['metadata'] = json.loads(data['metadata'])
-
         component = get_object_or_404(Component, slug=kwargs['slug'])
+        serializer = ComponentSerializer(component)
 
-        old_metadata = component.metadata
-        patch_metadata = dict(data)['metadata'][0]
-        new_metadata = {}
+        if 'metadata' in data:
+            new_metadata = {}
+            patch_metadata = json.loads(data['metadata'])
+            old_metadata = serializer.data['metadata']
 
-        for k in old_metadata.keys():
-            new_metadata[k] = patch_metadata.get(k, old_metadata[k])
-        metadata = {'metadata': json.dumps(new_metadata)}
+            for k in old_metadata.keys():
+                new_metadata[k] = patch_metadata.get(k, old_metadata[k])
 
-        serializer = ComponentSerializer(component,
-                                         data=new_metadata,
-                                         partial=True)
-        import pdb
-        #pdb.set_trace()
+            data['metadata'] = new_metadata
+
+        d_fixed = dict(data)
+
+        #if 'metadata' in d_fixed and isinstance(d_fixed['metadata'], list):
+        for k in d_fixed.keys():
+            if isinstance(d_fixed[k], list):
+                d_fixed[k] = d_fixed[k][0]
+
+        serializer = ComponentSerializer(component, data=d_fixed, partial=True)
 
         if serializer.is_valid():
             serializer.save()
