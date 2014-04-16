@@ -163,7 +163,7 @@ class ComponentAttributeTests(MirrorsTestCase):
         c = Component.objects.get(slug='test-component-with-list-one-attribute')
         attr_list = c.get_attribute('my_single_list_attr')
 
-        self.assertTrue(isinstance(attr_list), list)
+        self.assertTrue(isinstance(attr_list, list))
         self.assertEqual(len(attr_list), 1)
 
         attr = attr_list[0]
