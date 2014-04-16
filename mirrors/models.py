@@ -143,7 +143,11 @@ class Component(models.Model):
         if attrs.count() == 0:
             raise KeyError("no such attribute '{}'".format(attribute_name))
         elif attrs.count() == 1:
-            return attrs.first().child
+            attr = attrs.first()
+            if attr.weight == -1:
+                return attr.child
+            else:
+                return [attr.child]
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 

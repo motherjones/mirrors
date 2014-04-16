@@ -159,6 +159,16 @@ class ComponentAttributeTests(MirrorsTestCase):
 
         self.assertEqual(len(attr_list), 3)
 
+    def test_get_attribute_list_one_entry(self):
+        c = Component.objects.get(slug='test-component-with-list-one-attribute')
+        attr_list = c.get_attribute('my_single_list_attr')
+
+        self.assertTrue(isinstance(attr_list), list)
+        self.assertEqual(len(attr_list), 1)
+
+        attr = attr_list[0]
+        self.assertEqual(attr['slug'], 'attribute-1')
+
     def test_get_attribute_nonexistent(self):
         c = Component.objects.get(slug='test-component-1')
         with self.assertRaises(KeyError):
