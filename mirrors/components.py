@@ -123,3 +123,21 @@ class Component(dict):
             }
         }
         return self.update(schema)
+
+
+ComponentSchemaCache = {}
+
+
+class MissingComponentException(Exception):
+    pass
+
+
+def get_components():
+    return ComponentSchemaCache
+
+
+def get_component(_id):
+    try:
+        return ComponentSchemaCache[_id]
+    except KeyError:
+        raise MissingComponentException(_id)
