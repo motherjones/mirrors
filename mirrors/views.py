@@ -38,13 +38,12 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
     def patch(self, request, *args, **kwargs):
         data = request.DATA
-
         component = get_object_or_404(Component, slug=kwargs['slug'])
         serializer = ComponentSerializer(component)
 
         if 'metadata' in data:
             new_metadata = {}
-            patch_metadata = json.loads(data['metadata'])
+            patch_metadata = data['metadata']
             old_metadata = serializer.data['metadata']
 
             for k in old_metadata.keys():
@@ -54,7 +53,6 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         d_fixed = dict(data)
 
-        #if 'metadata' in d_fixed and isinstance(d_fixed['metadata'], list):
         for k in d_fixed.keys():
             if isinstance(d_fixed[k], list):
                 d_fixed[k] = d_fixed[k][0]
@@ -63,9 +61,11 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         if serializer.is_valid():
             serializer.save()
+            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'], data))
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            LOGGER.debug("error saving changes to {}: {}".format(kwargs['slug'], serializer.errors))
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)

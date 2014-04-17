@@ -1,3 +1,4 @@
+
 import json
 import hashlib
 
@@ -459,7 +460,7 @@ class ComponentViewTest(APITestCase):
         })
 
         res = self.client.patch(url, {
-            'metadata': json.dumps({'title': 'updated thing'})
+            'metadata': {'title': 'updated thing'}
         })
 
         
