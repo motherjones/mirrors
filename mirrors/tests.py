@@ -501,6 +501,16 @@ class ComponentsTestCase(TestCase):
         self.assertEqual(_dict['type'], 'array')
         self.assertIsInstance(_dict['items']['anyOf'], list)
 
+    def test_metadata(self):
+        _dict = {'test': 'test'}
+        schema = components.MetaData(_dict=_dict)
+        self.assertEqual(schema, _dict)
+
+    def test_string_schema_with_enum(self):
+        enum = ['a', 'b', 'c']
+        schema = components.StringSchema(enum)
+        self.assertEqual(schema['enum'], enum)
+
     def test_component_with_metadata(self):
         for key in dir(components):
             schema = getattr(components, key)
@@ -537,3 +547,18 @@ class ComponentsTestCase(TestCase):
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
         self.assertEqual(foo, components.AttributeList('example'))
+
+    def test_get_components(self):
+        comps = components.get_components()
+        self.assertTrue(len(comps)>=1)
+        for key, comp in comps.items():
+            self.assertTrue(issubclass(comp, components.Component))
+            self.assertEqual(key, comp.id)
+
+    def test_get_component(self):
+        comp = components.get_component('component')
+        self.assertTrue(comp, components.Component)
+
+    def test_get_component_fail(self):
+        with self.assertRaises(components.MissingComponentException):
+            components.get_component('nota valid component')
