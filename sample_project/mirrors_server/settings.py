@@ -92,6 +92,12 @@ LOGGING = {
     }
 }
 
+# Rest framework
+# http://www.django-rest-framework.org/api-guide/testing
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
