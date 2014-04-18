@@ -5,7 +5,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
@@ -63,11 +62,15 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         if serializer.is_valid():
             serializer.save()
-            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'], data))
+            LOGGER.debug(
+                "saved changes to {}: {}".format(kwargs['slug'], data))
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            LOGGER.debug("error saving changes to {}: {}".format(kwargs['slug'], serializer.errors))
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            LOGGER.debug(
+                "error saving changes to {}: {}".format(
+                    kwargs['slug'], serializer.errors))
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -88,4 +91,5 @@ def component_schemas(request):
     for key, schema in schemas.items():
         schemas[key] = schema()
     schemas['id'] = reverse('component-schemas')
-    return HttpResponse(json.dumps(schemas, indent=4), content_type="application/json") 
+    return HttpResponse(json.dumps(schemas, indent=4),
+                        content_type="application/json")
