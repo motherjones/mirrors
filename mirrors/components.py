@@ -1,5 +1,5 @@
 class MetaData(dict):
-    _dict = {} #TODO rename this to schema
+    _dict = {}  # TODO rename this to schema
 
     def __init__(self, _dict=None, required=None):
         self.required = required
@@ -124,7 +124,6 @@ class Component(dict):
         }
         return self.update(schema)
 
-    
 
 ComponentSchemaCache = {}
 
