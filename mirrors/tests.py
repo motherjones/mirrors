@@ -492,7 +492,7 @@ class ComponentsTestCase(TestCase):
         attribute = components.Attribute(*alpha, required=True)
         _dict = dict(attribute)
         for i, c in enumerate(_dict['anyOf']):
-            self.assertEqual(c['$ref'], alpha[i])
+            self.assertEqual(c['$ref'], '#%s' % alpha[i])
 
     def test_list_attribute_to_dict(self):
         alpha = ['a', 'b', 'c']

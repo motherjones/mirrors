@@ -45,7 +45,7 @@ class Attribute(dict):
     def template(self):
         return {
             'anyOf': [
-                {'$ref': c} for c in self.components
+                {'$ref': '#%s' % c} for c in self.components
             ]
         }
 
@@ -108,7 +108,7 @@ class Component(dict):
             }
         }
         schema = {
-            'schema': self.id,
+            'id': '#%s' % self.id,
             'title': self.schema_title,
             'type': 'object',
             'required': ['metadata', 'slug', 'schema_name', 'uri'],
@@ -124,6 +124,7 @@ class Component(dict):
         }
         return self.update(schema)
 
+    
 
 ComponentSchemaCache = {}
 

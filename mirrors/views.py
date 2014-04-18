@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
@@ -10,6 +11,7 @@ from rest_framework import generics, mixins, status
 
 from mirrors.models import *
 from mirrors.serializers import ComponentSerializer
+from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
 
@@ -79,3 +81,11 @@ def component_data_uri(request, slug):
     response = HttpResponse(asset.binary_data, mimetype=asset.content_type)
     response['Content-Disposition'] = 'inline; filename=%s' % slug
     return response
+
+
+def component_schemas(request):
+    schemas = components.get_components()
+    for key, schema in schemas.items():
+        schemas[key] = schema()
+    schemas['id'] = reverse('component-schemas')
+    return HttpResponse(json.dumps(schemas, indent=4), content_type="application/json") 
