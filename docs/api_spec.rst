@@ -144,13 +144,14 @@ by that name, a *404* response is returned.
 Creating
 """"""""
 
-An attribute is created by making a ``PUT`` request to
-``/component/<slug-id>/attribute/<attribute-name>`` with a JSON object of the
+An attribute is created by making a ``POST`` request to
+``/component/<slug-id>/attribute/`` with a JSON object of the
 following form:
 
 .. code:: json
 
  {
+   'name': '<attribute name',
    'component': '<component slug>',
    'weight': 9999
  }
