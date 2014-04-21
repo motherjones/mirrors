@@ -1,4 +1,3 @@
-
 import json
 import hashlib
 
@@ -234,6 +233,17 @@ class ComponentAttributeTests(MirrorsTestCase):
         c.new_attribute('my_attribute', c_2, 50)
 
         self.assertEqual(c.attributes.filter(name='my_attribute').count(), 2)
+
+    def test_get_str_on_single_attribute(self):
+        ca = ComponentAttribute.objects.get(10)
+        e_str = 'test-component-with-one-attribute[my_attribute] = attribute-1'
+        self.assertEqual(ca.__str__(), e_str)
+
+    def test_get_str_on_list_attribute(self):
+        ca = ComponentAttribute.objects.get(7)
+        e_str = 'component-with-list-attribute[my_list_attr,500] = attribute-1'
+        self.assertEqual(ca.__str__(), e_str)
+        
 
 
 class ComponentResourceTests(APITestCase):
