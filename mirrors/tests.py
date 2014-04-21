@@ -537,3 +537,63 @@ class ComponentsTestCase(TestCase):
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
         self.assertEqual(foo, components.AttributeList('example'))
+
+
+class ComponentAttributeResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentattributes.json']
+
+    def test_serialize_attribute(self):
+        self.fail('not implemented')
+
+    def test_serialize_list_attribute(self):
+        self.fail('not implemented')
+
+
+class ComponentAttributeViewTests(APITestCase):
+    fixtures = ['users.json', 'componentattributes.json']
+
+    def test_get_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_get_404_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_post_new_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_post_new_404_attribute(self):
+        # (specifically, the child doesn't exist)
+        self.fail('not yet implemented')
+
+    def test_get_attribute_list(self):
+        self.fail('not yet implemented')
+
+    def test_get_404_attribute_list(self):
+        self.fail('not yet implemented')
+
+    def test_post_new_attribute_to_list(self):
+        self.fail('not yet implemented')
+
+    def test_post_new_attribute_to_404_list(self):
+        self.fail('not yet implemented')
+
+    def test_patch_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_patch_404_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_delete_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_delete_404_attribute(self):
+        self.fail('not yet implemented')
+
+    def test_delete_attribute_list(self):
+        self.fail('not yet implemented')
+
+    def test_delete_attribute_list_element(self):
+        self.fail('not yet implemented')
+
+    def test_delete_attribute_list_404_element(self):
+        self.fail('not yet implemented')
