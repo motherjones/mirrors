@@ -166,6 +166,13 @@ class ComponentAttribute(models.Model):
 
     added_time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        if weight != -1:
+            return "{}[{},{}] -> {}".format(parent.slug, name, weight,
+                                               child.slug)
+        else:
+            return "{}[{}] = {}".format(parent.slug, name, child.slug)
+
 
 class ComponentRevision(models.Model):
     """A revision of the data contained by a :py:class:Component object.
