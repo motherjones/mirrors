@@ -62,13 +62,13 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         if serializer.is_valid():
             serializer.save()
-            LOGGER.debug(
-                "saved changes to {}: {}".format(kwargs['slug'], data))
+            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'],
+                                                          data))
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             LOGGER.debug(
-                "error saving changes to {}: {}".format(
-                    kwargs['slug'], serializer.errors))
+                "error saving changes to {}: {}".format(kwargs['slug'],
+                                                        serializer.errors))
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
