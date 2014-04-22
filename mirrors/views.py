@@ -89,7 +89,7 @@ def component_data_uri(request, slug):
 def component_schemas(request):
     schemas = components.get_components()
     for key, schema in schemas.items():
-        schemas[key] = schema()
+        schemas[key] = schema
     schemas['id'] = reverse('component-schemas')
     return HttpResponse(json.dumps(schemas, indent=4),
                         content_type="application/json")
