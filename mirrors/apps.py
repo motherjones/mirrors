@@ -32,7 +32,7 @@ def add_components(comps):
         if inspect.isclass(component) and \
                 issubclass(component, components.Component):
             if component.id not in components.ComponentSchemaCache:
-                components.ComponentSchemaCache[component.id] = component
+                components.ComponentSchemaCache[component.id] = component()
                 """
                 TODO: Add these to the validator here.
                 """
