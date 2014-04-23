@@ -79,3 +79,19 @@ class ComponentResourceTests(APITestCase):
 
         self.assertTrue(isinstance(list_attr, list))
         self.assertEqual(len(list_attr), 2)
+
+    def test_transform_metadata_from_string(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_str = json.dumps({'test': 'value'})
+
+        result = serializer.transform_metadata(None, metadata_str)
+        self.assertEqual(result, {'test': 'value'})
+
+    def test_transform_metadata_from_dict(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_dict = {'test': 'value'}
+
+        result = serializer.transform_metadata(None, metadata_dict)
+        self.assertEqual(result, {'test': 'value'})
