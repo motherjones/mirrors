@@ -95,3 +95,34 @@ class ComponentResourceTests(APITestCase):
 
         result = serializer.transform_metadata(None, metadata_dict)
         self.assertEqual(result, {'test': 'value'})
+
+
+class ComponentAttributeResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentattributes.json']
+
+    def test_serialize_attribute(self):
+        ca = ComponentAttribute.objects.get(pk=1)
+        content = ComponentAttributeSerializer(ca).data
+
+        self.assertIn('component', content)
+        self.assertIn('weight', content)
+
+        self.assertEqual(content['component'], 'attribute-1')
+        self.assertEqual(content['weight'], -1)
+
+    def test_serialize_list_attribute(self):
+        cas = ComponentAttribute.objects.filter(
+            name='list_attribute').order_by('weight')
+        content = ComponentAttributeSerializer(cas).data
+
+        self.assertTrue(isinstance(content, list))
+        self.assertEqual(len(content), 2)
+
+        attr_1 = content[0]
+        attr_2 = content[1]
+
+        self.assertEqual(attr_1['component'], 'attribute-3')
+        self.assertEqual(attr_1['weight'], 100)
+
+        self.assertEqual(attr_2['component'], 'attribute-4')
+        self.assertEqual(attr_2['weight'], 200)

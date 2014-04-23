@@ -58,6 +58,16 @@ class ComponentSerializer(serializers.ModelSerializer):
         return result
 
 
+class ComponentAttributeSerializer(serializers.ModelSerializer):
+    parent = serializers.SlugField()
+    component = serializers.SlugField(source='child')
+    weight = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = ComponentAttribute
+        fields = ('parent', 'component', 'weight')
+
+
 class ComponentRevisionSerializer(serializers.ModelSerializer):
     component = serializers.RelatedField(many=False)
 
