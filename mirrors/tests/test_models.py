@@ -95,7 +95,8 @@ class ComponentAttributeModelTests(TestCase):
         self.assertEqual(len(attr_list), 3)
 
     def test_get_attribute_list_one_entry(self):
-        c = Component.objects.get(slug='test-component-with-list-one-attribute')
+        c = Component.objects.get(
+            slug='test-component-with-list-one-attribute')
         attr_list = c.get_attribute('my_single_list_attr')
 
         self.assertTrue(isinstance(attr_list, list))

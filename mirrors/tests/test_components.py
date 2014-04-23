@@ -12,6 +12,7 @@ from mirrors.serializers import *
 
 from mirrors import components
 
+
 class ComponentsTestCase(TestCase):
     def test_attribute_to_dict(self):
         alpha = ['a', 'b', 'c']
@@ -76,7 +77,7 @@ class ComponentsTestCase(TestCase):
 
     def test_get_components(self):
         comps = components.get_components()
-        self.assertTrue(len(comps)>=1)
+        self.assertTrue(len(comps) >= 1)
         for key, comp in comps.items():
             self.assertTrue(issubclass(comp, components.Component))
             self.assertEqual(key, comp.id)
