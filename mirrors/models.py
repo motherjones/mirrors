@@ -167,11 +167,15 @@ class ComponentAttribute(models.Model):
     added_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        if weight != -1:
-            return "{}[{},{}] -> {}".format(parent.slug, name, weight,
-                                               child.slug)
+        if self.weight != -1:
+            return "{}[{},{}] = {}".format(self.parent.slug,
+                                           self.name,
+                                           self.weight,
+                                           self.child.slug)
         else:
-            return "{}[{}] = {}".format(parent.slug, name, child.slug)
+            return "{}[{}] = {}".format(self.parent.slug,
+                                        self.name,
+                                        self.child.slug)
 
 
 class ComponentRevision(models.Model):
