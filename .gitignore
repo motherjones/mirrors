@@ -1,6 +1,7 @@
 *~
 *.swp
 .coverage
+htmlcov
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -54,3 +55,6 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Git kruft
+*.orig
