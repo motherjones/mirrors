@@ -185,6 +185,7 @@ class ComponentViewTest(APITestCase):
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class ComponentAttributeViewTests(APITestCase):
     fixtures = ['users.json', 'componentattributes.json']
 
@@ -201,7 +202,6 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertIn('child', data)
         self.assertEqual(data['child'], 'attribute-1')
 
-        
     def test_get_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'component': 'component-with-regular-attribute',
@@ -215,13 +215,13 @@ class ComponentAttributeViewTests(APITestCase):
         url = reverse('component-attribute-list', kwargs={
             'component': 'component-with-regular-attribute'
         })
-        
+
         res = self.client.post(url, {'name': 'new_attribute',
                                      'child': 'attribute-4'})
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
         data = json.loads(res.content.decode('UTF-8'))
-        self.assertIn('child',data)
+        self.assertIn('child', data)
         self.assertNotIn('weight', data['child'])
         self.assertEqual(data['child'], 'attribute-4')
 
@@ -229,7 +229,7 @@ class ComponentAttributeViewTests(APITestCase):
         url = reverse('component-attribute-list', kwargs={
             'component': 'component-with-regular-attribute'
         })
-        
+
         res = self.client.post(url, {'name': '$not a valid name(',
                                      'child': 'attribute-4'})
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -246,7 +246,7 @@ class ComponentAttributeViewTests(APITestCase):
         url = reverse('component-attribute-list', kwargs={
             'component': 'component-with-regular-attribute'
         })
-        
+
         res = self.client.post(url, {'name': 'my_attribute',
                                      'child': 'attribute-4'})
 
@@ -256,7 +256,7 @@ class ComponentAttributeViewTests(APITestCase):
         url = reverse('component-attribute-list', kwargs={
             'component': 'component-with-regular-attribute'
         })
-        
+
         res = self.client.post(url, {'name': 'new_attribute',
                                      'child': '#not a valid component name'})
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -272,7 +272,7 @@ class ComponentAttributeViewTests(APITestCase):
         url = reverse('component-attribute-list', kwargs={
             'component': 'component-with-regular-attribute'
         })
-        
+
         res = self.client.post(url, {'name': 'new_attribute',
                                      'child': 'no-such-component-name'})
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -281,7 +281,8 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertIn('child', data)
         self.assertEqual(len(data.keys()), 1)
         self.assertEqual(data['child'],
-                         ["No such child actually exists!"])
+                         ['Object with slug=no-such-component-name does not '
+                          'exist.'])
 
     def test_get_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
@@ -293,6 +294,7 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = json.loads(res.content.decode('UTF-8'))
+        print("data: {}".format(data))
         self.assertTrue(isinstance(data, list))
         self.assertEqual(len(data), 2)
 
@@ -301,7 +303,6 @@ class ComponentAttributeViewTests(APITestCase):
 
         self.assertEqual(data[0]['weight'], 100)
         self.assertEqual(data[1]['weight'], 200)
-        
 
     def test_get_404_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
@@ -317,10 +318,11 @@ class ComponentAttributeViewTests(APITestCase):
             'component': 'component-with-list-attribute',
             'attr_name': 'list_attribute'
         })
-        new_attribute = {'name'child': 'attribute-1', 'weight': 9999}
 
-        res = self.client.post(url, new_attribute)
-        print("data: {}".format(res.content.decode("UTF-8")))
+        new_attribute = {'child': 'attribute-1', 'weight': 9999}
+
+        res = self.client.post(url, data=new_attribute)
+
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
         data = json.loads(res.content.decode('UTF-8'))
@@ -334,7 +336,7 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertEqual(data[0]['weight'], 100)
         self.assertEqual(data[1]['weight'], 200)
         self.assertEqual(data[2]['weight'], 9999)
-        
+
     def test_patch_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'component': 'component-with-regular-attribute',
@@ -355,7 +357,7 @@ class ComponentAttributeViewTests(APITestCase):
             'attr_name': 'list_attribute',
             'index': 1
         })
-        patch_data = { 'weight': 10000 }
+        patch_data = {'weight': 10000}
 
         res = self.client.patch(url, patch_data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -375,7 +377,7 @@ class ComponentAttributeViewTests(APITestCase):
             'component': 'component-with-list-attribute',
             'attr_name': 'no-such-attribute'
         })
-        patch_data = { 'weight': 10000 }
+        patch_data = {'weight': 10000}
 
         res = self.client.patch(url, patch_data)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
@@ -397,7 +399,6 @@ class ComponentAttributeViewTests(APITestCase):
 
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_delete_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
@@ -434,4 +435,3 @@ class ComponentAttributeViewTests(APITestCase):
 
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-        

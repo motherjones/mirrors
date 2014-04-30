@@ -2,14 +2,14 @@ import json
 import logging
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
 from mirrors.models import *
-from mirrors.serializers import ComponentSerializer, ComponentAttributeSerializer
+from mirrors.serializers import *
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -88,7 +88,7 @@ class ComponentAttributeList(mixins.CreateModelMixin,
     def post(self, request, *args, **kwargs):
         parent = Component.objects.get(slug=kwargs['component'])
         attrs = parent.attributes.filter(name=request.DATA['name'])
-        
+
         if attrs.count() > 0:
             return Response(data='Attribute name is already taken',
                             status=status.HTTP_409_CONFLICT)
@@ -98,7 +98,7 @@ class ComponentAttributeList(mixins.CreateModelMixin,
             del request.DATA['component']
 
         return self.create(request, *args, **kwargs)
-                                                  
+
 
 class ComponentAttributeDetail(mixins.CreateModelMixin,
                                mixins.UpdateModelMixin,
@@ -109,23 +109,46 @@ class ComponentAttributeDetail(mixins.CreateModelMixin,
     serializer_class = ComponentAttributeSerializer
 
     def get_queryset(self):
-        parent = ComponentAttribute.objects.get(parent=self.kwargs['component'])
-        return parent.attributes
+        component = self.kwargs['component']
+        attr_name = self.kwargs.get('attr_name', None)
+
+        parent = get_object_or_404(Component, slug=component)
+        queryset = parent.attributes
+
+        if attr_name is not None:
+            queryset = queryset.filter(name=self.kwargs['attr_name'])
+            queryset = queryset.order_by('weight')
+
+        return queryset
 
     def get(self, request, *args, **kwargs):
         parent = get_object_or_404(Component, slug=kwargs['component'])
-        queryset = parent.attributes.filter(name=kwargs['attr_name'])
+        queryset = self.get_queryset()
 
-        if queryset.count() > 0:
-            queryset = querysets.order_by('weight')
-        else:
+        if queryset.count() == 0:
             raise Http404
+        elif queryset.count() == 1:
+            serializer = ComponentAttributeSerializer(queryset.first())
+        else:
+            serializer = ComponentAttributeSerializer(queryset, many=True)
 
-        serializer = ComponentAttributeSerializer(queryset.first())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        request.DATA['parent'] = kwargs['component']
+        request.DATA['name'] = kwargs['attr_name']
+
+        serializer = ComponentAttributeSerializer(data=request.DATA,
+                                                  partial=False)
+        if serializer.is_valid():
+            self.create(request, *args, **kwargs)
+
+            serializer = ComponentAttributeSerializer(self.get_queryset(),
+                                                      many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
