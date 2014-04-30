@@ -38,6 +38,12 @@ class ComponentSerializer(serializers.ModelSerializer):
         return Component(**attrs)
 
     def transform_metadata(self, obj, val):
+        """
+        Transform the value of the metadata field into a python dict.
+
+        .. note :: This will be called any time metadata is accessed or
+                   changed.
+        """
         if isinstance(val, str):
             return json.loads(val)
         else:
@@ -59,13 +65,14 @@ class ComponentSerializer(serializers.ModelSerializer):
 
 
 class ComponentAttributeSerializer(serializers.ModelSerializer):
-    parent = serializers.SlugField()
-    component = serializers.SlugField(source='child')
+    parent = serializers.SlugRelatedField(slug_field='slug')
+    child = serializers.SlugRelatedField(slug_field='slug')
     weight = serializers.IntegerField(required=False)
+    name = serializers.SlugField()
 
     class Meta:
         model = ComponentAttribute
-        fields = ('parent', 'component', 'weight')
+        fields = ('parent', 'child', 'weight', 'name')
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):

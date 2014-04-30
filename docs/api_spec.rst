@@ -152,11 +152,10 @@ following form:
 
  {
    'name': '<attribute name',
-   'component': '<component slug>',
-   'weight': 9999
+   'child': '<component slug>'
  }
 
-The value for the field ``component`` should be the slug of the Component you
+The value for the field ``child`` should be the slug of the Component you
 wish to associate with the name. ``weight`` is optional and will default to
 9999 in order to have the effect of appending the Component to the list.
 
@@ -169,33 +168,31 @@ in correct JSON form.
 
 .. note:: Attribute names have the same constraints as slugs.
 
+Adding a new attribute to an attribute list is done by issuing a ``POST``
+request to the URI ``/component/<slug-id>/attribute/<attribute-name>`` with the
+same data as above.
+
+.. note:: Any changes made to a list-type attribute will result in the entirety
+          of the list being returned in the response.
+
 Updating
 """"""""
 
-When you make a ``PUT`` to an attribute including a component that already
-exists such as in this example:
+When dealing with regular, non-list attributes, when you send a ``PUT`` or
+``PATCH`` request to an attribute using the URL
+``/component/<slug-id>/attribute/<attribute-name>`` you can make changes to the
+value of that :py:class:`ComponentAttribute`.
 
 .. code:: json
 
  {
-   'component': 'my-fancy-component',
+   'child': 'my-fancy-component',
    'weight': 9999
  }
 
-followed by another ``PUT`` request...
-
-.. code:: json
-
- {
-   'component': 'my-fancy-component',
-   'weight': 150
- }
-
-The attribute will be updated in place. This will work whether the attribute
-has a single component in it or if it has a list.
-
-.. warning:: To entirely replace the contents of an attribute, you must delete
-             it first, and then re-create it.
+If you want to make a change to a specific element of an attribute list, you
+will need to refer to it by its index within that list using a URL format like
+``/component/<slug-id>/attribute/<attribute-name>/<index>``.
 
 Deleting
 """"""""
