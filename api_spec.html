@@ -163,16 +163,16 @@ by that name, a <em>404</em> response is returned.</p>
 </div>
 <div class="section" id="id2">
 <h4>Creating<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with a JSON object of the
+<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">POST</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/</span></tt> with a JSON object of the
 following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
+  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&#39;</span><span class="p">,</span>
+  <span class="s">&#39;child&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the Component you
+<p>The value for the field <tt class="docutils literal"><span class="pre">child</span></tt> should be the slug of the Component you
 wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to
 9999 in order to have the effect of appending the Component to the list.</p>
 <p>If you issue multiple <tt class="docutils literal"><span class="pre">PUT</span></tt> requests using the name attribute name, but
@@ -184,31 +184,30 @@ in correct JSON form.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">Attribute names have the same constraints as slugs.</p>
 </div>
+<p>Adding a new attribute to an attribute list is done by issuing a <tt class="docutils literal"><span class="pre">POST</span></tt>
+request to the URI <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with the
+same data as above.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Any changes made to a list-type attribute will result in the entirety
+of the list being returned in the response.</p>
+</div>
 </div>
 <div class="section" id="id3">
 <h4>Updating<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p>When you make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to an attribute including a component that already
-exists such as in this example:</p>
+<p>When dealing with regular, non-list attributes, when you send a <tt class="docutils literal"><span class="pre">PUT</span></tt> or
+<tt class="docutils literal"><span class="pre">PATCH</span></tt> request to an attribute using the URL
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> you can make changes to the
+value of that <tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt>.</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
+  <span class="s">&#39;child&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
   <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>followed by another <tt class="docutils literal"><span class="pre">PUT</span></tt> request...</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">150</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>The attribute will be updated in place. This will work whether the attribute
-has a single component in it or if it has a list.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">To entirely replace the contents of an attribute, you must delete
-it first, and then re-create it.</p>
-</div>
+<p>If you want to make a change to a specific element of an attribute list, you
+will need to refer to it by its index within that list using a URL format like
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;/&lt;index&gt;</span></tt>.</p>
 </div>
 <div class="section" id="id4">
 <h4>Deleting<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
@@ -457,7 +456,7 @@ date you wish to check.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2014, Mother Jones Tech Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

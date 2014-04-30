@@ -100,15 +100,14 @@ more than one</p>
 <dd><p>Add a new named attribute to the <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> object. This
 will overwrite an attribute if the child is unchanged. However, if the
 child has a different slug, then the attribute will be converted into
-an ordered list and the child component added to it.
-:param name: the attribute&#8217;s name, which can only contain alphanumeric</p>
-<blockquote>
-<div>characters as well as the - and _ characters.</div></blockquote>
+an ordered list and the child component added to it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the attribute&#8217;s name, which can only contain alphanumeric
+characters as well as the - and _ characters.</li>
 <li><strong>child</strong> (<cite>Component</cite>) &#8211; the <cite>Component</cite> object to associate with that name</li>
 <li><strong>weight</strong> (<em>int</em>) &#8211; the weight of the child within the ordered list, if the
 attribue is one</li>
@@ -225,7 +224,7 @@ other <cite>Component</cite> objects.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2014, Mother Jones Tech Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
