@@ -151,29 +151,34 @@ following form:
 .. code:: json
 
  {
-   'name': '<attribute name',
+   'name': '<attribute name>',
    'child': '<component slug>'
  }
 
-The value for the field ``child`` should be the slug of the Component you
-wish to associate with the name. ``weight`` is optional and will default to
-9999 in order to have the effect of appending the Component to the list.
+The value for the field ``child`` should be the slug of the Component
+you wish to associate with the name. ``weight`` is optional and will
+default to -1 in order to have the effect of appending the Component
+to the list.
 
-If you issue multiple ``PUT`` requests using the name attribute name, but
-different values for the weight, you will end up with an attribute that will
-return an order list of :py:class:`Component` objects.
-
-Successful requests will result in a *201* response along with the new resource
-in correct JSON form.
+Successful requests will result in a *201* response along with the new
+resource in correct JSON form.
 
 .. note:: Attribute names have the same constraints as slugs.
 
-Adding a new attribute to an attribute list is done by issuing a ``POST``
-request to the URI ``/component/<slug-id>/attribute/<attribute-name>`` with the
-same data as above.
 
-.. note:: Any changes made to a list-type attribute will result in the entirety
-          of the list being returned in the response.
+When creating an attribute that contains a ordered list of components,
+make a ``POST`` request to ``/component/<slug-id>/attribute/``, but
+the JSON object that is sent should look like this:
+
+.. code:: json
+
+ {
+   'name': '<attribute name>',
+   'contents': [ 'component-slug-1', 'another-component', 'the-third-component-slug' ]
+ }
+
+A successful request will result in a *201* response and the complete
+contents of the attribute.
 
 Updating
 """"""""
@@ -186,22 +191,30 @@ value of that :py:class:`ComponentAttribute`.
 .. code:: json
 
  {
-   'child': 'my-fancy-component',
-   'weight': 9999
+   'child': 'my-fancy-component'
+   'name': 'new-name'
  }
 
-If you want to make a change to a specific element of an attribute list, you
-will need to refer to it by its index within that list using a URL format like
-``/component/<slug-id>/attribute/<attribute-name>/<index>``.
+If you want to make a change to a list attribute, you will need to send a
+``PUT`` request to the URL ``/component/<slug-id>/attribute/<attribute-name>``
+that has the desired state of the entire list itself. Example:
+
+.. code:: json
+
+ [
+   'component-slug-name',
+   'new-slug',
+   'another-component'
+ ]
 
 Deleting
 """"""""
 
 To delete **all** of the contents of an attribute, make a ``DELETE`` request to
 ``/component/<slug-id>/attribute/<attribute-name>``. If you want to delete a
-specific ordered element in an attribute, make a ``DELETE`` request to
-``/component/<slug-id>/attribute/<attribute-name>/<index>``, where index is the
-location of the element in that list.
+specific ordered element in an attribute, make a ``PUT`` request to
+``/component/<slug-id>/attribute/<attribute-name>``, but remove the component
+from the list that gets included in the data.
 
 Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a *404* response.
