@@ -8,8 +8,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
-from mirrors.models import *
-from mirrors.serializers import *
+from mirrors.models import Component, ComponentAttribute
+from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentAttributeSerializer
+
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -100,8 +102,8 @@ class ComponentAttributeList(mixins.CreateModelMixin,
         return self.create(request, *args, **kwargs)
 
 
-class ComponentAttributeDetail(mixins.CreateModelMixin,
-                               mixins.UpdateModelMixin,
+class ComponentAttributeDetail(mixins.UpdateModelMixin,
+                               mixins.CreateModelMixin,
                                mixins.DestroyModelMixin,
                                generics.GenericAPIView):
     queryset = ComponentAttribute.objects.all()
@@ -122,7 +124,6 @@ class ComponentAttributeDetail(mixins.CreateModelMixin,
         return queryset
 
     def get(self, request, *args, **kwargs):
-        parent = get_object_or_404(Component, slug=kwargs['component'])
         queryset = self.get_queryset()
 
         if queryset.count() == 0:
@@ -141,10 +142,7 @@ class ComponentAttributeDetail(mixins.CreateModelMixin,
         serializer = ComponentAttributeSerializer(data=request.DATA,
                                                   partial=False)
         if serializer.is_valid():
-            self.create(request, *args, **kwargs)
-
-            serializer = ComponentAttributeSerializer(self.get_queryset(),
-                                                      many=True)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,
@@ -152,6 +150,24 @@ class ComponentAttributeDetail(mixins.CreateModelMixin,
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        request.DATA['parent'] = kwargs['component']
+        request.DATA['name'] = kwargs['attr_name']
+
+        if queryset.count() == 1:
+            serializer = ComponentAttributeSerializer(data=request.DATA,
+                                                      partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # TODO: not this
+            raise Http404
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

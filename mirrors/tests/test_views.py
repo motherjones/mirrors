@@ -23,7 +23,7 @@ class ComponentViewTest(APITestCase):
 
     def test_get_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'test-component-with-one-named-attribute'
+            'component': 'test-component-with-one-named-attribute'
         })
 
         res = self.client.get(url)
@@ -54,7 +54,7 @@ class ComponentViewTest(APITestCase):
 
     def test_get_404_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'no-such-component-here'
+            'component': 'no-such-component-here'
         })
 
         res = self.client.get(url)
@@ -116,7 +116,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_404_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'doesnt-exist'
+            'component': 'doesnt-exist'
         })
 
         res = self.client.patch(url, {'content_type': 'text/plain'})
@@ -125,7 +125,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_one_change(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'this-is-for-testing-on'
+            'component': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {'content_type': 'text/plain'})
@@ -139,7 +139,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_multiple_changes(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'this-is-for-testing-on'
+            'component': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {
@@ -157,7 +157,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_metadata(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'this-is-for-testing-on'
+            'component': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {
@@ -171,7 +171,7 @@ class ComponentViewTest(APITestCase):
 
     def test_delete_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'this-is-for-testing-on'
+            'component': 'this-is-for-testing-on'
         })
 
         res = self.client.delete(url)
@@ -179,7 +179,7 @@ class ComponentViewTest(APITestCase):
 
     def test_delete_404_component(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'doesnt-exist'
+            'component': 'doesnt-exist'
         })
 
         res = self.client.delete(url)
@@ -294,7 +294,6 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = json.loads(res.content.decode('UTF-8'))
-        print("data: {}".format(data))
         self.assertTrue(isinstance(data, list))
         self.assertEqual(len(data), 2)
 
@@ -345,6 +344,7 @@ class ComponentAttributeViewTests(APITestCase):
         patch_data = {'child': 'attribute-4'}
 
         res = self.client.patch(url, patch_data)
+        print("DATA: {}".format(res.content.decode('UTF-8')))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = json.loads(res.content.decode('UTF-8'))
