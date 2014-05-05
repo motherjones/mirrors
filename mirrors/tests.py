@@ -100,49 +100,6 @@ class ComponentDataTests(MirrorsTestCase):
                          'test-component-with-multiple-revisions')
 
 
-class ComponentRevisionTests(MirrorsTestCase):
-    fixtures = ['components.json']
-
-    def test_new_revision_first(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-
-        c.new_revision(data=b'this is a new revision', metadata=json.dumps({
-            'title': 'test component with no revisions'
-        }))
-
-        cr = c.revisions.get(revision_number=1)
-
-        self.assertEqual(c.revisions.count(), 1)
-        self.assertEqual(cr.component, c)
-        self.assertEqual(cr.data, b'this is a new revision')
-
-    def test_new_revision_first_only_metadata(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-
-        with self.assertRaises(ValueError):
-            c.new_revision(metadata={'title': 'this thing should fail!'})
-
-    def test_new_revision_not_first(self):
-        c = Component.objects.get(slug='component-with-binary-data')
-        num_orig_components = c.revisions.count()
-
-        cr = c.new_revision(b'this is a new revision', {
-            'title': 'test component with no revisions'
-        })
-
-        cr = c.revisions.all().order_by('-revision_number').first()
-        metadata = cr.metadata
-        self.assertEqual(metadata['title'],
-                         'test component with no revisions')
-        self.assertEqual(cr.revision_number, num_orig_components+1)
-
-    def test_new_revision_no_data(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-
-        with self.assertRaises(ValueError):
-            cr = c.new_revision()
-
-
 class ComponentAttributeTests(MirrorsTestCase):
     fixtures = ['components.json']
 
@@ -547,3 +504,37 @@ class ComponentsTestCase(TestCase):
         _dict = Example()
         foo = _dict['properties']['attributes']['properties'].get('foo')
         self.assertEqual(foo, components.AttributeList('example'))
+
+
+class ComponentDataViewTest(TestCase):
+    fixtures = ['component_data.json']
+
+    def setUp(self):
+        self.client = Client()
+
+        self.svg_hash = '01d5a1a9d1452f1b013bfc74da44d52e'
+        self.jpeg_hash = '6367446e537b50e363f26e385f47e99d'
+        self.md_hash = 'eb867962bfff036e98b5e59dc6153caf'
+
+    def test_get_data(self):
+        url = reverse('component-data-uri', kwargs={
+            'slug': 'component-with-svg-data'
+        })
+        
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.content_type, 'image/svg+xml')
+
+        md5_hash = hashlib.md5()
+        md5_hash.update(res.content)
+        self.assertEqual(md5_hash.hexdigest(), self.svg_hash)
+        
+    def test_get_data_component_without_data(self):
+        url = reverse('component-data-uri', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+

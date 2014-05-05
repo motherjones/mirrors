@@ -33,7 +33,7 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-revision_number').first()
+        rev = self.revisions.order_by('created_at').first()
 
         if rev:
             return rev.data.tobytes()
@@ -60,9 +60,8 @@ class Component(models.Model):
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('-revision_number').first()
+        cur_rev = self.revisions.all().order_by('created_at').first()
         if not cur_rev:
-            cur_rev_num = 0
             new_data = None
             new_metadata = self.metadata
 
@@ -71,7 +70,6 @@ class Component(models.Model):
                     'both metadata and data must be provided for 1st revision'
                 )
         else:
-            cur_rev_num = cur_rev.revision_number
             new_data = cur_rev.data
             new_metadata = cur_rev.metadata
 
@@ -81,11 +79,7 @@ class Component(models.Model):
             new_metadata = metadata
 
         new_rev = ComponentRevision.objects.create(
-            revision_number=cur_rev_num+1,
             data=data,
-            diff=None,  # figure this out later
-            metadata=metadata,
-            revision_date=timezone.now(),
             component=self
         )
 
@@ -167,11 +161,15 @@ class ComponentAttribute(models.Model):
     added_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        if weight != -1:
-            return "{}[{},{}] -> {}".format(parent.slug, name, weight,
-                                               child.slug)
+        if self.weight != -1:
+            return "{}[{},{}] -> {}".format(self.parent.slug,
+                                            self.name,
+                                            self.weight,
+                                            self.child.slug)
         else:
-            return "{}[{}] = {}".format(parent.slug, name, child.slug)
+            return "{}[{}] = {}".format(self.parent.slug,
+                                        self.name,
+                                        self.child.slug)
 
 
 class ComponentRevision(models.Model):
@@ -180,10 +178,9 @@ class ComponentRevision(models.Model):
     .. todo:: Write real documentation for mirrors.ComponentRevision
     """
     data = models.BinaryField()
-    diff = models.BinaryField(null=True, blank=True)
-    metadata = JSONField(default={})
-
-    revision_date = models.DateTimeField(auto_now_add=True)
-    revision_number = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     component = models.ForeignKey('Component', related_name='revisions')
+
+    def __str__(self):
+        return self.component.slug
