@@ -9,5 +9,5 @@ urlpatterns = patterns('mirrors.views',
                            views.ComponentDetail.as_view(),
                            name='component-detail'),
                        url(r'^component/(?P<slug>[-\w]+)/data$',
-                           views.component_data_uri,
-                           name='component-data-uri'))
+                           views.ComponentData.as_view(),
+                           name='component-data'))

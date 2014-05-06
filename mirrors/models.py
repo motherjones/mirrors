@@ -25,7 +25,7 @@ class Component(models.Model):
 
     @property
     def data_uri(self):
-        return reverse('component-data-uri', kwargs={'slug': self.slug})
+        return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
     def binary_data(self):
