@@ -200,7 +200,6 @@ class ComponentAttributeTests(MirrorsTestCase):
         ca = ComponentAttribute.objects.get(7)
         e_str = 'component-with-list-attribute[my_list_attr,500] = attribute-1'
         self.assertEqual(ca.__str__(), e_str)
-        
 
 
 class ComponentResourceTests(APITestCase):
@@ -273,6 +272,8 @@ class ComponentResourceTests(APITestCase):
 
         self.assertTrue(isinstance(list_attr, list))
         self.assertEqual(len(list_attr), 2)
+
+        self.assertTrue(isinstance(named_attr, dict))
 
 
 class ComponentViewTest(APITestCase):
@@ -430,7 +431,6 @@ class ComponentViewTest(APITestCase):
             'metadata': {'title': 'updated thing'}
         })
 
-        
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
 
@@ -517,24 +517,42 @@ class ComponentDataViewTest(TestCase):
         self.md_hash = 'eb867962bfff036e98b5e59dc6153caf'
 
     def test_get_data(self):
-        url = reverse('component-data-uri', kwargs={
+        url = reverse('component-data', kwargs={
             'slug': 'component-with-svg-data'
         })
-        
+
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.content_type, 'image/svg+xml')
+        self.assertEqual(res.get('Content-Type'), 'image/svg+xml')
 
         md5_hash = hashlib.md5()
         md5_hash.update(res.content)
         self.assertEqual(md5_hash.hexdigest(), self.svg_hash)
-        
+
     def test_get_data_component_without_data(self):
-        url = reverse('component-data-uri', kwargs={
+        url = reverse('component-data', kwargs={
             'slug': 'component-with-no-data'
         })
-        
+
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_get_data_with_filename(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-svg-data-and-metadata-filename'
+        })
 
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.get('Content-Disposition'),
+                         'inline; filename=einfache_zeitung.svg')
+
+    def test_get_data_without_filename(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-svg-data'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.get('Content-Disposition'),
+                         'inline; filename=component-with-svg-data')
