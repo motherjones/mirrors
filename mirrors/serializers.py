@@ -2,7 +2,7 @@ import json
 import logging
 
 from rest_framework import serializers
-from mirrors.models import Component, ComponentAttribute, ComponentRevision
+from mirrors.models import Component, ComponentRevision
 
 LOGGER = logging.getLogger(__name__)
 
@@ -13,7 +13,6 @@ class ComponentSerializer(serializers.ModelSerializer):
     data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
-    #metadata = serializers.SerializerMethodField('_get_metadata')
 
     class Meta:
         model = Component
