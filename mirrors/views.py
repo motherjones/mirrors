@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
@@ -11,6 +12,7 @@ from rest_framework import generics, mixins, status
 
 from mirrors.models import *
 from mirrors.serializers import ComponentSerializer
+from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
 
@@ -62,11 +64,15 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         if serializer.is_valid():
             serializer.save()
-            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'], data))
+            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'],
+                                                          data))
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            LOGGER.debug("error saving changes to {}: {}".format(kwargs['slug'], serializer.errors))
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            LOGGER.debug(
+                "error saving changes to {}: {}".format(kwargs['slug'],
+                                                        serializer.errors))
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -105,3 +111,12 @@ def component_data_uri(request, slug):
     response = HttpResponse(asset.binary_data, mimetype=asset.content_type)
     response['Content-Disposition'] = 'inline; filename=%s' % slug
     return response
+
+
+def component_schemas(request):
+    schemas = components.get_components()
+    for key, schema in schemas.items():
+        schemas[key] = schema
+    schemas['id'] = reverse('component-schemas')
+    return HttpResponse(json.dumps(schemas, indent=4),
+                        content_type="application/json")

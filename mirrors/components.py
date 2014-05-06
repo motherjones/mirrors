@@ -1,5 +1,5 @@
 class MetaData(dict):
-    _dict = {}
+    _dict = {}  # TODO rename this to schema
 
     def __init__(self, _dict=None, required=None):
         self.required = required
@@ -45,7 +45,7 @@ class Attribute(dict):
     def template(self):
         return {
             'anyOf': [
-                {'$ref': c} for c in self.components
+                {'$ref': '#%s' % c} for c in self.components
             ]
         }
 
@@ -108,7 +108,7 @@ class Component(dict):
             }
         }
         schema = {
-            'schema': self.id,
+            'id': '#%s' % self.id,
             'title': self.schema_title,
             'type': 'object',
             'required': ['metadata', 'slug', 'schema_name', 'uri'],
@@ -123,3 +123,21 @@ class Component(dict):
             }
         }
         return self.update(schema)
+
+
+ComponentSchemaCache = {}
+
+
+class MissingComponentException(Exception):
+    pass
+
+
+def get_components():
+    return ComponentSchemaCache
+
+
+def get_component(_id):
+    try:
+        return ComponentSchemaCache[_id]
+    except KeyError:
+        raise MissingComponentException(_id)

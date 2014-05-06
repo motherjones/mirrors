@@ -33,7 +33,7 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('created_at').first()
+        rev = self.revisions.order_by('-created_at').first()
 
         if rev:
             return rev.data.tobytes()
@@ -61,22 +61,11 @@ class Component(models.Model):
             raise ValueError('no new data was actually provided')
 
         cur_rev = self.revisions.all().order_by('created_at').first()
-        if not cur_rev:
-            new_data = None
-            new_metadata = self.metadata
 
-            if not data:
-                raise ValueError(
-                    'both metadata and data must be provided for 1st revision'
-                )
-        else:
-            new_data = cur_rev.data
-            new_metadata = cur_rev.metadata
-
-        if data:
-            new_data = data
-        if metadata:
-            new_metadata = metadata
+        if cur_rev is None and data is None:
+            raise ValueError(
+                'both metadata and data must be provided for 1st revision'
+            )
 
         new_rev = ComponentRevision.objects.create(
             data=data,
