@@ -162,7 +162,7 @@ class ComponentViewTest(APITestCase):
         res = self.client.patch(url, {
             'metadata': {'title': 'updated thing'}
         })
-        
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
 

@@ -81,7 +81,8 @@ class ComponentAttributeModelTests(TestCase):
         self.assertEqual(len(attr_list), 3)
 
     def test_get_attribute_list_one_entry(self):
-        c = Component.objects.get(slug='test-component-with-list-one-attribute')
+        c = Component.objects.get(slug='test-component-with-list'
+                                       '-one-attribute')
         attr_list = c.get_attribute('my_single_list_attr')
 
         self.assertTrue(isinstance(attr_list, list))
@@ -162,5 +163,6 @@ class ComponentAttributeModelTests(TestCase):
 
     def test_get_str_on_list_attribute(self):
         ca = ComponentAttribute.objects.get(pk=7)
-        e_str = 'component-with-list-attribute[my_list_attr,500] -> attribute-1'
+        e_str = ('component-with-list-attribute[my_list_attr,500] '
+                 '-> attribute-1')
         self.assertEqual(ca.__str__(), e_str)
