@@ -38,6 +38,11 @@ class ComponentModelTests(TestCase):
 class ComponentRevisionModelTests(TestCase):
     fixtures = ['components.json']
 
+    def test_component_revision_str(self):
+        slug_name = 'component-with-binary-data'
+        c = Component.objects.get(slug=slug_name)
+        self.assertEqual(c.revisions.first().__str__(), slug_name)
+
     def test_new_revision_first(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
 
