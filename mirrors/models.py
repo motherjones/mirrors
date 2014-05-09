@@ -34,7 +34,7 @@ class Component(models.Model):
 
         :rtype: str
         """
-        return reverse('component-data-uri', kwargs={'slug': self.slug})
+        return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
     def binary_data(self):
