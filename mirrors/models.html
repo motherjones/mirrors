@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mirrors 0.0.1 documentation" href="../index.html" />
-    <link rel="next" title="Tests" href="tests.html" />
-    <link rel="prev" title="Welcome to Mirrors’s documentation!" href="../index.html" /> 
+    <link rel="next" title="Serializers" href="serializers.html" />
+    <link rel="prev" title="Mirrors REST API spec" href="../api_spec.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,10 +38,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tests.html" title="Tests"
+          <a href="serializers.html" title="Serializers"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Welcome to Mirrors’s documentation!"
+          <a href="../api_spec.html" title="Mirrors REST API spec"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -57,10 +57,14 @@
 <dl class="class">
 <dt id="mirrors.models.Component">
 <em class="property">class </em><tt class="descclassname">mirrors.models.</tt><tt class="descname">Component</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.models.Component" title="Permalink to this definition">¶</a></dt>
-<dd><p>A component</p>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Write real documentation for mirrors.Component</p>
+<dd><p>A <tt class="docutils literal"><span class="pre">Component</span></tt> is the basic type of object for all things in the Mirrors
+content repository. Anything that has a presence in the final output of the
+website is made of at least one <tt class="docutils literal"><span class="pre">Component</span></tt> object, and will generally be
+made from several few.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The implementation of this class is incomplete and may change
+in the future.</p>
 </div>
 <dl class="attribute">
 <dt id="mirrors.models.Component.binary_data">
@@ -71,6 +75,20 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bytes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mirrors.models.Component.data_uri">
+<tt class="descname">data_uri</tt><a class="headerlink" href="#mirrors.models.Component.data_uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the URI for this <tt class="docutils literal"><span class="pre">Component</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -97,20 +115,20 @@ more than one</p>
 <dl class="method">
 <dt id="mirrors.models.Component.new_attribute">
 <tt class="descname">new_attribute</tt><big>(</big><em>name</em>, <em>child</em>, <em>weight=-1</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.new_attribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a new named attribute to the <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> object. This
-will overwrite an attribute if the child is unchanged. However, if the
-child has a different slug, then the attribute will be converted into
-an ordered list and the child component added to it.</p>
+<dd><p>Add a new named attribute to the <tt class="docutils literal"><span class="pre">Component</span></tt> object. This will overwrite
+an attribute if the child is unchanged. However, if the child has a
+different slug, then the attribute will be converted into an ordered
+list and the child component added to it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; the attribute&#8217;s name, which can only contain alphanumeric
+<li><strong>name</strong> (<em>str</em>) &#8211; the attribute&#8217;s name, which can only contain alphanumeric
 characters as well as the - and _ characters.</li>
 <li><strong>child</strong> (<cite>Component</cite>) &#8211; the <cite>Component</cite> object to associate with that name</li>
 <li><strong>weight</strong> (<em>int</em>) &#8211; the weight of the child within the ordered list, if the
-attribue is one</li>
+attribute is one</li>
 </ul>
 </td>
 </tr>
@@ -124,9 +142,8 @@ attribue is one</li>
 <dl class="method">
 <dt id="mirrors.models.Component.new_revision">
 <tt class="descname">new_revision</tt><big>(</big><em>data=None</em>, <em>metadata=None</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.new_revision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new revision for this <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> object. If the
-data is not in the correct format it will attempt to convert it into a
-bytes object.</p>
+<dd><p>Create a new revision for this <tt class="docutils literal"><span class="pre">Component</span></tt> object. If the data is not in
+the correct format it will attempt to convert it into a bytes object.</p>
 <p>Passing None for one of the arguments will result in that data not
 being changed.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -134,8 +151,8 @@ being changed.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<cite>bytes</cite>) &#8211; the actual content of the new revision</li>
-<li><strong>metadata</strong> (<cite>dict</cite>) &#8211; the new metadata</li>
+<li><strong>data</strong> (<em>bytes</em>) &#8211; the actual content of the new revision</li>
+<li><strong>metadata</strong> (<em>dict</em>) &#8211; the new metadata</li>
 </ul>
 </td>
 </tr>
@@ -154,17 +171,28 @@ being changed.</p>
 <dl class="class">
 <dt id="mirrors.models.ComponentAttribute">
 <em class="property">class </em><tt class="descclassname">mirrors.models.</tt><tt class="descname">ComponentAttribute</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.models.ComponentAttribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Named attributes that associate <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> objects with
-other <cite>Component</cite> objects.</p>
+<dd><p>A named connection between a <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> and one or more other
+<tt class="docutils literal"><span class="pre">Component</span></tt> objects that are considered to be attributes of the
+first. Some examples of that might include an attribute named &#8220;author&#8221; that
+connects an article <tt class="docutils literal"><span class="pre">Component</span></tt> to the <tt class="docutils literal"><span class="pre">Component</span></tt> that contains
+information about its author.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The implementation of this class is incomplete and may change
+in the future.</p>
+</div>
 </dd></dl>
 
 <dl class="class">
 <dt id="mirrors.models.ComponentRevision">
 <em class="property">class </em><tt class="descclassname">mirrors.models.</tt><tt class="descname">ComponentRevision</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.models.ComponentRevision" title="Permalink to this definition">¶</a></dt>
-<dd><p>A revision of the data contained by a :py:class:Component object.</p>
-<div class="admonition-todo admonition" id="index-1">
-<p class="first admonition-title">Todo</p>
-<p class="last">Write real documentation for mirrors.ComponentRevision</p>
+<dd><p>A revision of the data and metadata for a <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a>. It contains
+the binary data itself. Every time a <tt class="docutils literal"><span class="pre">Component</span></tt>&#8216;s data is updated, a new
+<tt class="docutils literal"><span class="pre">ComponentRevision</span></tt> is created.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The implementation of this class is incomplete and may change
+in the future.</p>
 </div>
 </dd></dl>
 
@@ -177,11 +205,11 @@ other <cite>Component</cite> objects.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../index.html"
-                        title="previous chapter">Welcome to Mirrors&#8217;s documentation!</a></p>
+  <p class="topless"><a href="../api_spec.html"
+                        title="previous chapter">Mirrors REST API spec</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="tests.html"
-                        title="next chapter">Tests</a></p>
+  <p class="topless"><a href="serializers.html"
+                        title="next chapter">Serializers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/mirrors/models.txt"
@@ -214,10 +242,10 @@ other <cite>Component</cite> objects.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tests.html" title="Tests"
+          <a href="serializers.html" title="Serializers"
              >next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Welcome to Mirrors’s documentation!"
+          <a href="../api_spec.html" title="Mirrors REST API spec"
              >previous</a> |</li>
         <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>

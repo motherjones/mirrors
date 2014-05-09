@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tests &mdash; Mirrors 0.0.1 documentation</title>
+    <title>Views &mdash; Mirrors 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mirrors 0.0.1 documentation" href="../index.html" />
-    <link rel="prev" title="Models" href="models.html" /> 
+    <link rel="prev" title="Serializers" href="serializers.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +34,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="serializers.html" title="Serializers"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -45,8 +48,33 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="tests">
-<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-mirrors.views">
+<span id="views"></span><h1>Views<a class="headerlink" href="#module-mirrors.views" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mirrors.views.ComponentDetail">
+<em class="property">class </em><tt class="descclassname">mirrors.views.</tt><tt class="descname">ComponentDetail</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.views.ComponentDetail" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for a single Component instance.</p>
+<dl class="attribute">
+<dt id="mirrors.views.ComponentDetail.serializer_class">
+<tt class="descname">serializer_class</tt><a class="headerlink" href="#mirrors.views.ComponentDetail.serializer_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ComponentSerializer</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirrors.views.ComponentList">
+<em class="property">class </em><tt class="descclassname">mirrors.views.</tt><tt class="descname">ComponentList</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.views.ComponentList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the POST requests made to <tt class="docutils literal"><span class="pre">/component</span></tt> to allow the creation of
+new Components.</p>
+<dl class="attribute">
+<dt id="mirrors.views.ComponentList.serializer_class">
+<tt class="descname">serializer_class</tt><a class="headerlink" href="#mirrors.views.ComponentList.serializer_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ComponentSerializer</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -56,11 +84,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="models.html"
-                        title="previous chapter">Models</a></p>
+  <p class="topless"><a href="serializers.html"
+                        title="previous chapter">Serializers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/content/tests.txt"
+    <li><a href="../_sources/mirrors/views.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -87,14 +115,17 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="serializers.html" title="Serializers"
              >previous</a> |</li>
         <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, Mother Jones Tech Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

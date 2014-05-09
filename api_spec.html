@@ -24,7 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Mirrors 0.0.1 documentation" href="index.html" />
-    <link rel="prev" title="Tests" href="mirrors/tests.html" /> 
+    <link rel="next" title="Models" href="mirrors/models.html" />
+    <link rel="prev" title="Welcome to Mirrors’s documentation!" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +38,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="mirrors/tests.html" title="Tests"
+          <a href="mirrors/models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Mirrors’s documentation!"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -163,67 +167,60 @@ by that name, a <em>404</em> response is returned.</p>
 </div>
 <div class="section" id="id2">
 <h4>Creating<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">POST</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/</span></tt> with a JSON object of the
+<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with a JSON object of the
 following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;child&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The value for the field <tt class="docutils literal"><span class="pre">child</span></tt> should be the slug of the Component
-you wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will
-default to -1 in order to have the effect of appending the Component
-to the list.</p>
-<p>Successful requests will result in a <em>201</em> response along with the new
-resource in correct JSON form.</p>
+<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the Component you
+wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to
+9999 in order to have the effect of appending the Component to the list.</p>
+<p>If you issue multiple <tt class="docutils literal"><span class="pre">PUT</span></tt> requests using the name attribute name, but
+different values for the weight, you will end up with an attribute that will
+return an order list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects.</p>
+<p>Successful requests will result in a <em>201</em> response along with the new resource
+in correct JSON form.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Attribute names have the same constraints as slugs.</p>
 </div>
-<p>When creating an attribute that contains a ordered list of components,
-make a <tt class="docutils literal"><span class="pre">POST</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/</span></tt>, but
-the JSON object that is sent should look like this:</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;contents&#39;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&#39;component-slug-1&#39;</span><span class="p">,</span> <span class="s">&#39;another-component&#39;</span><span class="p">,</span> <span class="s">&#39;the-third-component-slug&#39;</span> <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>A successful request will result in a <em>201</em> response and the complete
-contents of the attribute.</p>
 </div>
 <div class="section" id="id3">
 <h4>Updating<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p>When dealing with regular, non-list attributes, when you send a <tt class="docutils literal"><span class="pre">PUT</span></tt> or
-<tt class="docutils literal"><span class="pre">PATCH</span></tt> request to an attribute using the URL
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> you can make changes to the
-value of that <tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt>.</p>
-<div class="code json highlight-python"><div class="highlight"><pre>{
-  &#39;child&#39;: &#39;my-fancy-component&#39;
-  &#39;name&#39;: &#39;new-name&#39;
-}
+<p>When you make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to an attribute including a component that already
+exists such as in this example:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>If you want to make a change to a list attribute, you will need to send a
-<tt class="docutils literal"><span class="pre">PUT</span></tt> request to the URL <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>
-that has the desired state of the entire list itself. Example:</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span class="p">[</span>
-  <span class="s">&#39;component-slug-name&#39;</span><span class="p">,</span>
-  <span class="s">&#39;new-slug&#39;</span><span class="p">,</span>
-  <span class="s">&#39;another-component&#39;</span>
-<span class="p">]</span>
+<p>followed by another <tt class="docutils literal"><span class="pre">PUT</span></tt> request...</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
+  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">150</span>
+<span class="p">}</span>
 </pre></div>
+</div>
+<p>The attribute will be updated in place. This will work whether the attribute
+has a single component in it or if it has a list.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">To entirely replace the contents of an attribute, you must delete
+it first, and then re-create it.</p>
 </div>
 </div>
 <div class="section" id="id4">
 <h4>Deleting<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p>To delete <strong>all</strong> of the contents of an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>. If you want to delete a
-specific ordered element in an attribute, make a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>, but remove the component
-from the list that gets included in the data.</p>
+specific ordered element in an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;/&lt;index&gt;</span></tt>, where index is the
+location of the element in that list.</p>
 <p>Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a <em>404</em> response.</p>
 <p>A successful delete will return a <em>204</em> response.</p>
@@ -423,8 +420,11 @@ date you wish to check.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="mirrors/tests.html"
-                        title="previous chapter">Tests</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Mirrors&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mirrors/models.html"
+                        title="next chapter">Models</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_spec.txt"
@@ -457,7 +457,10 @@ date you wish to check.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="mirrors/tests.html" title="Tests"
+          <a href="mirrors/models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Mirrors’s documentation!"
              >previous</a> |</li>
         <li><a href="index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
       </ul>

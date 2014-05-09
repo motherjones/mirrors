@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Serializers &mdash; Mirrors 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Mirrors 0.0.1 documentation" href="../index.html" />
+    <link rel="next" title="Views" href="views.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-mirrors.serializers">
+<span id="serializers"></span><h1>Serializers<a class="headerlink" href="#module-mirrors.serializers" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mirrors.serializers.ComponentRevisionSerializer">
+<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">ComponentRevisionSerializer</tt><big>(</big><em>instance=None</em>, <em>data=None</em>, <em>files=None</em>, <em>context=None</em>, <em>partial=False</em>, <em>many=None</em>, <em>allow_add_remove=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentRevisionSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for turning a JSON blob into a
+<a class="reference internal" href="models.html#mirrors.models.ComponentRevision" title="mirrors.models.ComponentRevision"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.ComponentRevision</span></tt></a> and back again.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mirrors.serializers.ComponentSerializer">
+<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">ComponentSerializer</tt><big>(</big><em>instance=None</em>, <em>data=None</em>, <em>files=None</em>, <em>context=None</em>, <em>partial=False</em>, <em>many=None</em>, <em>allow_add_remove=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for turning a JSON blob into a <a class="reference internal" href="models.html#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.Component</span></tt></a>
+object, and back again.</p>
+<dl class="method">
+<dt id="mirrors.serializers.ComponentSerializer.restore_object">
+<tt class="descname">restore_object</tt><big>(</big><em>attrs</em>, <em>instance=None</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer.restore_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a dictionary of deserialized field values, either update an existing
+model instance, or create a new model instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attrs</strong> (<em>dict</em>) &#8211; the the key/value pairs (generally made by loading a JSON
+blob from the client) that represent the fields of a
+<tt class="docutils literal"><span class="pre">Component</span></tt> object</li>
+<li><strong>instance</strong> (<a class="reference internal" href="models.html#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.Component</span></tt></a>) &#8211; an optional instance of a <tt class="docutils literal"><span class="pre">Component</span></tt>. If this is
+set, then the values of <cite>attrs</cite> will be used update
+it, rather than to create a new <tt class="docutils literal"><span class="pre">Component</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="models.html#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.Component</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirrors.serializers.ComponentSerializer.transform_metadata">
+<tt class="descname">transform_metadata</tt><big>(</big><em>obj</em>, <em>val</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer.transform_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the contents of <cite>metadata</cite> from a string into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">CompenentSerializer</span></tt>) &#8211; reference to an instance of <tt class="docutils literal"><span class="pre">CompenentSerializer</span></tt></li>
+<li><strong>val</strong> (<em>str or dict</em>) &#8211; the current value of <cite>metadata</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="views.html"
+                        title="next chapter">Views</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mirrors/serializers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="Views"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >previous</a> |</li>
+        <li><a href="../index.html">Mirrors 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mother Jones Tech Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
