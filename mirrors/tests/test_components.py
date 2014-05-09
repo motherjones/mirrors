@@ -1,16 +1,5 @@
-import json
-
-from django.core.management import call_command
-from django.core.urlresolvers import resolve, reverse
-from django.db import transaction
-from django.test import TestCase, Client
-
-from mirrors import urls as content_url
-from mirrors.views import ComponentDetail
-from mirrors.models import *
-from mirrors.serializers import *
-
 from mirrors import components
+
 
 class ComponentsTestCase(TestCase):
     def test_attribute_to_dict(self):
@@ -76,9 +65,9 @@ class ComponentsTestCase(TestCase):
 
     def test_get_components(self):
         comps = components.get_components()
-        self.assertTrue(len(comps)>=1)
+        self.assertTrue(len(comps) >= 1)
         for key, comp in comps.items():
-            self.assertTrue(issubclass(comp, components.Component))
+            self.assertTrue(issubclass(comp.__class__, components.Component))
             self.assertEqual(key, comp.id)
 
     def test_get_component(self):
