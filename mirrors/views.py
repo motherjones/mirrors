@@ -19,6 +19,9 @@ LOGGER = logging.getLogger(__name__)
 
 class ComponentList(mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    """Handle the POST requests made to ``/component`` to allow the creation of
+    new Components.
+    """
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
@@ -30,9 +33,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
                       generics.GenericAPIView):
-    """
-    View for a single Component instance.
-    """
+    """View for a single Component instance."""
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
