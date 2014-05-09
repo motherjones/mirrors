@@ -11,9 +11,12 @@ from jsonfield import JSONField
 
 
 class Component(models.Model):
-    """A component
+    """A ``Component`` is the basic type of object for all things in the
+    Mirrors content repository. Anything that has a presence in the final
+    output of the website is made of at least one ``Component`` object, and
+    will generally be made from several few.
 
-    .. todo:: Write real documentation for `mirrors.models.Component`
+    .. warning :: This class may still be in flux.
     """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField(default={})
@@ -159,8 +162,14 @@ class Component(models.Model):
 
 
 class ComponentAttribute(models.Model):
-    """Named attributes that associate :py:class:`Component` objects with
-    other `Component` objects.
+    """A named connection between a :py:class:`Component` and one or more other
+    :py:class:`Component`s that are considered to be attributes of the
+    first.Some examples of that might include an attribute named "author" that
+    connects an article :py:class:`Component` to the :py:class:`Component` that
+    contains information about its author.
+
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
     """
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
@@ -182,9 +191,12 @@ class ComponentAttribute(models.Model):
 
 
 class ComponentRevision(models.Model):
-    """A revision of the data contained by a :py:class:Component object.
+    """A revision of the data and metadata for a :py:class:`Component`. It
+    contains the binary data itself. Every time a :class:`Component`'s data is
+    updated, a new ``ComponentRevision`` is created.
 
-    .. todo:: Write real documentation for mirrors.ComponentRevision
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
     """
     data = models.BinaryField()
     diff = models.BinaryField(null=True, blank=True)
