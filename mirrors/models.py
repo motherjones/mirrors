@@ -13,7 +13,7 @@ from jsonfield import JSONField
 class Component(models.Model):
     """A component
 
-    .. todo:: Write real documentation for mirrors.Component
+    .. todo:: Write real documentation for `mirrors.models.Component`
     """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField(default={})
@@ -25,6 +25,10 @@ class Component(models.Model):
 
     @property
     def data_uri(self):
+        """Get the URI for this :py:class:`Component`.
+
+        :rtype: str
+        """
         return reverse('component-data-uri', kwargs={'slug': self.slug})
 
     @property
@@ -55,7 +59,6 @@ class Component(models.Model):
 
         :rtype: :py:class:`ComponentRevision`
         :raises: `ValueError`
-
         """
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
@@ -108,7 +111,6 @@ class Component(models.Model):
         :type weight: int
 
         :rtype: :py:class:`ComponentAttribute` or a list
-
         """
 
         if not child or child == self:
@@ -136,6 +138,7 @@ class Component(models.Model):
 
         :param attribute_name: name of the attribute
         :type attribute_name: str
+
         :rtype: `Component` or list
         """
         attrs = self.attributes.filter(name=attribute_name)
