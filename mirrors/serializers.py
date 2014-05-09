@@ -8,11 +8,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ComponentSerializer(serializers.ModelSerializer):
-    """A :py:class:Component serializer
+    """Used for turning a JSON blob into a :class:`mirrors.models.Component`
+    object, and back again.
 
-    .. todo:: Write real documentation for
-              `mirrors.serializer.ComponentSerializer`
     """
+
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
     data_uri = serializers.URLField(read_only=True)
@@ -27,20 +27,19 @@ class ComponentSerializer(serializers.ModelSerializer):
                   'attributes')
 
     def restore_object(self, attrs, instance=None):
-        """Given a dictionary of deserialized field values, either update
-        an existing model instance, or create a new model instance.
+        """Given a dictionary of deserialized field values, either update an existing
+        model instance, or create a new model instance.
 
         :param attrs: the the key/value pairs (generally made by loading a JSON
                       blob from the client) that represent the fields of a
-                      :py:class:`Component` object
-
+                      ``Component`` object
         :type attrs: dict
-        :param instance: an optional instance of a :py:class:`Component`. If
-                         this is set, then the values of `attrs` will be used
-                         update it, rather than to create a new
-                         :py:class:`Component`.
 
-        :rtype: :py:class:`Component`
+        :param instance: an optional instance of a ``Component``. If this is
+                         set, then the values of `attrs` will be used update
+                         it, rather than to create a new ``Component``.
+        :type instance: :class:`mirrors.models.Component`
+        :rtype: :class:`mirrors.models.Component`
 
         """
         if instance is not None:
@@ -57,7 +56,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     def transform_metadata(self, obj, val):
         """Transform the contents of `metadata` from a string into a dict.
 
-        :param obj: reference to an instance of :py:class:`CompenentSerializer`
+        :param obj: reference to an instance of ``CompenentSerializer``
         :type obj: :py:class:`CompenentSerializer`
         :param val: the current value of `metadata`
         :type val: str or dict
@@ -86,10 +85,9 @@ class ComponentSerializer(serializers.ModelSerializer):
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):
-    """A :py:class:ComponentRevision serializer
+    """Used for turning a JSON blob into a
+     :class:`mirrors.models.ComponentRevision` and back again.
 
-    .. todo:: Write real documentation for
-              `mirrors.serializer.ComponentRevisionSerializer`
     """
     component = serializers.RelatedField(many=False)
 

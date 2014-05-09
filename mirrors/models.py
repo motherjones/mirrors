@@ -11,12 +11,14 @@ from jsonfield import JSONField
 
 
 class Component(models.Model):
-    """A ``Component`` is the basic type of object for all things in the
-    Mirrors content repository. Anything that has a presence in the final
-    output of the website is made of at least one ``Component`` object, and
-    will generally be made from several few.
+    """A ``Component`` is the basic type of object for all things in the Mirrors
+    content repository. Anything that has a presence in the final output of the
+    website is made of at least one ``Component`` object, and will generally be
+    made from several few.
 
-    .. warning :: This class may still be in flux.
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
+
     """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField(default={})
@@ -28,7 +30,7 @@ class Component(models.Model):
 
     @property
     def data_uri(self):
-        """Get the URI for this :py:class:`Component`.
+        """Get the URI for this ``Component``.
 
         :rtype: str
         """
@@ -48,20 +50,20 @@ class Component(models.Model):
             return None
 
     def new_revision(self, data=None, metadata=None):
-        """Create a new revision for this :py:class:`Component` object. If the
-        data is not in the correct format it will attempt to convert it into a
-        bytes object.
+        """Create a new revision for this ``Component`` object. If the data is not in
+        the correct format it will attempt to convert it into a bytes object.
 
         Passing None for one of the arguments will result in that data not
         being changed.
 
         :param data: the actual content of the new revision
-        :type data: `bytes`
+        :type data: bytes
         :param metadata: the new metadata
-        :type metadata: `dict`
+        :type metadata: dict
 
-        :rtype: :py:class:`ComponentRevision`
+        :rtype: :class:`ComponentRevision`
         :raises: `ValueError`
+
         """
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
@@ -98,22 +100,23 @@ class Component(models.Model):
         return new_rev
 
     def new_attribute(self, name, child, weight=-1):
-        """Add a new named attribute to the :py:class:`Component` object. This
-        will overwrite an attribute if the child is unchanged. However, if the
-        child has a different slug, then the attribute will be converted into
-        an ordered list and the child component added to it.
+        """Add a new named attribute to the ``Component`` object. This will overwrite
+        an attribute if the child is unchanged. However, if the child has a
+        different slug, then the attribute will be converted into an ordered
+        list and the child component added to it.
 
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
 
-        :type name: string
+        :type name: str
         :param child: the `Component` object to associate with that name
         :type child: `Component`
         :param weight: the weight of the child within the ordered list, if the
-                       attribue is one
+                       attribute is one
         :type weight: int
 
-        :rtype: :py:class:`ComponentAttribute` or a list
+        :rtype: :class:`ComponentAttribute` or a list
+
         """
 
         if not child or child == self:
@@ -162,14 +165,15 @@ class Component(models.Model):
 
 
 class ComponentAttribute(models.Model):
-    """A named connection between a :py:class:`Component` and one or more other
-    :py:class:`Component`s that are considered to be attributes of the
-    first.Some examples of that might include an attribute named "author" that
-    connects an article :py:class:`Component` to the :py:class:`Component` that
-    contains information about its author.
+    """A named connection between a :class:`Component` and one or more other
+    ``Component`` objects that are considered to be attributes of the
+    first. Some examples of that might include an attribute named "author" that
+    connects an article ``Component`` to the ``Component`` that contains
+    information about its author.
 
     .. warning :: The implementation of this class is incomplete and may change
                   in the future.
+
     """
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
@@ -191,12 +195,13 @@ class ComponentAttribute(models.Model):
 
 
 class ComponentRevision(models.Model):
-    """A revision of the data and metadata for a :py:class:`Component`. It
-    contains the binary data itself. Every time a :class:`Component`'s data is
-    updated, a new ``ComponentRevision`` is created.
+    """A revision of the data and metadata for a :class:`Component`. It contains
+    the binary data itself. Every time a ``Component``'s data is updated, a new
+    ``ComponentRevision`` is created.
 
     .. warning :: The implementation of this class is incomplete and may change
                   in the future.
+
     """
     data = models.BinaryField()
     diff = models.BinaryField(null=True, blank=True)
