@@ -32,6 +32,12 @@ cd sample_project
 python manage.py test mirrors
 ```
 
+If you want to get all of the test coverage, run this:
+
+```bash
+coverage run --source='../mirrors/mirrors' --omit='*migrations*' manage.py test mirrors; coverage html
+```
+
 ## Documentation
 
 The actual docs can be found at http://motherjones.github.io/mirrors/ and in
