@@ -274,7 +274,6 @@ class ComponentLockRequestTest(APITestCase):
         })
         data = {'locked': True}
         response = self.client.put(url, data)
-        pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_lock_locked_component(self):
