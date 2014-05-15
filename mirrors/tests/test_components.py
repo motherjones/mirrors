@@ -1,4 +1,5 @@
 from mirrors import components
+from django.test import TestCase
 
 
 class ComponentsTestCase(TestCase):
