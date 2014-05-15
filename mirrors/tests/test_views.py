@@ -235,3 +235,69 @@ class ComponentDataViewTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.get('Content-Disposition'),
                          'inline; filename=component-with-svg-data')
+
+
+class ComponentLockRequestTest(APITestCase):
+    fixtures = ['component_data.json']
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_get_lock_status_unlocked(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_lock_status_locked(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_lock_unlocked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        data = {
+            'locked': True,
+            'lock_duration': 60
+        }
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_lock_unlocked_component_with_no_duration(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        data = {'locked': True}
+        response = self.client.put(url, data)
+        pdb.set_trace()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_lock_locked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        data = {
+            'locked': True,
+            'lock_duration': 60
+        }
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_unlock_locked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_unlock_unlocked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -193,3 +193,11 @@ class ComponentRevision(models.Model):
 
     def __str__(self):
         return self.component.slug
+
+class ComponentLock(models.Model):
+    """ Determines whether a ``Component`` can be edited.
+    """
+    locked_by = models.CharField(max_length=255) # username
+    locked_at = models.DateTimeField(auto_now_add=True)
+    lock_ends_at = models.DateTimeField()
+    component = models.ForeignKey('Component', related_name='lock')

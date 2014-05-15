@@ -121,3 +121,35 @@ def component_schemas(request):
     schemas['id'] = reverse('component-schemas')
     return HttpResponse(json.dumps(schemas, indent=4),
                         content_type="application/json")
+
+class ComponentLock(View):
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        # data = component.binary_data
+
+        # if data is None:
+        #     raise Http404
+
+        # # if we have a real filename stored in metadata, we should provide that
+        # # to the browser as the filename. if not, just give it the slug instead
+        # if 'filename' in component.metadata:
+        #     filename = component.metadata['filename']
+        # else:
+        #     filename = component.slug
+
+        # resp = HttpResponse(data,
+        #                     content_type=component.content_type,
+        #                     status=status.HTTP_200_OK)
+        # resp['Content-Disposition'] = "inline; filename={}".format(filename)
+        # return resp
+
+        if component.lock:
+            lock_info = { 'locked': True }
+            return HttpResponse(json.dumps(lock_info, indent=4),
+                                content_type="application/json")
+        else:
+            return Response(None, status=HTTP_404_NOT_FOUND) 
+
+
+    def post(self, request, *args, **kwargs):
+        raise NotImplementedError()

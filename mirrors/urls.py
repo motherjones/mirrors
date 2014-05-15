@@ -12,6 +12,9 @@ urlpatterns = patterns(
     url(r'^component/(?P<slug>[-\w]+)/data$',
         views.ComponentData.as_view(),
         name='component-data'),
+    url(r'^component/(?P<slug>[-\w]+)/lock$',
+        views.ComponentLock.as_view(),
+        name='component-lock'),
     url(r'^schemas$',
         views.component_schemas,
         name='component-schemas')
