@@ -258,8 +258,7 @@ class ComponentDataViewTest(TestCase):
             # req = rf.post(url, data={'file': upload_file})
             # res = ComponentDataView.post(req)
             res = c.post(url,
-                         data={'file': upload_file},
-                         content_type='multipart/form-data')
+                         data={'file': upload_file})
 
             self.assertTrue(res.status_code, status.HTTP_204_NO_CONTENT)
             self.assertEqual(component.revisions.count(), 1)
