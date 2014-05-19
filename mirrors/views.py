@@ -4,7 +4,9 @@ import logging
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.views.generic import View
 
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
@@ -19,6 +21,9 @@ LOGGER = logging.getLogger(__name__)
 
 class ComponentList(mixins.CreateModelMixin,
                     generics.GenericAPIView):
+    """Handle the POST requests made to ``/component`` to allow the creation of
+    new Components.
+    """
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
@@ -30,9 +35,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
                       generics.GenericAPIView):
-    """
-    View for a single Component instance.
-    """
+    """View for a single Component instance."""
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
@@ -41,7 +44,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
     def patch(self, request, *args, **kwargs):
         data = request.DATA
-        component = get_object_or_404(Component, slug=kwargs['component'])
+        component = get_object_or_404(Component, slug=kwargs['slug'])
         serializer = ComponentSerializer(component)
 
         if 'metadata' in data:
@@ -64,12 +67,12 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
         if serializer.is_valid():
             serializer.save()
-            LOGGER.debug("saved changes to {}: {}".format(kwargs['component'],
+            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'],
                                                           data))
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             LOGGER.debug(
-                "error saving changes to {}: {}".format(kwargs['component'],
+                "error saving changes to {}: {}".format(kwargs['slug'],
                                                         serializer.errors))
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -88,16 +91,16 @@ class ComponentAttributeList(mixins.CreateModelMixin,
     serializer_class = ComponentAttributeSerializer
 
     def post(self, request, *args, **kwargs):
-        parent = Component.objects.get(slug=kwargs['component'])
+        parent = Component.objects.get(slug=kwargs['slug'])
         attrs = parent.attributes.filter(name=request.DATA['name'])
 
         if attrs.count() > 0:
             return Response(data='Attribute name is already taken',
                             status=status.HTTP_409_CONFLICT)
-        request.DATA['parent'] = kwargs['component']
-        del kwargs['component']
-        if 'component' in request.DATA:
-            del request.DATA['component']
+        request.DATA['parent'] = kwargs['slug']
+        del kwargs['slug']
+        if 'slug' in request.DATA:
+            del request.DATA['slug']
 
         return self.create(request, *args, **kwargs)
 
@@ -111,7 +114,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
     serializer_class = ComponentAttributeSerializer
 
     def get_queryset(self):
-        component = self.kwargs['component']
+        component = self.kwargs['slug']
         attr_name = self.kwargs.get('attr_name', None)
 
         parent = get_object_or_404(Component, slug=component)
@@ -136,7 +139,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        request.DATA['parent'] = kwargs['component']
+        request.DATA['parent'] = kwargs['slug']
         request.DATA['name'] = kwargs['attr_name']
 
         serializer = ComponentAttributeSerializer(data=request.DATA,
@@ -153,7 +156,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
 
     def patch(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        request.DATA['parent'] = kwargs['component']
+        request.DATA['parent'] = kwargs['slug']
         request.DATA['name'] = kwargs['attr_name']
 
         if queryset.count() == 1:
@@ -173,11 +176,29 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-def component_data_uri(request, component):
-    asset = get_object_or_404(Component, slug=component)
-    response = HttpResponse(asset.binary_data, mimetype=asset.content_type)
-    response['Content-Disposition'] = 'inline; filename=%s' % component
-    return response
+class ComponentData(View):
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        data = component.binary_data
+
+        if data is None:
+            raise Http404
+
+        # if we have a real filename stored in metadata, we should provide that
+        # to the browser as the filename. if not, just give it the slug instead
+        if 'filename' in component.metadata:
+            filename = component.metadata['filename']
+        else:
+            filename = component.slug
+
+        resp = HttpResponse(data,
+                            content_type=component.content_type,
+                            status=status.HTTP_200_OK)
+        resp['Content-Disposition'] = "inline; filename={}".format(filename)
+        return resp
+
+    def post(self, request, *args, **kwargs):
+        raise NotImplementedError()
 
 
 def component_schemas(request):

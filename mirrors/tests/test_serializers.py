@@ -104,10 +104,10 @@ class ComponentAttributeResourceTests(APITestCase):
         ca = ComponentAttribute.objects.get(pk=1)
         content = ComponentAttributeSerializer(ca).data
 
-        self.assertIn('component', content)
+        self.assertIn('slug', content)
         self.assertIn('weight', content)
 
-        self.assertEqual(content['component'], 'attribute-1')
+        self.assertEqual(content['slug'], 'attribute-1')
         self.assertEqual(content['weight'], -1)
 
     def test_serialize_list_attribute(self):
@@ -121,8 +121,8 @@ class ComponentAttributeResourceTests(APITestCase):
         attr_1 = content[0]
         attr_2 = content[1]
 
-        self.assertEqual(attr_1['component'], 'attribute-3')
+        self.assertEqual(attr_1['child'], 'attribute-3')
         self.assertEqual(attr_1['weight'], 100)
 
-        self.assertEqual(attr_2['component'], 'attribute-4')
+        self.assertEqual(attr_2['child'], 'attribute-4')
         self.assertEqual(attr_2['weight'], 200)

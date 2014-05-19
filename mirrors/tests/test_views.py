@@ -1,12 +1,11 @@
+import hashlib
 import json
 
 from django.core.urlresolvers import reverse
 
 from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase, APIClient
-
-from mirrors.views import ComponentDetail
+from django.test import TestCase, Client
+from rest_framework.test import APITestCase
 
 
 class ComponentViewTest(APITestCase):
@@ -23,7 +22,7 @@ class ComponentViewTest(APITestCase):
 
     def test_get_component(self):
         url = reverse('component-detail', kwargs={
-            'component': 'test-component-with-one-named-attribute'
+            'slug': 'test-component-with-one-named-attribute'
         })
 
         res = self.client.get(url)
@@ -54,7 +53,7 @@ class ComponentViewTest(APITestCase):
 
     def test_get_404_component(self):
         url = reverse('component-detail', kwargs={
-            'component': 'no-such-component-here'
+            'slug': 'no-such-component-here'
         })
 
         res = self.client.get(url)
@@ -116,7 +115,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_404_component(self):
         url = reverse('component-detail', kwargs={
-            'component': 'doesnt-exist'
+            'slug': 'doesnt-exist'
         })
 
         res = self.client.patch(url, {'content_type': 'text/plain'})
@@ -125,7 +124,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_one_change(self):
         url = reverse('component-detail', kwargs={
-            'component': 'this-is-for-testing-on'
+            'slug': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {'content_type': 'text/plain'})
@@ -139,7 +138,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_multiple_changes(self):
         url = reverse('component-detail', kwargs={
-            'component': 'this-is-for-testing-on'
+            'slug': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {
@@ -157,7 +156,7 @@ class ComponentViewTest(APITestCase):
 
     def test_patch_component_metadata(self):
         url = reverse('component-detail', kwargs={
-            'component': 'this-is-for-testing-on'
+            'slug': 'this-is-for-testing-on'
         })
 
         res = self.client.patch(url, {
@@ -171,7 +170,7 @@ class ComponentViewTest(APITestCase):
 
     def test_delete_component(self):
         url = reverse('component-detail', kwargs={
-            'component': 'this-is-for-testing-on'
+            'slug': 'this-is-for-testing-on'
         })
 
         res = self.client.delete(url)
@@ -179,7 +178,7 @@ class ComponentViewTest(APITestCase):
 
     def test_delete_404_component(self):
         url = reverse('component-detail', kwargs={
-            'component': 'doesnt-exist'
+            'slug': 'doesnt-exist'
         })
 
         res = self.client.delete(url)
@@ -191,7 +190,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_get_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-regular-attribute',
+            'slug': 'component-with-regular-attribute',
             'attr_name': 'my_attribute'
         })
 
@@ -204,7 +203,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_get_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-regular-attribute',
+            'slug': 'component-with-regular-attribute',
             'attr_name': 'no_such_attribute'
         })
 
@@ -213,7 +212,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute(self):
         url = reverse('component-attribute-list', kwargs={
-            'component': 'component-with-regular-attribute'
+            'slug': 'component-with-regular-attribute'
         })
 
         res = self.client.post(url, {'name': 'new_attribute',
@@ -227,7 +226,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute_invalid_name(self):
         url = reverse('component-attribute-list', kwargs={
-            'component': 'component-with-regular-attribute'
+            'slug': 'component-with-regular-attribute'
         })
 
         res = self.client.post(url, {'name': '$not a valid name(',
@@ -244,7 +243,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute_used_name(self):
         url = reverse('component-attribute-list', kwargs={
-            'component': 'component-with-regular-attribute'
+            'slug': 'component-with-regular-attribute'
         })
 
         res = self.client.post(url, {'name': 'my_attribute',
@@ -254,7 +253,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute_invalid_component_name(self):
         url = reverse('component-attribute-list', kwargs={
-            'component': 'component-with-regular-attribute'
+            'slug': 'component-with-regular-attribute'
         })
 
         res = self.client.post(url, {'name': 'new_attribute',
@@ -270,7 +269,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute_404_component(self):
         url = reverse('component-attribute-list', kwargs={
-            'component': 'component-with-regular-attribute'
+            'slug': 'component-with-regular-attribute'
         })
 
         res = self.client.post(url, {'name': 'new_attribute',
@@ -286,7 +285,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_get_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute'
         })
 
@@ -305,7 +304,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_get_404_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'no-such-attribute'
         })
 
@@ -314,7 +313,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_post_new_attribute_to_existing_list(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute'
         })
 
@@ -338,7 +337,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_patch_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-regular-attribute',
+            'slug': 'component-with-regular-attribute',
             'attr_name': 'my_attribute'
         })
         patch_data = {'child': 'attribute-4'}
@@ -353,7 +352,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_patch_list_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute',
             'index': 1
         })
@@ -374,7 +373,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_patch_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'no-such-attribute'
         })
         patch_data = {'weight': 10000}
@@ -384,7 +383,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_delete_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-regular-attribute',
+            'slug': 'component-with-regular-attribute',
             'attr_name': 'my_attribute'
         })
 
@@ -393,7 +392,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_delete_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-regular-attribute',
+            'slug': 'component-with-regular-attribute',
             'attr_name': 'no-such-slug'
         })
 
@@ -402,7 +401,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_delete_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute'
         })
 
@@ -411,7 +410,7 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_delete_attribute_list_element(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute',
             'index': 1
         })
@@ -428,10 +427,62 @@ class ComponentAttributeViewTests(APITestCase):
 
     def test_delete_attribute_list_404_element(self):
         url = reverse('component-attribute-detail', kwargs={
-            'component': 'component-with-list-attribute',
+            'slug': 'component-with-list-attribute',
             'attr_name': 'list_attribute',
             'index': 9999
         })
 
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ComponentDataViewTest(TestCase):
+    fixtures = ['component_data.json']
+
+    def setUp(self):
+        self.client = Client()
+
+        self.svg_hash = '01d5a1a9d1452f1b013bfc74da44d52e'
+        self.jpeg_hash = '6367446e537b50e363f26e385f47e99d'
+        self.md_hash = 'eb867962bfff036e98b5e59dc6153caf'
+
+    def test_get_data(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-svg-data'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.get('Content-Type'), 'image/svg+xml')
+
+        md5_hash = hashlib.md5()
+        md5_hash.update(res.content)
+        self.assertEqual(md5_hash.hexdigest(), self.svg_hash)
+
+    def test_get_data_component_without_data(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-no-data'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_data_with_filename(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-svg-data-and-metadata-filename'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.get('Content-Disposition'),
+                         'inline; filename=einfache_zeitung.svg')
+
+    def test_get_data_without_filename(self):
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-svg-data'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.get('Content-Disposition'),
+                         'inline; filename=component-with-svg-data')

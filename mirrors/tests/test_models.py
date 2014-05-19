@@ -45,7 +45,7 @@ class ComponentRevisionModelTests(TestCase):
             'title': 'test component with no revisions'
         }))
 
-        cr = c.revisions.get(revision_number=1)
+        cr = c.revisions.order_by('-created_at').first()
 
         self.assertEqual(c.revisions.count(), 1)
         self.assertEqual(cr.component, c)
@@ -56,20 +56,6 @@ class ComponentRevisionModelTests(TestCase):
 
         with self.assertRaises(ValueError):
             c.new_revision(metadata={'title': 'this thing should fail!'})
-
-    def test_new_revision_not_first(self):
-        c = Component.objects.get(slug='component-with-binary-data')
-        num_orig_components = c.revisions.count()
-
-        cr = c.new_revision(b'this is a new revision', {
-            'title': 'test component with no revisions'
-        })
-
-        cr = c.revisions.all().order_by('-revision_number').first()
-        metadata = cr.metadata
-        self.assertEqual(metadata['title'],
-                         'test component with no revisions')
-        self.assertEqual(cr.revision_number, num_orig_components+1)
 
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
@@ -95,8 +81,8 @@ class ComponentAttributeModelTests(TestCase):
         self.assertEqual(len(attr_list), 3)
 
     def test_get_attribute_list_one_entry(self):
-        c = Component.objects.get(
-            slug='test-component-with-list-one-attribute')
+        c = Component.objects.get(slug='test-component-with-list'
+                                       '-one-attribute')
         attr_list = c.get_attribute('my_single_list_attr')
 
         self.assertTrue(isinstance(attr_list, list))
@@ -177,5 +163,6 @@ class ComponentAttributeModelTests(TestCase):
 
     def test_get_str_on_list_attribute(self):
         ca = ComponentAttribute.objects.get(pk=7)
-        e_str = 'component-with-list-attribute[my_list_attr,500] = attribute-1'
+        e_str = ('component-with-list-attribute[my_list_attr,500] '
+                 '-> attribute-1')
         self.assertEqual(ca.__str__(), e_str)

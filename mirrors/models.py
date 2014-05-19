@@ -11,9 +11,14 @@ from jsonfield import JSONField
 
 
 class Component(models.Model):
-    """A component
+    """A ``Component`` is the basic type of object for all things in the Mirrors
+    content repository. Anything that has a presence in the final output of the
+    website is made of at least one ``Component`` object, and will generally be
+    made from several few.
 
-    .. todo:: Write real documentation for mirrors.Component
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
+
     """
     slug = models.SlugField(max_length=100, unique=True)
     metadata = JSONField(default={})
@@ -25,7 +30,11 @@ class Component(models.Model):
 
     @property
     def data_uri(self):
-        return reverse('component-data-uri', kwargs={'slug': self.slug})
+        """Get the URI for this ``Component``.
+
+        :rtype: str
+        """
+        return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
     def binary_data(self):
@@ -33,7 +42,7 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-revision_number').first()
+        rev = self.revisions.order_by('-created_at').first()
 
         if rev:
             return rev.data.tobytes()
@@ -41,73 +50,55 @@ class Component(models.Model):
             return None
 
     def new_revision(self, data=None, metadata=None):
-        """Create a new revision for this :py:class:`Component` object. If the
-        data is not in the correct format it will attempt to convert it into a
-        bytes object.
+        """Create a new revision for this ``Component`` object. If the data is not in
+        the correct format it will attempt to convert it into a bytes object.
 
         Passing None for one of the arguments will result in that data not
         being changed.
 
         :param data: the actual content of the new revision
-        :type data: `bytes`
+        :type data: bytes
         :param metadata: the new metadata
-        :type metadata: `dict`
+        :type metadata: dict
 
-        :rtype: :py:class:`ComponentRevision`
+        :rtype: :class:`ComponentRevision`
         :raises: `ValueError`
 
         """
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('-revision_number').first()
-        if not cur_rev:
-            cur_rev_num = 0
-            new_data = None
-            new_metadata = self.metadata
+        cur_rev = self.revisions.all().order_by('created_at').first()
 
-            if not data:
-                raise ValueError(
-                    'both metadata and data must be provided for 1st revision'
-                )
-        else:
-            cur_rev_num = cur_rev.revision_number
-            new_data = cur_rev.data
-            new_metadata = cur_rev.metadata
-
-        if data:
-            new_data = data
-        if metadata:
-            new_metadata = metadata
+        if cur_rev is None and data is None:
+            raise ValueError(
+                'both metadata and data must be provided for 1st revision'
+            )
 
         new_rev = ComponentRevision.objects.create(
-            revision_number=cur_rev_num+1,
             data=data,
-            diff=None,  # figure this out later
-            metadata=metadata,
-            revision_date=timezone.now(),
             component=self
         )
 
         return new_rev
 
     def new_attribute(self, name, child, weight=-1):
-        """Add a new named attribute to the :py:class:`Component` object. This
-        will overwrite an attribute if the child is unchanged. However, if the
-        child has a different slug, then the attribute will be converted into
-        an ordered list and the child component added to it.
+        """Add a new named attribute to the ``Component`` object. This will overwrite
+        an attribute if the child is unchanged. However, if the child has a
+        different slug, then the attribute will be converted into an ordered
+        list and the child component added to it.
 
         :param name: the attribute's name, which can only contain alphanumeric
                      characters as well as the - and _ characters.
 
-        :type name: string
+        :type name: str
         :param child: the `Component` object to associate with that name
         :type child: `Component`
         :param weight: the weight of the child within the ordered list, if the
-                       attribue is one
+                       attribute is one
         :type weight: int
 
-        :rtype: :py:class:`ComponentAttribute` or a list
+        :rtype: :class:`ComponentAttribute` or a list
 
         """
 
@@ -136,6 +127,7 @@ class Component(models.Model):
 
         :param attribute_name: name of the attribute
         :type attribute_name: str
+
         :rtype: `Component` or list
         """
         attrs = self.attributes.filter(name=attribute_name)
@@ -156,8 +148,15 @@ class Component(models.Model):
 
 
 class ComponentAttribute(models.Model):
-    """Named attributes that associate :py:class:`Component` objects with
-    other `Component` objects.
+    """A named connection between a :class:`Component` and one or more other
+    ``Component`` objects that are considered to be attributes of the
+    first. Some examples of that might include an attribute named "author" that
+    connects an article ``Component`` to the ``Component`` that contains
+    information about its author.
+
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
+
     """
     parent = models.ForeignKey('Component', related_name='attributes')
     child = models.ForeignKey('Component')
@@ -168,10 +167,10 @@ class ComponentAttribute(models.Model):
 
     def __str__(self):
         if self.weight != -1:
-            return "{}[{},{}] = {}".format(self.parent.slug,
-                                           self.name,
-                                           self.weight,
-                                           self.child.slug)
+            return "{}[{},{}] -> {}".format(self.parent.slug,
+                                            self.name,
+                                            self.weight,
+                                            self.child.slug)
         else:
             return "{}[{}] = {}".format(self.parent.slug,
                                         self.name,
@@ -179,15 +178,18 @@ class ComponentAttribute(models.Model):
 
 
 class ComponentRevision(models.Model):
-    """A revision of the data contained by a :py:class:Component object.
+    """A revision of the data and metadata for a :class:`Component`. It contains
+    the binary data itself. Every time a ``Component``'s data is updated, a new
+    ``ComponentRevision`` is created.
 
-    .. todo:: Write real documentation for mirrors.ComponentRevision
+    .. warning :: The implementation of this class is incomplete and may change
+                  in the future.
+
     """
     data = models.BinaryField()
-    diff = models.BinaryField(null=True, blank=True)
-    metadata = JSONField(default={})
-
-    revision_date = models.DateTimeField(auto_now_add=True)
-    revision_number = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     component = models.ForeignKey('Component', related_name='revisions')
+
+    def __str__(self):
+        return self.component.slug

@@ -1,26 +1,27 @@
 from django.conf.urls import patterns, url
 from mirrors import views
 
-urlpatterns = patterns('mirrors.views',
+urlpatterns = patterns(
+    'mirrors.views',
     url(r'^component$',
         views.ComponentList.as_view(),
         name='component-list'),
-    url(r'^component/(?P<component>[-\w]+)$',
+    url(r'^component/(?P<slug>[-\w]+)$',
         views.ComponentDetail.as_view(),
         name='component-detail'),
-     url(r'^component/(?P<component>[-\w]+)/attribute$',
+    url(r'^component/(?P<slug>[-\w]+)/attribute$',
          views.ComponentAttributeList.as_view(),
          name='component-attribute-list'),
-    url(r'^component/(?P<component>[-\w]+)/attribute/(?P<attr_name>[-\w_]+)$',
+    url(r'^component/(?P<slug>[-\w]+)/attribute/(?P<attr_name>[-\w_]+)$',
         views.ComponentAttributeDetail.as_view(),
         name='component-attribute-detail'),
-    url(r'^component/(?P<component>[-\w]+)/attribute/(?P<attr_name>[-\w_]+)/(?P<index>[\d]+)$',
+    url(r'^component/(?P<slug>[-\w]+)/attribute/(?P<attr_name>[-\w_]+)/(?P<index>[\d]+)$',
         views.ComponentAttributeDetail.as_view(),
         name='component-attribute-detail'),
-    url(r'^component/(?P<component>[-\w]+)/data$',
-        views.component_data_uri,
-        name='component-data-uri'),
+    url(r'^component/(?P<slug>[-\w]+)/data$',
+        views.ComponentData.as_view(),
+        name='component-data'),
     url(r'^schemas$',
         views.component_schemas,
-        name='component-schemas'),
+        name='component-schemas')
 )
