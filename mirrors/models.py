@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models import Max
 from django.utils import timezone
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from jsonfield import JSONField
 
@@ -197,7 +198,7 @@ class ComponentRevision(models.Model):
 class ComponentLock(models.Model):
     """ Determines whether a ``Component`` can be edited.
     """
-    locked_by = models.CharField(max_length=255) # username
+    locked_by = models.ForeignKey(User) # username
     locked_at = models.DateTimeField(auto_now_add=True)
     lock_ends_at = models.DateTimeField()
     component = models.ForeignKey('Component', related_name='lock')
