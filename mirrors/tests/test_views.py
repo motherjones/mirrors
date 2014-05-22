@@ -224,6 +224,59 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertNotIn('weight', data['child'])
         self.assertEqual(data['child'], 'attribute-4')
 
+    def test_put_attribute(self):
+        url = reverse('component-attribute-detail', kwargs={
+            'slug': 'component-with-regular-attribute',
+            'name': 'my_attribute'
+        })
+
+        res = self.client.put(url, {'name': 'my_attribute',
+                                    'child': 'attribute-2'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('child', data)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], 'my_attribute')
+        self.assertEqual(data['child'], 'attribute-2')
+
+    def test_put_attribute_invalid_type(self):
+        url = reverse('component-attribute-detail', kwargs={
+            'slug': 'component-with-regular-attribute',
+            'name': 'my_attribute'
+        })
+
+        res = self.client.put(url, 'blah')
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('error', data)
+        self.assertEqual(data['error'],
+                         'ComponentAttribute data must be a list or a dict')
+
+    def test_put_attribute_invalid_data(self):
+        url = reverse('component-attribute-detail', kwargs={
+            'slug': 'component-with-regular-attribute',
+            'name': 'my_attribute'
+        })
+
+        res = self.client.put(url, {'name': 'my_attribute'})
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('child', data)
+        self.assertEqual(len(data['child']), 1)
+        self.assertEqual(data['child'][0], 'This field is required.')
+
+    def test_post_new_attribute_strip_slug(self):
+        url = reverse('component-attribute-list', kwargs={
+            'slug': 'component-with-regular-attribute'
+        })
+        res = self.client.post(url, {'name': 'new_attribute',
+                                     'child': 'attribute-4',
+                                     'slug': 'attribute-4'})
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
     def test_post_new_attribute_invalid_name(self):
         url = reverse('component-attribute-list', kwargs={
             'slug': 'component-with-regular-attribute'

@@ -63,6 +63,15 @@ class ComponentRevisionModelTests(TestCase):
         with self.assertRaises(ValueError):
             cr = c.new_revision()
 
+    def test_revision_to_str(self):
+        c = Component.objects.filter(
+            slug='test-component-with-multiple-revisions'
+        ).first()
+        cr = c.revisions.first()
+
+        self.assertEqual(cr.__str__(),
+                         'test-component-with-multiple-revisions')
+
 
 class ComponentAttributeModelTests(TestCase):
     fixtures = ['components.json']

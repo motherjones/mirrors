@@ -3,11 +3,11 @@ import logging
 
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import View
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
@@ -58,13 +58,9 @@ class ComponentDetail(mixins.RetrieveModelMixin,
 
             data['metadata'] = new_metadata
 
-        d_fixed = dict(data)
-
-        for k in d_fixed.keys():
-            if isinstance(d_fixed[k], list):
-                d_fixed[k] = d_fixed[k][0]
-
-        serializer = ComponentSerializer(component, data=d_fixed, partial=True)
+        serializer = ComponentSerializer(component,
+                                         data=dict(data),
+                                         partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -77,9 +73,6 @@ class ComponentDetail(mixins.RetrieveModelMixin,
                                                         serializer.errors))
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
@@ -100,6 +93,7 @@ class ComponentAttributeList(mixins.CreateModelMixin,
                             status=status.HTTP_409_CONFLICT)
         request.DATA['parent'] = kwargs['slug']
         del kwargs['slug']
+
         if 'slug' in request.DATA:
             del request.DATA['slug']
 
@@ -137,7 +131,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
             data['name'] = self.kwargs['name']
             return data
         else:
-            raise TypeError('ComponentAttribute must be a list or a dict')
+            raise TypeError('ComponentAttribute data must be a list or a dict')
 
     def get_queryset(self):
         component = self.kwargs['slug']
@@ -164,19 +158,13 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        serializer = ComponentAttributeSerializer(data=request.DATA,
-                                                  partial=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors,
+    def put(self, request, *args, **kwargs):
+        try:
+            data = self._normalize_request_data(request.DATA)
+        except TypeError as e:
+            return Response({'error': str(e)},
                             status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, *args, **kwargs):
-        data = self._normalize_request_data(request.DATA)
         has_many = isinstance(data, list)
         serializer = ComponentAttributeSerializer(data=data, many=has_many)
 
@@ -202,18 +190,18 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
         request.DATA['parent'] = kwargs['slug']
         request.DATA['name'] = kwargs['name']
 
-        if queryset.count() == 1:
-            serializer = ComponentAttributeSerializer(data=request.DATA,
-                                                      partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response(serializer.errors,
-                                status=status.HTTP_400_BAD_REQUEST)
-        else:
-            # TODO: not this
+        if queryset.count() != 1:
             raise Http404
+
+        serializer = ComponentAttributeSerializer(data=request.DATA,
+                                                  partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
         if self.get_queryset().count() == 0:
