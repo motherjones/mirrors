@@ -1,12 +1,12 @@
 import json
-import hashlib
 
 from django.core.urlresolvers import reverse
 
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 
-from mirrors.models import *
-from mirrors.serializers import *
+from mirrors.models import Component, ComponentAttribute
+from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentAttributeSerializer
 
 
 class ComponentResourceTests(APITestCase):
@@ -100,15 +100,19 @@ class ComponentResourceTests(APITestCase):
 class ComponentAttributeResourceTests(APITestCase):
     fixtures = ['users.json', 'componentattributes.json']
 
-    def test_serialize_attribute(self):
-        ca = ComponentAttribute.objects.get(pk=1)
+    def test_serialize_single_attribute(self):
+        parent = Component.objects.filter(
+            slug='component-with-regular-attribute'
+        ).first()
+
+        ca = ComponentAttribute.objects.filter(parent=parent).first()
         content = ComponentAttributeSerializer(ca).data
 
-        self.assertIn('slug', content)
-        self.assertIn('weight', content)
+        self.assertIn('name', content)
+        self.assertIn('child', content)
 
-        self.assertEqual(content['slug'], 'attribute-1')
-        self.assertEqual(content['weight'], -1)
+        self.assertEqual(content['child'], 'attribute-1')
+        self.assertEqual(content['name'], 'my_attribute')
 
     def test_serialize_list_attribute(self):
         cas = ComponentAttribute.objects.filter(

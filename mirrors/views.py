@@ -2,8 +2,9 @@ import json
 import logging
 
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.views.generic import View
 
 from rest_framework.views import APIView
@@ -110,18 +111,43 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
                                mixins.DestroyModelMixin,
                                generics.GenericAPIView):
     queryset = ComponentAttribute.objects.all()
-    lookup_field = 'attr_name'
+    lookup_field = 'name'
     serializer_class = ComponentAttributeSerializer
+
+    def _normalize_request_data(self, data):
+        """Turn a single or list of client-submitted component attributes into
+        something that the serializer understands by setting the value of
+        `attribute['parent']` to the component slug and `attribute['name']` to
+        the attribute name.
+
+        :param data: The data to normalize; generally requset.DATA
+        :type data: `list` or `dict`
+        :raise TypeError: If data is not a list or or dict
+        :return: the normalized data
+        """
+        if isinstance(data, list):
+            new_data = []
+            for attr in data:
+                attr['parent'] = self.kwargs['slug']
+                attr['name'] = self.kwargs['name']
+                new_data.append(attr)
+            return new_data
+        elif isinstance(data, dict):
+            data['parent'] = self.kwargs['slug']
+            data['name'] = self.kwargs['name']
+            return data
+        else:
+            raise TypeError('ComponentAttribute must be a list or a dict')
 
     def get_queryset(self):
         component = self.kwargs['slug']
-        attr_name = self.kwargs.get('attr_name', None)
+        attr_name = self.kwargs.get('name', None)
 
         parent = get_object_or_404(Component, slug=component)
         queryset = parent.attributes
 
         if attr_name is not None:
-            queryset = queryset.filter(name=self.kwargs['attr_name'])
+            queryset = queryset.filter(name=self.kwargs['name'])
             queryset = queryset.order_by('weight')
 
         return queryset
@@ -139,25 +165,42 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        request.DATA['parent'] = kwargs['slug']
-        request.DATA['name'] = kwargs['attr_name']
-
         serializer = ComponentAttributeSerializer(data=request.DATA,
                                                   partial=False)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+        data = self._normalize_request_data(request.DATA)
+        has_many = isinstance(data, list)
+        serializer = ComponentAttributeSerializer(data=data, many=has_many)
+
+        if serializer.is_valid():
+            with transaction.atomic():
+                qs = self.get_queryset()
+                if qs.count() > 0:
+                    qs.delete()
+                serializer.save()
+
+            if has_many:
+                serializer = ComponentAttributeSerializer(self.get_queryset(),
+                                                          many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         request.DATA['parent'] = kwargs['slug']
-        request.DATA['name'] = kwargs['attr_name']
+        request.DATA['name'] = kwargs['name']
 
         if queryset.count() == 1:
             serializer = ComponentAttributeSerializer(data=request.DATA,
@@ -173,7 +216,11 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
             raise Http404
 
     def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        if self.get_queryset().count() == 0:
+            raise Http404
+
+        self.get_queryset().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ComponentData(View):

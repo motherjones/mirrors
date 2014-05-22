@@ -191,7 +191,7 @@ class ComponentAttributeViewTests(APITestCase):
     def test_get_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-regular-attribute',
-            'attr_name': 'my_attribute'
+            'name': 'my_attribute'
         })
 
         res = self.client.get(url)
@@ -204,7 +204,7 @@ class ComponentAttributeViewTests(APITestCase):
     def test_get_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-regular-attribute',
-            'attr_name': 'no_such_attribute'
+            'name': 'no_such_attribute'
         })
 
         res = self.client.get(url)
@@ -286,7 +286,7 @@ class ComponentAttributeViewTests(APITestCase):
     def test_get_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute'
+            'name': 'list_attribute'
         })
 
         res = self.client.get(url)
@@ -305,23 +305,24 @@ class ComponentAttributeViewTests(APITestCase):
     def test_get_404_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-list-attribute',
-            'attr_name': 'no-such-attribute'
+            'name': 'no-such-attribute'
         })
 
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_post_new_attribute_to_existing_list(self):
+    def test_put_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute'
+            'name': 'list_attribute'
         })
 
-        new_attribute = {'child': 'attribute-1', 'weight': 9999}
+        attribute_list = [{'child': 'attribute-4', 'weight': 200},
+                          {'child': 'attribute-3', 'weight': 100},
+                          {'child': 'attribute-1', 'weight': 9999}]
 
-        res = self.client.post(url, data=new_attribute)
-
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        res = self.client.put(url, data=attribute_list)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = json.loads(res.content.decode('UTF-8'))
         self.assertTrue(isinstance(data, list))
@@ -338,43 +339,21 @@ class ComponentAttributeViewTests(APITestCase):
     def test_patch_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-regular-attribute',
-            'attr_name': 'my_attribute'
+            'name': 'my_attribute'
         })
         patch_data = {'child': 'attribute-4'}
 
         res = self.client.patch(url, patch_data)
-        print("DATA: {}".format(res.content.decode('UTF-8')))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = json.loads(res.content.decode('UTF-8'))
         self.assertTrue(isinstance(data, dict))
         self.assertEqual(data['child'], 'attribute-4')
 
-    def test_patch_list_attribute(self):
-        url = reverse('component-attribute-detail', kwargs={
-            'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute',
-            'index': 1
-        })
-        patch_data = {'weight': 10000}
-
-        res = self.client.patch(url, patch_data)
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-
-        data = json.loads(res.content.decode('UTF-8'))
-        self.assertTrue(isinstance(data, list))
-        self.assertEqual(len(data), 2)
-
-        self.assertEqual(data[0]['child'], 'attribute-4')
-        self.assertEqual(data[1]['child'], 'attribute-3')
-
-        self.assertEqual(data[0]['weight'], 200)
-        self.assertEqual(data[1]['weight'], 10000)
-
     def test_patch_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-list-attribute',
-            'attr_name': 'no-such-attribute'
+            'name': 'no-such-attribute'
         })
         patch_data = {'weight': 10000}
 
@@ -384,7 +363,7 @@ class ComponentAttributeViewTests(APITestCase):
     def test_delete_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-regular-attribute',
-            'attr_name': 'my_attribute'
+            'name': 'my_attribute'
         })
 
         res = self.client.delete(url)
@@ -393,7 +372,7 @@ class ComponentAttributeViewTests(APITestCase):
     def test_delete_404_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-regular-attribute',
-            'attr_name': 'no-such-slug'
+            'name': 'no-such-slug'
         })
 
         res = self.client.delete(url)
@@ -402,38 +381,11 @@ class ComponentAttributeViewTests(APITestCase):
     def test_delete_attribute_list(self):
         url = reverse('component-attribute-detail', kwargs={
             'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute'
+            'name': 'list_attribute'
         })
 
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-
-    def test_delete_attribute_list_element(self):
-        url = reverse('component-attribute-detail', kwargs={
-            'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute',
-            'index': 1
-        })
-
-        res = self.client.delete(url)
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-
-        data = json.loads(res.content.decode('UTF-8'))
-        self.assertTrue(isinstance(data, list))
-        self.assertEqual(len(data), 1)
-
-        self.assertEqual(data[0]['child'], 'attribute-3')
-        self.assertEqual(data[0]['weight'], 100)
-
-    def test_delete_attribute_list_404_element(self):
-        url = reverse('component-attribute-detail', kwargs={
-            'slug': 'component-with-list-attribute',
-            'attr_name': 'list_attribute',
-            'index': 9999
-        })
-
-        res = self.client.delete(url)
-        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class ComponentDataViewTest(TestCase):
