@@ -1,12 +1,12 @@
 import json
-import hashlib
 
 from django.core.urlresolvers import reverse
 
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 
-from mirrors.models import *
-from mirrors.serializers import *
+from mirrors.models import Component, ComponentAttribute
+from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentAttributeSerializer
 
 
 class ComponentResourceTests(APITestCase):
@@ -79,3 +79,54 @@ class ComponentResourceTests(APITestCase):
 
         self.assertTrue(isinstance(list_attr, list))
         self.assertEqual(len(list_attr), 2)
+
+    def test_transform_metadata_from_string(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_str = json.dumps({'test': 'value'})
+
+        result = serializer.transform_metadata(None, metadata_str)
+        self.assertEqual(result, {'test': 'value'})
+
+    def test_transform_metadata_from_dict(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_dict = {'test': 'value'}
+
+        result = serializer.transform_metadata(None, metadata_dict)
+        self.assertEqual(result, {'test': 'value'})
+
+
+class ComponentAttributeResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentattributes.json']
+
+    def test_serialize_single_attribute(self):
+        parent = Component.objects.filter(
+            slug='component-with-regular-attribute'
+        ).first()
+
+        ca = ComponentAttribute.objects.filter(parent=parent).first()
+        content = ComponentAttributeSerializer(ca).data
+
+        self.assertIn('name', content)
+        self.assertIn('child', content)
+
+        self.assertEqual(content['child'], 'attribute-1')
+        self.assertEqual(content['name'], 'my_attribute')
+
+    def test_serialize_list_attribute(self):
+        cas = ComponentAttribute.objects.filter(
+            name='list_attribute').order_by('weight')
+        content = ComponentAttributeSerializer(cas).data
+
+        self.assertTrue(isinstance(content, list))
+        self.assertEqual(len(content), 2)
+
+        attr_1 = content[0]
+        attr_2 = content[1]
+
+        self.assertEqual(attr_1['child'], 'attribute-3')
+        self.assertEqual(attr_1['weight'], 100)
+
+        self.assertEqual(attr_2['child'], 'attribute-4')
+        self.assertEqual(attr_2['weight'], 200)

@@ -2,7 +2,7 @@ import json
 import logging
 
 from rest_framework import serializers
-from mirrors.models import Component, ComponentRevision
+from mirrors.models import Component, ComponentAttribute, ComponentRevision
 
 LOGGER = logging.getLogger(__name__)
 
@@ -81,6 +81,17 @@ class ComponentSerializer(serializers.ModelSerializer):
                 result[n] = ComponentSerializer(attr).data
 
         return result
+
+
+class ComponentAttributeSerializer(serializers.ModelSerializer):
+    parent = serializers.SlugRelatedField(slug_field='slug')
+    child = serializers.SlugRelatedField(slug_field='slug')
+    weight = serializers.IntegerField(required=False)
+    name = serializers.SlugField()
+
+    class Meta:
+        model = ComponentAttribute
+        fields = ('parent', 'child', 'weight', 'name')
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):
