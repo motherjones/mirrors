@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='ComponentLock',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('locked_by', models.CharField(max_length=255)),
+                ('locked_by', models.ForeignKey(to='auth.User', to_field='id')),
                 ('locked_at', models.DateTimeField(auto_now_add=True)),
                 ('lock_ends_at', models.DateTimeField()),
                 ('component', models.ForeignKey(to='mirrors.Component', to_field='id')),
