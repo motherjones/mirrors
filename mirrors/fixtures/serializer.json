@@ -1,187 +1,680 @@
 [
-    {
-        "pk": 17, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "article", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "application/x-markdown", 
-            "slug": "test-component-with-no-attributes", 
-            "metadata": "{\"description\": \"this is a test article\", \"title\": \"test component with no attributes\"}"
-        }
-    }, 
-    {
-        "pk": 18, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "test-component-with-one-named-attribute", 
-            "metadata": "{\"title\": \"test component with a single named attribute\", \"author\": \"author one\"}"
-        }
-    }, 
-    {
-        "pk": 19, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "attribute-1", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 1\"}"
-        }
-    }, 
-    {
-        "pk": 20, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "attribute-2", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 2\"}"
-        }
-    }, 
-    {
-        "pk": 21, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "attribute-3", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 3\"}"
-        }
-    }, 
-    {
-        "pk": 22, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "attribute-4", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 4\"}"
-        }
-    }, 
-    {
-        "pk": 23, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "test-component-with-list-attribute", 
-            "metadata": "{\"author\": \"author two\", \"title\": \"component with a list attribute\"}"
-        }
-    }, 
-    {
-        "pk": 24, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "schema name", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "none", 
-            "slug": "test-component-mixed-attributes", 
-            "metadata": "{\"author\": \"author two\", \"title\": \"component with both a list attribute and a regular attribute in it\"}"
-        }
-    }, 
-    {
-        "pk": 25, 
-        "model": "mirrors.component", 
-        "fields": {
-            "schema_name": "article", 
-            "created_at": "2014-02-06T00:03:40.660Z", 
-            "updated_at": "2014-02-06T00:03:40.660Z", 
-            "content_type": "application/json", 
-            "slug": "this-is-for-testing-on", 
-            "metadata": "{\"title\": \"thing thing thing\"}"
-        }
-    }, 
-    {
-        "pk": 13, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-03-25T20:32:36.426Z", 
-            "weight": -1, 
-            "name": "my_named_attribute", 
-            "parent": 18, 
-            "child": 19
-        }
-    }, 
-    {
-        "pk": 14, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-03-25T21:37:30.166Z", 
-            "weight": 100, 
-            "name": "my_list_attribute", 
-            "parent": 23, 
-            "child": 21
-        }
-    }, 
-    {
-        "pk": 15, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-03-25T21:38:01.582Z", 
-            "weight": 5, 
-            "name": "my_list_attribute", 
-            "parent": 23, 
-            "child": 22
-        }
-    }, 
-    {
-        "pk": 16, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-03-25T21:38:15.453Z", 
-            "weight": 9999, 
-            "name": "my_list_attribute", 
-            "parent": 23, 
-            "child": 19
-        }
-    }, 
-    {
-        "pk": 17, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-04-03T21:27:10.912Z", 
-            "weight": 50, 
-            "name": "my_list_attribute", 
-            "parent": 24, 
-            "child": 21
-        }
-    }, 
-    {
-        "pk": 18, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-04-03T21:27:14.720Z", 
-            "weight": 500, 
-            "name": "my_list_attribute", 
-            "parent": 24, 
-            "child": 19
-        }
-    }, 
-    {
-        "pk": 20, 
-        "model": "mirrors.componentattribute", 
-        "fields": {
-            "added_time": "2014-04-03T21:29:53.990Z", 
-            "weight": -1, 
-            "name": "my_attribute", 
-            "parent": 24, 
-            "child": 22
-        }
-    }
+{
+    "fields": {
+        "model": "logentry",
+        "name": "log entry",
+        "app_label": "admin"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 1
+},
+{
+    "fields": {
+        "model": "permission",
+        "name": "permission",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 2
+},
+{
+    "fields": {
+        "model": "group",
+        "name": "group",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 3
+},
+{
+    "fields": {
+        "model": "user",
+        "name": "user",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 4
+},
+{
+    "fields": {
+        "model": "contenttype",
+        "name": "content type",
+        "app_label": "contenttypes"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 5
+},
+{
+    "fields": {
+        "model": "session",
+        "name": "session",
+        "app_label": "sessions"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 6
+},
+{
+    "fields": {
+        "model": "migrationhistory",
+        "name": "migration history",
+        "app_label": "south"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 7
+},
+{
+    "fields": {
+        "model": "component",
+        "name": "component",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 8
+},
+{
+    "fields": {
+        "model": "componentattribute",
+        "name": "component attribute",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 9
+},
+{
+    "fields": {
+        "model": "componentrevision",
+        "name": "component revision",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 10
+},
+{
+    "fields": {
+        "model": "componentlock",
+        "name": "component lock",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 11
+},
+{
+    "fields": {
+        "schema_name": "article",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "test-component-with-no-attributes",
+        "content_type": "application/x-markdown",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 17
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "test-component-with-one-named-attribute",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 18
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "attribute-1",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 19
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "attribute-2",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 20
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "attribute-3",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 21
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "attribute-4",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 22
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "test-component-with-list-attribute",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 23
+},
+{
+    "fields": {
+        "schema_name": "schema name",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "test-component-mixed-attributes",
+        "content_type": "none",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 24
+},
+{
+    "fields": {
+        "schema_name": "article",
+        "created_at": "2014-02-06T00:03:40.660Z",
+        "slug": "this-is-for-testing-on",
+        "content_type": "application/json",
+        "updated_at": "2014-02-06T00:03:40.660Z"
+    },
+    "model": "mirrors.component",
+    "pk": 25
+},
+{
+    "fields": {
+        "added_time": "2014-03-25T20:32:36.426Z",
+        "weight": -1,
+        "name": "my_named_attribute",
+        "parent": 18,
+        "child": 19
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 13
+},
+{
+    "fields": {
+        "added_time": "2014-03-25T21:37:30.166Z",
+        "weight": 100,
+        "name": "my_list_attribute",
+        "parent": 23,
+        "child": 21
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 14
+},
+{
+    "fields": {
+        "added_time": "2014-03-25T21:38:01.582Z",
+        "weight": 5,
+        "name": "my_list_attribute",
+        "parent": 23,
+        "child": 22
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 15
+},
+{
+    "fields": {
+        "added_time": "2014-03-25T21:38:15.453Z",
+        "weight": 9999,
+        "name": "my_list_attribute",
+        "parent": 23,
+        "child": 19
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 16
+},
+{
+    "fields": {
+        "added_time": "2014-04-03T21:27:10.912Z",
+        "weight": 50,
+        "name": "my_list_attribute",
+        "parent": 24,
+        "child": 21
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 17
+},
+{
+    "fields": {
+        "added_time": "2014-04-03T21:27:14.720Z",
+        "weight": 500,
+        "name": "my_list_attribute",
+        "parent": 24,
+        "child": 19
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 18
+},
+{
+    "fields": {
+        "added_time": "2014-04-03T21:29:53.990Z",
+        "weight": -1,
+        "name": "my_attribute",
+        "parent": 24,
+        "child": 22
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 20
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 17,
+        "created_at": "2014-05-29T23:06:18.727Z",
+        "metadata": "{\"description\":\"this is a test article\",\"title\":\"test component with no attributes\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 6
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 17,
+        "created_at": "2014-05-29T23:07:42.071Z",
+        "metadata": "{\"title\":\"test component with a single named attribute\",\"author\":\"author one\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 7
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 20,
+        "created_at": "2014-05-29T23:11:14.845Z",
+        "metadata": "{\"author\":\"attribute author\",\"title\":\"attribute 2\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 8
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 21,
+        "created_at": "2014-05-29T23:11:36.821Z",
+        "metadata": "{\"author\":\"attribute author\",\"title\":\"attribute 3\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 9
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 22,
+        "created_at": "2014-05-29T23:11:50.325Z",
+        "metadata": "{\"author\":\"attribute author\",\"title\":\"attribute 4\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 10
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 23,
+        "created_at": "2014-05-29T23:14:59.157Z",
+        "metadata": "{\"author\":\"author two\",\"title\":\"component with a list attribute\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 11
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 24,
+        "created_at": "2014-05-29T23:15:22.781Z",
+        "metadata": "{\"author\":\"author two\",\"title\":\"component with both a list attribute and a regular attribute in it\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 12
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 25,
+        "created_at": "2014-05-29T23:15:40.662Z",
+        "metadata": "{\"title\":\"thing thing thing\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 13
+},
+{
+    "fields": {
+        "codename": "add_logentry",
+        "name": "Can add log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 1
+},
+{
+    "fields": {
+        "codename": "change_logentry",
+        "name": "Can change log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 2
+},
+{
+    "fields": {
+        "codename": "delete_logentry",
+        "name": "Can delete log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 3
+},
+{
+    "fields": {
+        "codename": "add_permission",
+        "name": "Can add permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 4
+},
+{
+    "fields": {
+        "codename": "change_permission",
+        "name": "Can change permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 5
+},
+{
+    "fields": {
+        "codename": "delete_permission",
+        "name": "Can delete permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 6
+},
+{
+    "fields": {
+        "codename": "add_group",
+        "name": "Can add group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 7
+},
+{
+    "fields": {
+        "codename": "change_group",
+        "name": "Can change group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 8
+},
+{
+    "fields": {
+        "codename": "delete_group",
+        "name": "Can delete group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 9
+},
+{
+    "fields": {
+        "codename": "add_user",
+        "name": "Can add user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 10
+},
+{
+    "fields": {
+        "codename": "change_user",
+        "name": "Can change user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 11
+},
+{
+    "fields": {
+        "codename": "delete_user",
+        "name": "Can delete user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 12
+},
+{
+    "fields": {
+        "codename": "add_contenttype",
+        "name": "Can add content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 13
+},
+{
+    "fields": {
+        "codename": "change_contenttype",
+        "name": "Can change content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 14
+},
+{
+    "fields": {
+        "codename": "delete_contenttype",
+        "name": "Can delete content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 15
+},
+{
+    "fields": {
+        "codename": "add_session",
+        "name": "Can add session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 16
+},
+{
+    "fields": {
+        "codename": "change_session",
+        "name": "Can change session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 17
+},
+{
+    "fields": {
+        "codename": "delete_session",
+        "name": "Can delete session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 18
+},
+{
+    "fields": {
+        "codename": "add_migrationhistory",
+        "name": "Can add migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 19
+},
+{
+    "fields": {
+        "codename": "change_migrationhistory",
+        "name": "Can change migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 20
+},
+{
+    "fields": {
+        "codename": "delete_migrationhistory",
+        "name": "Can delete migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 21
+},
+{
+    "fields": {
+        "codename": "add_component",
+        "name": "Can add component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 22
+},
+{
+    "fields": {
+        "codename": "change_component",
+        "name": "Can change component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 23
+},
+{
+    "fields": {
+        "codename": "delete_component",
+        "name": "Can delete component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 24
+},
+{
+    "fields": {
+        "codename": "add_componentattribute",
+        "name": "Can add component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 25
+},
+{
+    "fields": {
+        "codename": "change_componentattribute",
+        "name": "Can change component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 26
+},
+{
+    "fields": {
+        "codename": "delete_componentattribute",
+        "name": "Can delete component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 27
+},
+{
+    "fields": {
+        "codename": "add_componentrevision",
+        "name": "Can add component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 28
+},
+{
+    "fields": {
+        "codename": "change_componentrevision",
+        "name": "Can change component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 29
+},
+{
+    "fields": {
+        "codename": "delete_componentrevision",
+        "name": "Can delete component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 30
+},
+{
+    "fields": {
+        "codename": "add_componentlock",
+        "name": "Can add component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 31
+},
+{
+    "fields": {
+        "codename": "change_componentlock",
+        "name": "Can change component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 32
+},
+{
+    "fields": {
+        "codename": "delete_componentlock",
+        "name": "Can delete component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 33
+},
+{
+    "fields": {
+        "username": "jonf",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-04-21T19:04:40.750Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$12000$r7AmprhvehSq$K9yc9TKqcrYMzyLxyQB1GIDb3AhBivti0bNWmPxKb1M=",
+        "email": "jfriedman@motherjones.com",
+        "date_joined": "2014-04-21T19:04:40.750Z"
+    },
+    "model": "auth.user",
+    "pk": 1
+}
 ]
