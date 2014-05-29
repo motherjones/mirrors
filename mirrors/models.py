@@ -21,12 +21,18 @@ class Component(models.Model):
 
     """
     slug = models.SlugField(max_length=100, unique=True)
-    metadata = JSONField(default={})
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def metadata(self):
+        if self.revisions.count() > 0:
+            return self.revisions.order_by('version_number').first().metadata
+        else:
+            return {}
 
     @property
     def data_uri(self):
@@ -186,10 +192,12 @@ class ComponentRevision(models.Model):
                   in the future.
 
     """
-    data = models.BinaryField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
     component = models.ForeignKey('Component', related_name='revisions')
+    data = models.BinaryField()
+    metadata = JSONField(default={})
+
+    version_number = models.IntegerField(default=0, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.component.slug
