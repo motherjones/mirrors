@@ -364,6 +364,28 @@
 },
 {
     "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 18,
+        "created_at": "2014-05-29T23:15:40.662Z",
+        "metadata": "{\"author\":\"author one\",\"title\":\"test component with a single named attribute\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 14
+},
+{
+    "fields": {
+        "data": "",
+        "version_number": 1,
+        "component": 19,
+        "created_at": "2014-05-29T23:15:40.662Z",
+        "metadata": "{\"author\":\"attribute author\",\"title\":\"attribute 1\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 15
+},
+{
+    "fields": {
         "codename": "add_logentry",
         "name": "Can add log entry",
         "content_type": 1
