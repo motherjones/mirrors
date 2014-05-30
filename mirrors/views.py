@@ -11,7 +11,9 @@ from django.views.generic import View
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
 
-from mirrors.models import Component, ComponentAttribute
+from mirrors.models import Component
+from mirrors.models import ComponentRevision
+from mirrors.models import ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
 
@@ -29,7 +31,28 @@ class ComponentList(mixins.CreateModelMixin,
     serializer_class = ComponentSerializer
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        data = request.DATA
+        metadata = data.get('metadata', None)
+        if metadata:
+            del data['metadata']
+
+        serializer = ComponentSerializer(data=data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer.save()
+            component = Component.objects.get(slug=data['slug'])
+
+            if metadata:
+                rev = ComponentRevision(component=component,
+                                        metadata=metadata,
+                                        version_number=1)
+                rev.save()
+
+            serializer = ComponentSerializer(component)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ComponentDetail(mixins.RetrieveModelMixin,
@@ -56,7 +79,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
             for k in old_metadata.keys():
                 new_metadata[k] = patch_metadata.get(k, old_metadata[k])
 
-            data['metadata'] = new_metadata
+            component.new_revision(metadata=new_metadata)
 
         serializer = ComponentSerializer(component,
                                          data=dict(data),

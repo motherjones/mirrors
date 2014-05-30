@@ -30,7 +30,7 @@ class Component(models.Model):
     @property
     def metadata(self):
         if self.revisions.count() > 0:
-            return self.revisions.order_by('version_number').first().metadata
+            return self.revisions.order_by('-version_number').first().metadata
         else:
             return {}
 
@@ -48,11 +48,15 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-created_at').first()
 
-        if rev:
-            return rev.data.tobytes()
-        else:
+        # first get the most recent version of the data
+        try:
+            qs = self.revisions.filter(data__isnull=False)
+            rev = qs.order_by('-version_number')[0:1].get()
+
+            return rev.data
+        except ComponentRevision.DoesNotExist:
+            # no revisions exist so there's nothing to give them
             return None
 
     def new_revision(self, data=None, metadata=None):
@@ -74,17 +78,21 @@ class Component(models.Model):
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('created_at').first()
+        version_number = 1 + self.revisions.count()
 
-        if cur_rev is None and data is None:
-            raise ValueError(
-                'both metadata and data must be provided for 1st revision'
-            )
+        if version_number > 1:
+            cur_rev = self.revisions.all().order_by('version_number').first()
 
-        new_rev = ComponentRevision.objects.create(
-            data=data,
-            component=self
-        )
+            if data is None:
+                data = self.binary_data
+            if metadata is None:
+                metadata = cur_rev.metadata
+
+        new_rev = ComponentRevision(component=self,
+                                    data=data,
+                                    metadata=metadata,
+                                    version_number=version_number)
+        new_rev.save()
 
         return new_rev
 
@@ -193,7 +201,7 @@ class ComponentRevision(models.Model):
 
     """
     component = models.ForeignKey('Component', related_name='revisions')
-    data = models.BinaryField()
+    data = models.BinaryField(null=True)
     metadata = JSONField(default={})
 
     version_number = models.IntegerField(default=0, null=False, blank=False)

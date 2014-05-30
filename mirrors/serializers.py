@@ -47,7 +47,6 @@ class ComponentSerializer(serializers.ModelSerializer):
                                               instance.content_type)
             instance.schema_name = attrs.get('schema_name',
                                              instance.schema_name)
-            instance.metadata = attrs.get('metadata', instance.metadata)
 
             return instance
 

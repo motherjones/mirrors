@@ -72,8 +72,7 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['slug'], 'my-new-slug')
 
         self.assertIn('metadata', data)
-        data = json.loads(data['metadata'])
-        self.assertEqual(data['title'], 'Valid component')
+        self.assertEqual(data['metadata']['title'], 'Valid component')
 
     def test_post_new_component_used_name(self):
         url = reverse('component-list')
