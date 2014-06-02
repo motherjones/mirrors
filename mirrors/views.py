@@ -1,6 +1,9 @@
 import json
 import logging
 
+# TODO: these will have to be used at some point, but not yet
+# from django.core.files.storage import default_storage
+# from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.utils import IntegrityError
@@ -8,10 +11,13 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 
-from rest_framework.response import Response
 from rest_framework import generics, mixins, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-from mirrors.models import Component, ComponentAttribute
+from mirrors.models import Component
+from mirrors.models import ComponentRevision
+from mirrors.models import ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
 
@@ -29,7 +35,28 @@ class ComponentList(mixins.CreateModelMixin,
     serializer_class = ComponentSerializer
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        data = request.DATA
+        metadata = data.get('metadata', None)
+        if metadata:
+            del data['metadata']
+
+        serializer = ComponentSerializer(data=data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer.save()
+            component = Component.objects.get(slug=data['slug'])
+
+            if metadata:
+                rev = ComponentRevision(component=component,
+                                        metadata=metadata,
+                                        version_number=1)
+                rev.save()
+
+            serializer = ComponentSerializer(component)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ComponentDetail(mixins.RetrieveModelMixin,
@@ -56,7 +83,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
             for k in old_metadata.keys():
                 new_metadata[k] = patch_metadata.get(k, old_metadata[k])
 
-            data['metadata'] = new_metadata
+            component.new_revision(metadata=new_metadata)
 
         serializer = ComponentSerializer(component,
                                          data=dict(data),
@@ -232,8 +259,30 @@ class ComponentData(View):
         resp['Content-Disposition'] = "inline; filename={}".format(filename)
         return resp
 
+    def handle_uploaded_file(self, f):
+        data = b''
+        for chunk in f.chunks():
+            # destination.write(chunk)
+            data = data + chunk
+
+        LOGGER.info("received file {} ({} bytes)".format(f.name,
+                                                         f.size))
+
+        return data
+
     def post(self, request, *args, **kwargs):
-        raise NotImplementedError()
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+
+        if len(request.FILES) != 1:
+            error = {'File': ['Exactly one file per upload allowed']}
+            return HttpResponse(error, status=status.HTTP_400_BAD_REQUEST)
+
+        filedata = self.handle_uploaded_file(request.FILES['file'])
+        component.new_revision(data=filedata)
+
+        return HttpResponse({'received': len(filedata)},
+                            content_type='application/json',
+                            status=status.HTTP_201_CREATED)
 
 
 def component_schemas(request):

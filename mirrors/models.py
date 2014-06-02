@@ -21,12 +21,27 @@ class Component(models.Model):
 
     """
     slug = models.SlugField(max_length=100, unique=True)
-    metadata = JSONField(default={})
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def metadata(self):
+        qs = self.revisions.exclude(metadata__isnull=True,
+                                    metadata={})
+
+        if qs.count() > 0:
+            md = qs.order_by('-version_number').first()
+
+            if md.metadata == None:
+                md.metadata = {}
+                md.save()
+
+            return md.metadata
+        else:
+            return {}
 
     @property
     def data_uri(self):
@@ -42,11 +57,15 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-created_at').first()
 
-        if rev:
-            return rev.data.tobytes()
-        else:
+        # first get the most recent version of the data
+        try:
+            qs = self.revisions.filter(data__isnull=False)
+            rev = qs.order_by('-version_number')[0:1].get()
+
+            return rev.data
+        except ComponentRevision.DoesNotExist:
+            # no revisions exist so there's nothing to give them
             return None
 
     def new_revision(self, data=None, metadata=None):
@@ -68,17 +87,24 @@ class Component(models.Model):
         if not data and not metadata:
             raise ValueError('no new data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('created_at').first()
+        version_number = 1 + self.revisions.count()
 
-        if cur_rev is None and data is None:
-            raise ValueError(
-                'both metadata and data must be provided for 1st revision'
-            )
+        if version_number > 1:
+            cur_rev = self.revisions.all().order_by('version_number').first()
 
-        new_rev = ComponentRevision.objects.create(
-            data=data,
-            component=self
-        )
+            if data is None:
+                data = self.binary_data
+            if metadata is None:
+                if cur_rev.metadata is None:
+                    metadata = {}
+                else:
+                    metadata = cur_rev.metadata
+
+        new_rev = ComponentRevision(component=self,
+                                    data=data,
+                                    metadata=metadata,
+                                    version_number=version_number)
+        new_rev.save()
 
         return new_rev
 
@@ -186,10 +212,12 @@ class ComponentRevision(models.Model):
                   in the future.
 
     """
-    data = models.BinaryField()
+    component = models.ForeignKey('Component', related_name='revisions')
+    data = models.BinaryField(null=True)
+    metadata = JSONField(default={}, blank=False)
+
+    version_number = models.IntegerField(default=0, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    component = models.ForeignKey('Component', related_name='revisions')
-
     def __str__(self):
-        return self.component.slug
+        return "{} v{}".format(self.component.slug, self.version_number)

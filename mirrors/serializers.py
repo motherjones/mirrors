@@ -18,6 +18,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
+    metadata = serializers.CharField(read_only=True)
 
     class Meta:
         model = Component
@@ -46,7 +47,6 @@ class ComponentSerializer(serializers.ModelSerializer):
                                               instance.content_type)
             instance.schema_name = attrs.get('schema_name',
                                              instance.schema_name)
-            instance.metadata = attrs.get('metadata', instance.metadata)
 
             return instance
 
