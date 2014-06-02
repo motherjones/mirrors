@@ -28,6 +28,10 @@ class ComponentModelTests(TestCase):
         url = c.data_uri
         self.assertEqual(url, expected_url)
 
+    def test_get_unset_metadata(self):
+        c = Component.objects.get(slug='test-component-with-no-revisions')
+        self.assertEqual(c.metadata, {})
+
     def test_get_str(self):
         c = Component.objects.get(
             slug='test-component-with-multiple-revisions')
@@ -56,6 +60,12 @@ class ComponentRevisionModelTests(TestCase):
 
         with self.assertRaises(ValueError):
             cr = c.new_revision()
+
+    def test_new_revision_no_metadata(self):
+        c = Component.objects.get(slug='test-component-with-no-revisions')
+
+        c.new_revision(data=b'this is test data')
+        self.assertEqual(c.metadata, {})
 
     def test_revision_to_str(self):
         c = Component.objects.filter(

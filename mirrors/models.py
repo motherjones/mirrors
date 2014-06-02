@@ -29,8 +29,17 @@ class Component(models.Model):
 
     @property
     def metadata(self):
-        if self.revisions.count() > 0:
-            return self.revisions.order_by('-version_number').first().metadata
+        qs = self.revisions.exclude(metadata__isnull=True,
+                                    metadata={})
+
+        if qs.count() > 0:
+            md = qs.order_by('-version_number').first()
+
+            if md.metadata == None:
+                md.metadata = {}
+                md.save()
+
+            return md.metadata
         else:
             return {}
 
@@ -86,7 +95,10 @@ class Component(models.Model):
             if data is None:
                 data = self.binary_data
             if metadata is None:
-                metadata = cur_rev.metadata
+                if cur_rev.metadata is None:
+                    metadata = {}
+                else:
+                    metadata = cur_rev.metadata
 
         new_rev = ComponentRevision(component=self,
                                     data=data,
@@ -202,7 +214,7 @@ class ComponentRevision(models.Model):
     """
     component = models.ForeignKey('Component', related_name='revisions')
     data = models.BinaryField(null=True)
-    metadata = JSONField(default={})
+    metadata = JSONField(default={}, blank=False)
 
     version_number = models.IntegerField(default=0, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
