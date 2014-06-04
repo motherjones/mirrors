@@ -276,7 +276,7 @@ Viewing a Specific Revision
 """""""""""""""""""""""""""
 
 If you want to view a specific version of the :py:class:`Component`, just make
-a ``GET`` request to ``/component/<slug-id>/revisions/<revision-num>``. The
+a ``GET`` request to ``/component/<slug-id>/revision/<revision-num>``. The
 data returned will be the same as those laid out in
 :ref:`components-reading-section`.
 
