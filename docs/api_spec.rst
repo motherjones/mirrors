@@ -262,13 +262,12 @@ like this:
 
 .. code:: json
 
- [
-   {
-     version: 1,
-     change_date: '<timestamp of revision'>,
-     changes_type: '<type of change>'
-   }
- ]
+ {
+   'version': 1,
+   'change_date': '<timestamp of revision>',
+   'changes_type': '<type of change>',
+ }
+
 
 The type of change can be ``'metadata'`` or ``'data'`` currently. As more kinds
 of changes are tracked, this will probably expand.
