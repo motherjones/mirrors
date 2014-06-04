@@ -7,8 +7,11 @@ Components
 CRUD Operations
 ^^^^^^^^^^^^^^^
 
-Reading
-"""""""
+
+.. _components-reading-section:
+
+Reading Components
+""""""""""""""""""
 
 All information associated with a :py:class:`Component` object except for the
 actual binary data itself.
@@ -50,8 +53,8 @@ that slug.
    Both the url and the data_uri field start with the root 
 
 
-Creating
-""""""""
+Creating Components
+"""""""""""""""""""
 
 Creating new :py:class:`Component` objects is done through a ``POST`` request
 against ``/component``, desired slug. The minimum expected data should look
@@ -77,8 +80,8 @@ returned.
 If the slug provided is already in use, a *409* response will be returned.
 
 
-Updating
-""""""""
+Updating Components
+"""""""""""""""""""
 
 Changes to a :py:class:`Component` resource are made by submitting a ``PATCH``
 query to ``/component/<slug-id>``. Multiple fields can be changed at once.
@@ -97,8 +100,8 @@ After a successful update, a *200* HTTP response is returned along with the
 current state of the :py:class:`Component`.
 
 
-Deleting
-""""""""
+Deleting Components
+"""""""""""""""""""
 Deleting a :py:class:`Component` resource is achieved by submitting a
 ``DELETE`` query to ``/component/<slug-id>``.
 
@@ -144,66 +147,76 @@ by that name, a *404* response is returned.
 Creating
 """"""""
 
-An attribute is created by making a ``PUT`` request to
-``/component/<slug-id>/attribute/<attribute-name>`` with a JSON object of the
+An attribute is created by making a ``POST`` request to
+``/component/<slug-id>/attribute/`` with a JSON object of the
 following form:
 
 .. code:: json
 
  {
-   'component': '<component slug>',
-   'weight': 9999
+   'name': '<attribute name>',
+   'child': '<component slug>'
  }
 
-The value for the field ``component`` should be the slug of the Component you
-wish to associate with the name. ``weight`` is optional and will default to
-9999 in order to have the effect of appending the Component to the list.
+The value for the field ``child`` should be the slug of the Component
+you wish to associate with the name. ``weight`` is optional and will
+default to -1 in order to have the effect of appending the Component
+to the list.
 
-If you issue multiple ``PUT`` requests using the name attribute name, but
-different values for the weight, you will end up with an attribute that will
-return an order list of :py:class:`Component` objects.
-
-Successful requests will result in a *201* response along with the new resource
-in correct JSON form.
+Successful requests will result in a *201* response along with the new
+resource in correct JSON form.
 
 .. note:: Attribute names have the same constraints as slugs.
+
+When creating an attribute that contains a ordered list of components,
+make a ``POST`` request to ``/component/<slug-id>/attribute/``, but
+the JSON object that is sent should look like this:
+
+.. code:: json
+
+ {
+   'name': '<attribute name>',
+   'contents': [ 'component-slug-1', 'another-component', 'the-third-component-slug' ]
+ }
+
+A successful request will result in a *201* response and the complete
+contents of the attribute.
 
 Updating
 """"""""
 
-When you make a ``PUT`` to an attribute including a component that already
-exists such as in this example:
+When dealing with regular, non-list attributes, when you send a ``PUT`` or
+``PATCH`` request to an attribute using the URL
+``/component/<slug-id>/attribute/<attribute-name>`` you can make changes to the
+value of that :py:class:`ComponentAttribute`.
 
 .. code:: json
 
  {
-   'component': 'my-fancy-component',
-   'weight': 9999
+   'child': 'my-fancy-component'
+   'name': 'new-name'
  }
 
-followed by another ``PUT`` request...
+If you want to make a change to a list attribute, you will need to send a
+``PUT`` request to the URL ``/component/<slug-id>/attribute/<attribute-name>``
+that has the desired state of the entire list itself. Example:
 
 .. code:: json
 
- {
-   'component': 'my-fancy-component',
-   'weight': 150
- }
-
-The attribute will be updated in place. This will work whether the attribute
-has a single component in it or if it has a list.
-
-.. warning:: To entirely replace the contents of an attribute, you must delete
-             it first, and then re-create it.
+ [
+   'component-slug-name',
+   'new-slug',
+   'another-component'
+ ]
 
 Deleting
 """"""""
 
 To delete **all** of the contents of an attribute, make a ``DELETE`` request to
 ``/component/<slug-id>/attribute/<attribute-name>``. If you want to delete a
-specific ordered element in an attribute, make a ``DELETE`` request to
-``/component/<slug-id>/attribute/<attribute-name>/<index>``, where index is the
-location of the element in that list.
+specific ordered element in an attribute, make a ``PUT`` request to
+``/component/<slug-id>/attribute/<attribute-name>``, but remove the component
+from the list that gets included in the data.
 
 Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a *404* response.
@@ -213,6 +226,8 @@ A successful delete will return a *204* response.
 
 Data
 ^^^^
+
+.. _components-data-reading:
 
 Reading
 """""""
@@ -231,6 +246,47 @@ Both creating and updating the data for a :py:class:`Component` is done by the
 same method. Issuing a ``PUT`` query to ``/component/<slug-id>/data`` where the
 request body is the data itself.
 
+
+Revisions
+^^^^^^^^^
+
+When changes are made to a :py:class:`Component`, the old versions are kept and
+remain accessible for future use or reference.
+
+Viewing a Summary of Changes
+""""""""""""""""""""""""""""
+
+To view a summary of all of the revisions of a ``Component``, make a ``GET``
+request to ``/component/<slug-id>/revision`` and you'll receive a JSON object
+like this:
+
+.. code:: json
+
+ [
+   {
+     version: 1,
+     change_date: '<timestamp of revision'>,
+     changes_type: '<type of change>'
+   }
+ ]
+
+The type of change can be ``'metadata'`` or ``'data'`` currently. As more kinds
+of changes are tracked, this will probably expand.
+
+Viewing a Specific Revision
+"""""""""""""""""""""""""""
+
+If you want to view a specific version of the :py:class:`Component`, just make
+a ``GET`` request to ``/component/<slug-id>/revisions/<revision-num>``. The
+data returned will be the same as those laid out in
+:ref:`components-reading-section`.
+
+Getting Old Data
+""""""""""""""""
+
+Getting the binary data from an older revision is as simple as making a ``GET``
+request to ``/component/<slug-id>/revision/<revision-num>/data``. Just like with
+:ref:`components-data-reading`, you'll get the binary data served to you.
 
 Locking
 ^^^^^^^

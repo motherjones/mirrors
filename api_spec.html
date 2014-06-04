@@ -58,8 +58,8 @@
 <h2>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="crud-operations">
 <h3>CRUD Operations<a class="headerlink" href="#crud-operations" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="reading">
-<h4>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="reading-components">
+<span id="components-reading-section"></span><h4>Reading Components<a class="headerlink" href="#reading-components" title="Permalink to this headline">¶</a></h4>
 <p>All information associated with a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> object except for the
 actual binary data itself.</p>
 <p>It will return a JSON object with this format:</p>
@@ -94,8 +94,8 @@ the front end to display i</p>
 <p class="last">Both the url and the data_uri field start with the root</p>
 </div>
 </div>
-<div class="section" id="creating">
-<h4>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="creating-components">
+<h4>Creating Components<a class="headerlink" href="#creating-components" title="Permalink to this headline">¶</a></h4>
 <p>Creating new <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects is done through a <tt class="docutils literal"><span class="pre">POST</span></tt> request
 against <tt class="docutils literal"><span class="pre">/component</span></tt>, desired slug. The minimum expected data should look
 like this:</p>
@@ -115,8 +115,8 @@ as it would be appear if the user issued a <tt class="docutils literal"><span cl
 returned.</p>
 <p>If the slug provided is already in use, a <em>409</em> response will be returned.</p>
 </div>
-<div class="section" id="updating">
-<h4>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="updating-components">
+<h4>Updating Components<a class="headerlink" href="#updating-components" title="Permalink to this headline">¶</a></h4>
 <p>Changes to a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> resource are made by submitting a <tt class="docutils literal"><span class="pre">PATCH</span></tt>
 query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>. Multiple fields can be changed at once.
 Attributes can not be altered at this end point, though. The expected data
@@ -130,8 +130,8 @@ takes the form</p>
 <p>After a successful update, a <em>200</em> HTTP response is returned along with the
 current state of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>.</p>
 </div>
-<div class="section" id="deleting">
-<h4>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="deleting-components">
+<h4>Deleting Components<a class="headerlink" href="#deleting-components" title="Permalink to this headline">¶</a></h4>
 <p>Deleting a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> resource is achieved by submitting a
 <tt class="docutils literal"><span class="pre">DELETE</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;</span></tt>.</p>
 <p>After a successful delete, a <em>204</em> response is returned.</p>
@@ -159,68 +159,75 @@ returned value will come in <em>this</em> form:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="section" id="id1">
-<h4>Reading<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="reading">
+<h4>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h4>
 <p>Reading an attribute is as simple as making a <tt class="docutils literal"><span class="pre">GET</span></tt> request to
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>. If there is no attribute
 by that name, a <em>404</em> response is returned.</p>
 </div>
-<div class="section" id="id2">
-<h4>Creating<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> with a JSON object of the
+<div class="section" id="creating">
+<h4>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h4>
+<p>An attribute is created by making a <tt class="docutils literal"><span class="pre">POST</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/</span></tt> with a JSON object of the
 following form:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
+  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;child&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;component slug&gt;&#39;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The value for the field <tt class="docutils literal"><span class="pre">component</span></tt> should be the slug of the Component you
-wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will default to
-9999 in order to have the effect of appending the Component to the list.</p>
-<p>If you issue multiple <tt class="docutils literal"><span class="pre">PUT</span></tt> requests using the name attribute name, but
-different values for the weight, you will end up with an attribute that will
-return an order list of <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects.</p>
-<p>Successful requests will result in a <em>201</em> response along with the new resource
-in correct JSON form.</p>
+<p>The value for the field <tt class="docutils literal"><span class="pre">child</span></tt> should be the slug of the Component
+you wish to associate with the name. <tt class="docutils literal"><span class="pre">weight</span></tt> is optional and will
+default to -1 in order to have the effect of appending the Component
+to the list.</p>
+<p>Successful requests will result in a <em>201</em> response along with the new
+resource in correct JSON form.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Attribute names have the same constraints as slugs.</p>
 </div>
-</div>
-<div class="section" id="id3">
-<h4>Updating<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p>When you make a <tt class="docutils literal"><span class="pre">PUT</span></tt> to an attribute including a component that already
-exists such as in this example:</p>
+<p>When creating an attribute that contains a ordered list of components,
+make a <tt class="docutils literal"><span class="pre">POST</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/</span></tt>, but
+the JSON object that is sent should look like this:</p>
 <div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">9999</span>
+  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;attribute name&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;contents&#39;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&#39;component-slug-1&#39;</span><span class="p">,</span> <span class="s">&#39;another-component&#39;</span><span class="p">,</span> <span class="s">&#39;the-third-component-slug&#39;</span> <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>followed by another <tt class="docutils literal"><span class="pre">PUT</span></tt> request...</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;component&#39;</span><span class="p">:</span> <span class="s">&#39;my-fancy-component&#39;</span><span class="p">,</span>
-  <span class="s">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">150</span>
-<span class="p">}</span>
+<p>A successful request will result in a <em>201</em> response and the complete
+contents of the attribute.</p>
+</div>
+<div class="section" id="updating">
+<h4>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h4>
+<p>When dealing with regular, non-list attributes, when you send a <tt class="docutils literal"><span class="pre">PUT</span></tt> or
+<tt class="docutils literal"><span class="pre">PATCH</span></tt> request to an attribute using the URL
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> you can make changes to the
+value of that <tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt>.</p>
+<div class="code json highlight-python"><div class="highlight"><pre>{
+  &#39;child&#39;: &#39;my-fancy-component&#39;
+  &#39;name&#39;: &#39;new-name&#39;
+}
 </pre></div>
 </div>
-<p>The attribute will be updated in place. This will work whether the attribute
-has a single component in it or if it has a list.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">To entirely replace the contents of an attribute, you must delete
-it first, and then re-create it.</p>
+<p>If you want to make a change to a list attribute, you will need to send a
+<tt class="docutils literal"><span class="pre">PUT</span></tt> request to the URL <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>
+that has the desired state of the entire list itself. Example:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">[</span>
+  <span class="s">&#39;component-slug-name&#39;</span><span class="p">,</span>
+  <span class="s">&#39;new-slug&#39;</span><span class="p">,</span>
+  <span class="s">&#39;another-component&#39;</span>
+<span class="p">]</span>
+</pre></div>
 </div>
 </div>
-<div class="section" id="id4">
-<h4>Deleting<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="deleting">
+<h4>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h4>
 <p>To delete <strong>all</strong> of the contents of an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>. If you want to delete a
-specific ordered element in an attribute, make a <tt class="docutils literal"><span class="pre">DELETE</span></tt> request to
-<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;/&lt;index&gt;</span></tt>, where index is the
-location of the element in that list.</p>
+specific ordered element in an attribute, make a <tt class="docutils literal"><span class="pre">PUT</span></tt> request to
+<tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt>, but remove the component
+from the list that gets included in the data.</p>
 <p>Attempting to delete a nonexistent attribute or a nonexistent attribute element
 will result in a <em>404</em> response.</p>
 <p>A successful delete will return a <em>204</em> response.</p>
@@ -228,8 +235,8 @@ will result in a <em>404</em> response.</p>
 </div>
 <div class="section" id="data">
 <h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id5">
-<h4>Reading<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="components-data-reading">
+<span id="id1"></span><h4>Reading<a class="headerlink" href="#components-data-reading" title="Permalink to this headline">¶</a></h4>
 <p>To get at the data of a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, issue a <tt class="docutils literal"><span class="pre">GET</span></tt> query to
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/data</span></tt>. The data will be returned with a <em>200</em> response
 code, and the content type header set appropriately (eg <tt class="docutils literal"><span class="pre">'image/png'</span></tt> if the
@@ -241,6 +248,41 @@ data represented by the <tt class="xref py py-class docutils literal"><span clas
 <p>Both creating and updating the data for a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> is done by the
 same method. Issuing a <tt class="docutils literal"><span class="pre">PUT</span></tt> query to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/data</span></tt> where the
 request body is the data itself.</p>
+</div>
+</div>
+<div class="section" id="revisions">
+<h3>Revisions<a class="headerlink" href="#revisions" title="Permalink to this headline">¶</a></h3>
+<p>When changes are made to a <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, the old versions are kept and
+remain accessible for future use or reference.</p>
+<div class="section" id="viewing-a-summary-of-changes">
+<h4>Viewing a Summary of Changes<a class="headerlink" href="#viewing-a-summary-of-changes" title="Permalink to this headline">¶</a></h4>
+<p>To view a summary of all of the revisions of a <tt class="docutils literal"><span class="pre">Component</span></tt>, make a <tt class="docutils literal"><span class="pre">GET</span></tt>
+request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision</span></tt> and you&#8217;ll receive a JSON object
+like this:</p>
+<div class="code json highlight-python"><div class="highlight"><pre>[
+  {
+    version: 1,
+    change_date: &#39;&lt;timestamp of revision&#39;&gt;,
+    changes_type: &#39;&lt;type of change&gt;&#39;
+  }
+]
+</pre></div>
+</div>
+<p>The type of change can be <tt class="docutils literal"><span class="pre">'metadata'</span></tt> or <tt class="docutils literal"><span class="pre">'data'</span></tt> currently. As more kinds
+of changes are tracked, this will probably expand.</p>
+</div>
+<div class="section" id="viewing-a-specific-revision">
+<h4>Viewing a Specific Revision<a class="headerlink" href="#viewing-a-specific-revision" title="Permalink to this headline">¶</a></h4>
+<p>If you want to view a specific version of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, just make
+a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revisions/&lt;revision-num&gt;</span></tt>. The
+data returned will be the same as those laid out in
+<a class="reference internal" href="#components-reading-section"><em>Reading Components</em></a>.</p>
+</div>
+<div class="section" id="getting-old-data">
+<h4>Getting Old Data<a class="headerlink" href="#getting-old-data" title="Permalink to this headline">¶</a></h4>
+<p>Getting the binary data from an older revision is as simple as making a <tt class="docutils literal"><span class="pre">GET</span></tt>
+request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision/&lt;revision-num&gt;/data</span></tt>. Just like with
+<a class="reference internal" href="#components-data-reading"><em>Reading</em></a>, you&#8217;ll get the binary data served to you.</p>
 </div>
 </div>
 <div class="section" id="locking">
@@ -375,22 +417,28 @@ date you wish to check.</p>
 <li><a class="reference internal" href="#">Mirrors REST API spec</a><ul>
 <li><a class="reference internal" href="#components">Components</a><ul>
 <li><a class="reference internal" href="#crud-operations">CRUD Operations</a><ul>
+<li><a class="reference internal" href="#reading-components">Reading Components</a></li>
+<li><a class="reference internal" href="#creating-components">Creating Components</a></li>
+<li><a class="reference internal" href="#updating-components">Updating Components</a></li>
+<li><a class="reference internal" href="#deleting-components">Deleting Components</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
 <li><a class="reference internal" href="#reading">Reading</a></li>
 <li><a class="reference internal" href="#creating">Creating</a></li>
 <li><a class="reference internal" href="#updating">Updating</a></li>
 <li><a class="reference internal" href="#deleting">Deleting</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#attributes">Attributes</a><ul>
-<li><a class="reference internal" href="#id1">Reading</a></li>
-<li><a class="reference internal" href="#id2">Creating</a></li>
-<li><a class="reference internal" href="#id3">Updating</a></li>
-<li><a class="reference internal" href="#id4">Deleting</a></li>
+<li><a class="reference internal" href="#data">Data</a><ul>
+<li><a class="reference internal" href="#components-data-reading">Reading</a></li>
+<li><a class="reference internal" href="#creating-updating">Creating/Updating</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#data">Data</a><ul>
-<li><a class="reference internal" href="#id5">Reading</a></li>
-<li><a class="reference internal" href="#creating-updating">Creating/Updating</a></li>
+<li><a class="reference internal" href="#revisions">Revisions</a><ul>
+<li><a class="reference internal" href="#viewing-a-summary-of-changes">Viewing a Summary of Changes</a></li>
+<li><a class="reference internal" href="#viewing-a-specific-revision">Viewing a Specific Revision</a></li>
+<li><a class="reference internal" href="#getting-old-data">Getting Old Data</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#locking">Locking</a><ul>
