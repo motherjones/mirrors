@@ -259,13 +259,11 @@ remain accessible for future use or reference.</p>
 <p>To view a summary of all of the revisions of a <tt class="docutils literal"><span class="pre">Component</span></tt>, make a <tt class="docutils literal"><span class="pre">GET</span></tt>
 request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision</span></tt> and you&#8217;ll receive a JSON object
 like this:</p>
-<div class="code json highlight-python"><div class="highlight"><pre>[
-  {
-    version: 1,
-    change_date: &#39;&lt;timestamp of revision&#39;&gt;,
-    changes_type: &#39;&lt;type of change&gt;&#39;
-  }
-]
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s">&#39;change_date&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of revision&gt;&#39;</span><span class="p">,</span>
+  <span class="s">&#39;changes_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;type of change&gt;&#39;</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The type of change can be <tt class="docutils literal"><span class="pre">'metadata'</span></tt> or <tt class="docutils literal"><span class="pre">'data'</span></tt> currently. As more kinds
@@ -274,7 +272,7 @@ of changes are tracked, this will probably expand.</p>
 <div class="section" id="viewing-a-specific-revision">
 <h4>Viewing a Specific Revision<a class="headerlink" href="#viewing-a-specific-revision" title="Permalink to this headline">¶</a></h4>
 <p>If you want to view a specific version of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, just make
-a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revisions/&lt;revision-num&gt;</span></tt>. The
+a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision/&lt;revision-num&gt;</span></tt>. The
 data returned will be the same as those laid out in
 <a class="reference internal" href="#components-reading-section"><em>Reading Components</em></a>.</p>
 </div>
