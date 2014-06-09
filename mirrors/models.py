@@ -21,7 +21,6 @@ class Component(models.Model):
 
     """
     slug = models.SlugField(max_length=100, unique=True)
-    metadata = JSONField(default={})
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
@@ -37,14 +36,30 @@ class Component(models.Model):
         return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
+    def metadata(self):
+        """Get the current metadata from the most recent revision of the
+        component.
+
+        :rtype: dict
+        """
+        qs = self.revisions.filter(metadata__isnull=False).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.metadata
+        else:
+            return None
+
+    @property
     def binary_data(self):
         """Get the data from the most recent revision of the data.
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-created_at').first()
+        qs = self.revisions.filter(data__isnull=False).order_by('-version')
+        rev = qs.first()
 
-        if rev:
+        if rev is not None:
             return rev.data.tobytes()
         else:
             return None
@@ -66,18 +81,17 @@ class Component(models.Model):
 
         """
         if not data and not metadata:
-            raise ValueError('no new data was actually provided')
+            raise ValueError('no new revision data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('created_at').first()
-
-        if cur_rev is None and data is None:
-            raise ValueError(
-                'both metadata and data must be provided for 1st revision'
-            )
+        next_version = 1
+        cur_rev = self.revisions.all().order_by('-version').first()
+        if cur_rev is not None:
+            next_version = cur_rev.version + 1
 
         new_rev = ComponentRevision.objects.create(
             data=data,
-            component=self
+            component=self,
+            version=next_version
         )
 
         return new_rev
@@ -143,6 +157,9 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
+    def at_version(self, version_number):
+        raise NotImplementedError()
+
     def __str__(self):
         return self.slug
 
@@ -186,9 +203,11 @@ class ComponentRevision(models.Model):
                   in the future.
 
     """
-    data = models.BinaryField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    data = models.BinaryField(null=True, blank=True)
+    metadata = JSONField(default=None, null=True, blank=True)
+    version = models.IntegerField(null=False)
 
+    created_at = models.DateTimeField(auto_now_add=True)
     component = models.ForeignKey('Component', related_name='revisions')
 
     def __str__(self):

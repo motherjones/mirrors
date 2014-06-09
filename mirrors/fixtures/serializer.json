@@ -7,8 +7,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "application/x-markdown", 
-            "slug": "test-component-with-no-attributes", 
-            "metadata": "{\"description\": \"this is a test article\", \"title\": \"test component with no attributes\"}"
+            "slug": "test-component-with-no-attributes"
         }
     }, 
     {
@@ -19,8 +18,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-with-one-named-attribute", 
-            "metadata": "{\"title\": \"test component with a single named attribute\", \"author\": \"author one\"}"
+            "slug": "test-component-with-one-named-attribute"
         }
     }, 
     {
@@ -31,8 +29,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-1", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 1\"}"
+            "slug": "attribute-1"
         }
     }, 
     {
@@ -43,8 +40,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-2", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 2\"}"
+            "slug": "attribute-2"
         }
     }, 
     {
@@ -55,8 +51,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-3", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 3\"}"
+            "slug": "attribute-3"
         }
     }, 
     {
@@ -67,8 +62,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-4", 
-            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 4\"}"
+            "slug": "attribute-4"
         }
     }, 
     {
@@ -79,8 +73,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-with-list-attribute", 
-            "metadata": "{\"author\": \"author two\", \"title\": \"component with a list attribute\"}"
+            "slug": "test-component-with-list-attribute"
         }
     }, 
     {
@@ -91,8 +84,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-mixed-attributes", 
-            "metadata": "{\"author\": \"author two\", \"title\": \"component with both a list attribute and a regular attribute in it\"}"
+            "slug": "test-component-mixed-attributes"
         }
     }, 
     {
@@ -103,8 +95,7 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "application/json", 
-            "slug": "this-is-for-testing-on", 
-            "metadata": "{\"title\": \"thing thing thing\"}"
+            "slug": "this-is-for-testing-on"
         }
     }, 
     {
@@ -183,5 +174,104 @@
             "parent": 24, 
             "child": 22
         }
+    },
+    {
+        "fields": {
+            "component": 17,
+            "created_at": "2014-06-09T20:08:20.373Z",
+            "version": 1,
+            "data": null,
+            "metadata": "{\"description\": \"this is a test article\", \"title\": \"test component with no attributes\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "component": 18,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"title\": \"test component with a single named attribute\", \"author\": \"author one\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "component": 19,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 1\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "component": 20,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 2\"}"    
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "component": 21,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 3\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "component": 22,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"attribute author\", \"title\": \"attribute 4\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "component": 23,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"author two\", \"title\": \"component with a list attribute\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "component": 24,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"author\": \"author two\", \"title\": \"component with both a list attribute and a regular attribute in it\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "component": 25,
+            "created_at": "2014-02-06T00:03:40.660Z", 
+            "version": 1,
+            "data": null,
+            "metadata": "{\"title\": \"thing thing thing\"}"
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 10
     }
 ]

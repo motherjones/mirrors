@@ -18,6 +18,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
+    metadata = serializers.SerializerMethodField('_get_metadata')
 
     class Meta:
         model = Component
@@ -68,6 +69,9 @@ class ComponentSerializer(serializers.ModelSerializer):
         else:
             return val
 
+    def _get_metadata(self, obj):
+        return obj.metadata
+
     def _get_attributes(self, obj):
         result = {}
         attribute_names = [o.name for o in obj.attributes.distinct('name')]
@@ -95,12 +99,21 @@ class ComponentAttributeSerializer(serializers.ModelSerializer):
 
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):
-    """Used for turning a JSON blob into a
-     :class:`mirrors.models.ComponentRevision` and back again.
-
-    """
-    component = serializers.RelatedField(many=False)
+    version = serializers.IntegerField(read_only=True)
+    change_date = serializers.DateTimeField(read_only=True, source='created_at')
+    change_types = serializers.SerializerMethodField('_get_change_types')
 
     class Meta:
         model = ComponentRevision
-        fields = ('revision_date', 'revision_number', 'component')
+        fields = ('version', 'change_date', 'change_types')
+
+    def _get_change_types(self, obj):
+        changes = []
+
+        if obj.data is not None:
+            changes.append('data')
+
+        if obj.metadata is not None:
+            changes.append('metadata')
+
+        return changes

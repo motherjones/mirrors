@@ -4,9 +4,12 @@ from django.core.urlresolvers import reverse
 
 from rest_framework.test import APITestCase
 
-from mirrors.models import Component, ComponentAttribute
+from mirrors.models import Component
+from mirrors.models import ComponentAttribute
+from mirrors.models import ComponentRevision
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
+from mirrors.serializers import ComponentRevisionSerializer
 
 
 class ComponentResourceTests(APITestCase):
@@ -130,3 +133,40 @@ class ComponentAttributeResourceTests(APITestCase):
 
         self.assertEqual(attr_2['child'], 'attribute-4')
         self.assertEqual(attr_2['weight'], 200)
+
+
+class ComponentRevisionResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentrevisions.json']
+
+    def test_serialize_revision_with_multiple_type_changes(self):
+        c_rev = ComponentRevision.objects.get(pk=4)
+        rev = ComponentRevisionSerializer(c_rev).data
+
+        self.assertTrue(isinstance(rev, dict))
+        self.assertEqual(rev['version'], 1)
+        self.assertEqual(str(rev['change_date']),
+                         '2014-06-09 19:50:40.797000+00:00')
+
+        self.assertTrue(isinstance(rev['change_types'], list))
+        self.assertEqual(len(rev['change_types']), 2)
+        self.assertIn('data', rev['change_types'])
+        self.assertIn('metadata', rev['change_types'])
+
+    def test_serialize_revision_summary(self):
+        rev_1 = ComponentRevisionSerializer(
+            ComponentRevision.objects.get(pk=3)
+        ).data
+        rev_2 = ComponentRevisionSerializer(
+            ComponentRevision.objects.get(pk=5)
+        ).data
+
+        self.assertTrue(isinstance(rev_1, dict))
+        self.assertEqual(rev_1['version'], 1)
+        self.assertEqual(str(rev_1['change_date']),
+                         '2014-06-09 19:44:12.459000+00:00')
+        self.assertEqual(rev_1['change_types'], ['metadata'])
+
+        self.assertEqual(rev_2['version'], 2)
+        self.assertEqual(str(rev_2['change_date']),
+                         '2014-06-09 19:56:42.455000+00:00')
+        self.assertEqual(rev_2['change_types'], ['data'])

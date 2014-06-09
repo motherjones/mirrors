@@ -262,19 +262,19 @@ like this:
 
 .. code:: json
 
- {
-   'version': 1,
-   'change_date': '<timestamp of revision>',
-   'changes_type': '<type of change>',
- }
-
-
-The type of change can be ``'metadata'`` or ``'data'`` currently. As more kinds
-of changes are tracked, this will probably expand.
-
-Viewing a Specific Revision
-"""""""""""""""""""""""""""
-
+ [
+   {
+     'version': 1,
+     'change_date': '<timestamp of revision>',
+     'change_types': ['<type of change>'],
+   },
+   {
+     'version': 2,
+     'change_date': '<timestamp of revision>',
+     'change_types': ['<type of change>'],
+   }
+ ]   
+  
 If you want to view a specific version of the :py:class:`Component`, just make
 a ``GET`` request to ``/component/<slug-id>/revision/<revision-num>``. The
 data returned will be the same as those laid out in
