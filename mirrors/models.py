@@ -102,6 +102,7 @@ class Component(models.Model):
             component=self,
             version=next_version
         )
+		new_rev.save()
 
         return new_rev
 
@@ -261,7 +262,8 @@ class ComponentRevision(models.Model):
     version = models.IntegerField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
     component = models.ForeignKey('Component', related_name='revisions')
 
     def __str__(self):
-        return self.component.slug
+        return "{} v{}".format(self.component.slug, self.version_number)

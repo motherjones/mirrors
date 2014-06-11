@@ -92,6 +92,12 @@ class ComponentRevisionModelTests(TestCase):
         self.assertEqual(cr.component, c)
         self.assertEqual(cr.data, b'this is a new revision')
 
+    def test_new_revision_first_only_metadata(self):
+        c = Component.objects.get(slug='test-component-with-no-revisions')
+
+        with self.assertRaises(ValueError):
+            c.new_revision(metadata={'title': 'this thing should fail!'})
+
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
 
@@ -105,7 +111,7 @@ class ComponentRevisionModelTests(TestCase):
         cr = c.revisions.first()
 
         self.assertEqual(cr.__str__(),
-                         'test-component-with-multiple-revisions')
+                         'test-component-with-multiple-revisions v1')
 
 
 class ComponentAttributeModelTests(TestCase):

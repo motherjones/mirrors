@@ -1,11 +1,15 @@
 import hashlib
 import json
+import os
 
 from django.core.urlresolvers import reverse
+from django.test import TestCase, Client, RequestFactory
 
 from rest_framework import status
-from django.test import TestCase, Client
 from rest_framework.test import APITestCase
+
+from mirrors.models import Component, ComponentRevision
+from mirrors.views import ComponentData as ComponentDataView
 
 
 class ComponentViewTest(APITestCase):
@@ -72,9 +76,7 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(data['slug'], 'my-new-slug')
 
         self.assertIn('metadata', data)
-
-        data = data['metadata']
-        self.assertEqual(data['title'], 'Valid component')
+        self.assertEqual(data['metadata']['title'], 'Valid component')
 
     def test_post_new_component_used_name(self):
         url = reverse('component-list')
@@ -129,7 +131,6 @@ class ComponentViewTest(APITestCase):
         })
 
         res = self.client.patch(url, {'content_type': 'text/plain'})
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content.decode('UTF-8'))
 
@@ -493,6 +494,34 @@ class ComponentDataViewTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.get('Content-Disposition'),
                          'inline; filename=component-with-svg-data')
+
+    def test_post_data(self):
+        c = Client()
+
+        url = reverse('component-data', kwargs={
+            'slug': 'component-with-no-data'
+        })
+        file_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                 '..',
+                                                 'fixtures',
+                                                 'binary-data',
+                                                 'fake_article.md'))
+
+        component = Component.objects.get(slug='component-with-no-data')
+
+        with open(file_path, 'rb') as upload_file:
+            # req = rf.post(url, data={'file': upload_file})
+            # res = ComponentDataView.post(req)
+            res = c.post(url,
+                         data={'file': upload_file})
+
+            self.assertTrue(res.status_code, status.HTTP_204_NO_CONTENT)
+            self.assertEqual(component.revisions.count(), 1)
+
+            rev = component.revisions.first()
+            md5_hash = hashlib.md5()
+            md5_hash.update(rev.data)
+            self.assertEqual(md5_hash.hexdigest(), self.md_hash)
 
 
 class ComponentRevisionViewTest(APITestCase):
