@@ -102,7 +102,7 @@ class Component(models.Model):
             component=self,
             version=next_version
         )
-		new_rev.save()
+        new_rev.save()
 
         return new_rev
 
