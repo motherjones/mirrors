@@ -24,6 +24,9 @@ class WritableSerializerMethodField(serializers.SerializerMethodField):
 
     def field_from_native(self, data, files, field_name, into):
         return getattr(self.parent, self.set_method_name)(data,
+                                                          files,
+                                                          field_name,
+                                                          into)
 
 
 class ComponentSerializer(serializers.ModelSerializer):

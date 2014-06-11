@@ -266,4 +266,4 @@ class ComponentRevision(models.Model):
     component = models.ForeignKey('Component', related_name='revisions')
 
     def __str__(self):
-        return "{} v{}".format(self.component.slug, self.version_number)
+        return "{} v{}".format(self.component.slug, self.version)
