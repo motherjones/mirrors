@@ -185,8 +185,8 @@ contents of the attribute.
 Updating
 """"""""
 
-When dealing with regular, non-list attributes, when you send a ``PUT`` or
-``PATCH`` request to an attribute using the URL
+When dealing with regular, non-list attributes, when you send a ``PUT`` request
+to an attribute using the URL
 ``/component/<slug-id>/attribute/<attribute-name>`` you can make changes to the
 value of that :py:class:`ComponentAttribute`.
 

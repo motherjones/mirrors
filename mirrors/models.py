@@ -42,13 +42,7 @@ class Component(models.Model):
 
         :rtype: dict
         """
-        qs = self.revisions.filter(metadata__isnull=False).order_by('-version')
-        rev = qs.first()
-
-        if rev is not None:
-            return rev.metadata
-        else:
-            return None
+        return self.metadata_at_version(self.max_version)
 
     @property
     def binary_data(self):
@@ -56,13 +50,27 @@ class Component(models.Model):
 
         :rtype: bytes
         """
-        qs = self.revisions.filter(data__isnull=False).order_by('-version')
-        rev = qs.first()
-
-        if rev is not None:
-            return rev.data.tobytes()
-        else:
+        try:
+            return self.binary_data_at_version(self.max_version)
+        except IndexError:
             return None
+
+    @property
+    def max_version(self):
+        """Get the version number for the most recent revision.
+
+        :rtype: int
+
+        .. note :: If there are no revisions, max_version will be 0
+        """
+        version = self.revisions.all().aggregate(Max('version'))
+        if version['version__max'] == None:
+            return 0
+        else:
+            return version['version__max']
+
+    def _version_in_range(self, version):
+        return (version > 0) and (version <= self.max_version)
 
     def new_revision(self, data=None, metadata=None):
         """Create a new revision for this ``Component`` object. If the data is not in
@@ -77,7 +85,7 @@ class Component(models.Model):
         :type metadata: dict
 
         :rtype: :class:`ComponentRevision`
-        :raises: `ValueError`
+        :raises: :class:`ValueError`
 
         """
         if not data and not metadata:
@@ -90,6 +98,7 @@ class Component(models.Model):
 
         new_rev = ComponentRevision.objects.create(
             data=data,
+            metadata=metadata,
             component=self,
             version=next_version
         )
@@ -157,8 +166,53 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
-    def at_version(self, version_number):
-        raise NotImplementedError()
+    def metadata_at_version(self, version):
+        """Get the metadata for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the metadata for.
+        :type version: int
+
+        :rtype: dict
+        :raises: :class:`IndexError`
+        """
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(metadata__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.metadata
+        else:
+            return None
+        
+
+    def binary_data_at_version(self, version):
+        """Get the binary data for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the binary data for.
+        :type version: int
+
+        :rtype: bytes
+        :raises: :class:`IndexError`
+        """
+
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(data__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.data
+        else:
+            return None
 
     def __str__(self):
         return self.slug

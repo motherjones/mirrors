@@ -34,6 +34,47 @@ class ComponentModelTests(TestCase):
         self.assertEqual(c.__str__(),
                          'test-component-with-multiple-revisions')
 
+    def test_get_metadata(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        expected_metadata = {
+            "title": "component data that has multiple revisions",
+            "author": "bobby tables"
+        }
+        self.assertEqual(c.metadata, expected_metadata)
+
+    def test_get_missing_metadata(self):
+        c = Component.objects.get(
+            slug='test-component-with-no-metadata'
+        )
+
+        self.assertIs(c.metadata, None)
+
+    def test_get_metadata_missing_version(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        with self.assertRaises(IndexError):
+            c.metadata_at_version(999)
+
+    def test_get_binary_data_missing_version(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        with self.assertRaises(IndexError):
+            c.binary_data_at_version(999)
+
+    def test_get_binary_data_no_data(self):
+        c = Component.objects.get(
+            slug='test-component-with-no-data'
+        )
+
+        self.assertIs(c.binary_data_at_version(1), None)
+
 
 class ComponentRevisionModelTests(TestCase):
     fixtures = ['components.json']
@@ -51,17 +92,11 @@ class ComponentRevisionModelTests(TestCase):
         self.assertEqual(cr.component, c)
         self.assertEqual(cr.data, b'this is a new revision')
 
-    def test_new_revision_first_only_metadata(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-
-        with self.assertRaises(ValueError):
-            c.new_revision(metadata={'title': 'this thing should fail!'})
-
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
 
         with self.assertRaises(ValueError):
-            cr = c.new_revision()
+            c.new_revision()
 
     def test_revision_to_str(self):
         c = Component.objects.filter(

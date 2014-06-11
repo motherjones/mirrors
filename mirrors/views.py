@@ -14,7 +14,7 @@ from rest_framework import generics, mixins, status
 from mirrors.models import Component, ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
-
+from mirrors.serializers import ComponentRevisionSerializer
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -44,35 +44,7 @@ class ComponentDetail(mixins.RetrieveModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
-        data = request.DATA
-        component = get_object_or_404(Component, slug=kwargs['slug'])
-        serializer = ComponentSerializer(component)
-
-        if 'metadata' in data:
-            new_metadata = {}
-            patch_metadata = data['metadata']
-            old_metadata = serializer.data['metadata']
-
-            for k in old_metadata.keys():
-                new_metadata[k] = patch_metadata.get(k, old_metadata[k])
-
-            data['metadata'] = new_metadata
-
-        serializer = ComponentSerializer(component,
-                                         data=dict(data),
-                                         partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            LOGGER.debug("saved changes to {}: {}".format(kwargs['slug'],
-                                                          data))
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            LOGGER.debug(
-                "error saving changes to {}: {}".format(kwargs['slug'],
-                                                        serializer.errors))
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        return self.update(request, *args, partial=True, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
@@ -185,30 +157,60 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        request.DATA['parent'] = kwargs['slug']
-        request.DATA['name'] = kwargs['name']
-
-        if queryset.count() != 1:
-            raise Http404
-
-        serializer = ComponentAttributeSerializer(data=request.DATA,
-                                                  partial=True)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
     def delete(self, request, *args, **kwargs):
         if self.get_queryset().count() == 0:
             raise Http404
 
         self.get_queryset().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ComponentRevisionList(mixins.RetrieveModelMixin,
+                            generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        qs = component.revisions.order_by('version')
+
+        if qs.count() == 0:
+            raise Http404
+
+        serializer = ComponentRevisionSerializer(qs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ComponentRevisionDetail(mixins.RetrieveModelMixin,
+                              generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        version = int(kwargs['version'])
+
+        if not component._version_in_range(version):
+            raise Http404()
+
+        serializer = ComponentSerializer(component, version=version)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ComponentRevisionData(mixins.RetrieveModelMixin,
+                            generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        version = int(kwargs['version'])
+        data = component.binary_data_at_version(version)
+
+        if data is None:
+            raise Http404
+
+        if 'filename' in component.metadata:
+            filename = component.metadata['filename']
+        else:
+            filename = component.slug
+
+        resp = HttpResponse(data,
+                            content_type=component.content_type,
+                            status=status.HTTP_200_OK)
+        resp['Content-Disposition'] = "inline; filename={}".format(filename)
+        return resp
 
 
 class ComponentData(View):
@@ -221,8 +223,10 @@ class ComponentData(View):
 
         # if we have a real filename stored in metadata, we should provide that
         # to the browser as the filename. if not, just give it the slug instead
-        if 'filename' in component.metadata:
-            filename = component.metadata['filename']
+        metadata = component.metadata
+
+        if metadata is not None and 'filename' in metadata:
+            filename = metadata['filename']
         else:
             filename = component.slug
 
