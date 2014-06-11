@@ -64,7 +64,7 @@ class Component(models.Model):
         .. note :: If there are no revisions, max_version will be 0
         """
         version = self.revisions.all().aggregate(Max('version'))
-        if version['version__max'] == None:
+        if version['version__max'] is None:
             return 0
         else:
             return version['version__max']
@@ -188,7 +188,6 @@ class Component(models.Model):
             return rev.metadata
         else:
             return None
-        
 
     def binary_data_at_version(self, version):
         """Get the binary data for the :class:`Component` as it was at the

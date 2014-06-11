@@ -8,8 +8,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class WritableSerializerMethodField(serializers.SerializerMethodField):
-    """
-    A field that gets and sets its value by calling a method on the serializer it's attached to.
+    """A field that gets and sets its value by calling a method on the serializer
+    it's attached to.
     """
 
     def __init__(self, get_method_name, set_method_name, *args, **kwargs):
@@ -164,7 +164,8 @@ class ComponentAttributeSerializer(serializers.ModelSerializer):
 
 class ComponentRevisionSerializer(serializers.ModelSerializer):
     version = serializers.IntegerField(read_only=True)
-    change_date = serializers.DateTimeField(read_only=True, source='created_at')
+    change_date = serializers.DateTimeField(read_only=True,
+                                            source='created_at')
     change_types = serializers.SerializerMethodField('_get_change_types')
 
     class Meta:

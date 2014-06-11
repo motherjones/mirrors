@@ -2,7 +2,6 @@ from mirrors import components
 from django.test import TestCase
 
 
-
 class ComponentsTestCase(TestCase):
     def test_attribute_to_dict(self):
         alpha = ['a', 'b', 'c']
