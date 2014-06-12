@@ -28,22 +28,6 @@ class Component(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
-    def metadata(self):
-        qs = self.revisions.exclude(metadata__isnull=True,
-                                    metadata={})
-
-        if qs.count() > 0:
-            md = qs.order_by('-version_number').first()
-
-            if md.metadata == None:
-                md.metadata = {}
-                md.save()
-
-            return md.metadata
-        else:
-            return {}
-
-    @property
     def data_uri(self):
         """Get the URI for this ``Component``.
 
@@ -52,21 +36,41 @@ class Component(models.Model):
         return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
+    def metadata(self):
+        """Get the current metadata from the most recent revision of the
+        component.
+
+        :rtype: dict
+        """
+        return self.metadata_at_version(self.max_version)
+
+    @property
     def binary_data(self):
         """Get the data from the most recent revision of the data.
 
         :rtype: bytes
         """
-
-        # first get the most recent version of the data
         try:
-            qs = self.revisions.filter(data__isnull=False)
-            rev = qs.order_by('-version_number')[0:1].get()
-
-            return rev.data
-        except ComponentRevision.DoesNotExist:
-            # no revisions exist so there's nothing to give them
+            return self.binary_data_at_version(self.max_version)
+        except IndexError:
             return None
+
+    @property
+    def max_version(self):
+        """Get the version number for the most recent revision.
+
+        :rtype: int
+
+        .. note :: If there are no revisions, max_version will be 0
+        """
+        version = self.revisions.all().aggregate(Max('version'))
+        if version['version__max'] is None:
+            return 0
+        else:
+            return version['version__max']
+
+    def _version_in_range(self, version):
+        return (version > 0) and (version <= self.max_version)
 
     def new_revision(self, data=None, metadata=None):
         """Create a new revision for this ``Component`` object. If the data is not in
@@ -81,29 +85,23 @@ class Component(models.Model):
         :type metadata: dict
 
         :rtype: :class:`ComponentRevision`
-        :raises: `ValueError`
+        :raises: :class:`ValueError`
 
         """
         if not data and not metadata:
-            raise ValueError('no new data was actually provided')
+            raise ValueError('no new revision data was actually provided')
 
-        version_number = 1 + self.revisions.count()
+        next_version = 1
+        cur_rev = self.revisions.all().order_by('-version').first()
+        if cur_rev is not None:
+            next_version = cur_rev.version + 1
 
-        if version_number > 1:
-            cur_rev = self.revisions.all().order_by('version_number').first()
-
-            if data is None:
-                data = self.binary_data
-            if metadata is None:
-                if cur_rev.metadata is None:
-                    metadata = {}
-                else:
-                    metadata = cur_rev.metadata
-
-        new_rev = ComponentRevision(component=self,
-                                    data=data,
-                                    metadata=metadata,
-                                    version_number=version_number)
+        new_rev = ComponentRevision.objects.create(
+            data=data,
+            metadata=metadata,
+            component=self,
+            version=next_version
+        )
         new_rev.save()
 
         return new_rev
@@ -169,6 +167,53 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
+    def metadata_at_version(self, version):
+        """Get the metadata for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the metadata for.
+        :type version: int
+
+        :rtype: dict
+        :raises: :class:`IndexError`
+        """
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(metadata__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.metadata
+        else:
+            return None
+
+    def binary_data_at_version(self, version):
+        """Get the binary data for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the binary data for.
+        :type version: int
+
+        :rtype: bytes
+        :raises: :class:`IndexError`
+        """
+
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(data__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.data
+        else:
+            return None
+
     def __str__(self):
         return self.slug
 
@@ -212,12 +257,13 @@ class ComponentRevision(models.Model):
                   in the future.
 
     """
-    component = models.ForeignKey('Component', related_name='revisions')
-    data = models.BinaryField(null=True)
-    metadata = JSONField(default={}, blank=False)
+    data = models.BinaryField(null=True, blank=True)
+    metadata = JSONField(default=None, null=True, blank=True)
+    version = models.IntegerField(null=False)
 
-    version_number = models.IntegerField(default=0, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    component = models.ForeignKey('Component', related_name='revisions')
+
     def __str__(self):
-        return "{} v{}".format(self.component.slug, self.version_number)
+        return "{} v{}".format(self.component.slug, self.version)

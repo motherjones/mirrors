@@ -28,15 +28,52 @@ class ComponentModelTests(TestCase):
         url = c.data_uri
         self.assertEqual(url, expected_url)
 
-    def test_get_unset_metadata(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-        self.assertEqual(c.metadata, {})
-
     def test_get_str(self):
         c = Component.objects.get(
             slug='test-component-with-multiple-revisions')
         self.assertEqual(c.__str__(),
                          'test-component-with-multiple-revisions')
+
+    def test_get_metadata(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        expected_metadata = {
+            "title": "component data that has multiple revisions",
+            "author": "bobby tables"
+        }
+        self.assertEqual(c.metadata, expected_metadata)
+
+    def test_get_missing_metadata(self):
+        c = Component.objects.get(
+            slug='test-component-with-no-metadata'
+        )
+
+        self.assertIs(c.metadata, None)
+
+    def test_get_metadata_missing_version(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        with self.assertRaises(IndexError):
+            c.metadata_at_version(999)
+
+    def test_get_binary_data_missing_version(self):
+        c = Component.objects.get(
+            slug='test-component-with-multiple-revisions'
+        )
+
+        with self.assertRaises(IndexError):
+            c.binary_data_at_version(999)
+
+    def test_get_binary_data_no_data(self):
+        c = Component.objects.get(
+            slug='test-component-with-no-data'
+        )
+
+        self.assertIs(c.binary_data_at_version(1), None)
 
 
 class ComponentRevisionModelTests(TestCase):
@@ -53,19 +90,13 @@ class ComponentRevisionModelTests(TestCase):
 
         self.assertEqual(c.revisions.count(), 1)
         self.assertEqual(cr.component, c)
-        self.assertEqual(bytes(cr.data), b'this is a new revision')
+        self.assertEqual(cr.data, b'this is a new revision')
 
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
 
         with self.assertRaises(ValueError):
-            cr = c.new_revision()
-
-    def test_new_revision_no_metadata(self):
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-
-        c.new_revision(data=b'this is test data')
-        self.assertEqual(c.metadata, {})
+            c.new_revision()
 
     def test_revision_to_str(self):
         c = Component.objects.filter(

@@ -1,288 +1,189 @@
 [
 {
+    "pk": 1, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "logentry",
-        "name": "log entry",
-        "app_label": "admin"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 1
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:32:53.029Z", 
+        "updated_at": "2014-04-21T19:32:53.030Z", 
+        "schema_name": "none", 
+        "slug": "component-with-regular-attribute"
+    }
 },
 {
+    "pk": 2, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "permission",
-        "name": "permission",
-        "app_label": "auth"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 2
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.060Z", 
+        "updated_at": "2014-04-21T19:34:52.060Z", 
+        "schema_name": "none", 
+        "slug": "attribute-1"
+    }
 },
 {
+    "pk": 3, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "group",
-        "name": "group",
-        "app_label": "auth"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 3
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.065Z", 
+        "updated_at": "2014-04-21T19:34:52.065Z", 
+        "schema_name": "none", 
+        "slug": "attribute-2"
+    }
 },
 {
+    "pk": 4, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "user",
-        "name": "user",
-        "app_label": "auth"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 4
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.071Z", 
+        "updated_at": "2014-04-21T19:34:52.071Z", 
+        "schema_name": "none", 
+        "slug": "attribute-3"
+    }
 },
 {
+    "pk": 5, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "contenttype",
-        "name": "content type",
-        "app_label": "contenttypes"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 5
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.077Z", 
+        "updated_at": "2014-04-21T19:34:52.077Z", 
+        "schema_name": "none", 
+        "slug": "attribute-4"
+    }
 },
 {
+    "pk": 6, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "session",
-        "name": "session",
-        "app_label": "sessions"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 6
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.082Z", 
+        "updated_at": "2014-04-21T19:34:52.082Z", 
+        "schema_name": "none", 
+        "slug": "attribute-5"
+    }
 },
 {
+    "pk": 7, 
+    "model": "mirrors.component", 
     "fields": {
-        "model": "migrationhistory",
-        "name": "migration history",
-        "app_label": "south"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 7
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:50:04.566Z", 
+        "updated_at": "2014-04-21T19:50:04.566Z", 
+        "schema_name": "none", 
+        "slug": "component-with-list-attribute"
+    }
 },
 {
+    "pk": 1, 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "model": "component",
-        "name": "component",
-        "app_label": "mirrors"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 8
-},
-{
-    "fields": {
-        "model": "componentattribute",
-        "name": "component attribute",
-        "app_label": "mirrors"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 9
-},
-{
-    "fields": {
-        "model": "componentrevision",
-        "name": "component revision",
-        "app_label": "mirrors"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 10
-},
-{
-    "fields": {
-        "model": "componentlock",
-        "name": "component lock",
-        "app_label": "mirrors"
-    },
-    "model": "contenttypes.contenttype",
-    "pk": 11
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:32:53.029Z",
-        "slug": "component-with-regular-attribute",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:32:53.030Z"
-    },
-    "model": "mirrors.component",
-    "pk": 1
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:34:52.060Z",
-        "slug": "attribute-1",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:34:52.060Z"
-    },
-    "model": "mirrors.component",
-    "pk": 2
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:34:52.065Z",
-        "slug": "attribute-2",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:34:52.065Z"
-    },
-    "model": "mirrors.component",
-    "pk": 3
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:34:52.071Z",
-        "slug": "attribute-3",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:34:52.071Z"
-    },
-    "model": "mirrors.component",
-    "pk": 4
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:34:52.077Z",
-        "slug": "attribute-4",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:34:52.077Z"
-    },
-    "model": "mirrors.component",
-    "pk": 5
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:34:52.082Z",
-        "slug": "attribute-5",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:34:52.082Z"
-    },
-    "model": "mirrors.component",
-    "pk": 6
-},
-{
-    "fields": {
-        "schema_name": "none",
-        "created_at": "2014-04-21T19:50:04.566Z",
-        "slug": "component-with-list-attribute",
-        "content_type": "none",
-        "updated_at": "2014-04-21T19:50:04.566Z"
-    },
-    "model": "mirrors.component",
-    "pk": 7
-},
-{
-    "fields": {
-        "added_time": "2014-04-21T19:51:48.288Z",
-        "weight": -1,
-        "name": "my_attribute",
-        "parent": 1,
+        "added_time": "2014-04-21T19:51:48.288Z", 
+        "weight": -1, 
+        "name": "my_attribute", 
+        "parent": 1, 
         "child": 2
-    },
-    "model": "mirrors.componentattribute",
-    "pk": 1
+    }
 },
 {
+    "pk": 2, 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "added_time": "2014-04-21T20:10:52.934Z",
-        "weight": 100,
-        "name": "list_attribute",
-        "parent": 7,
+        "added_time": "2014-04-21T20:10:52.934Z", 
+        "weight": 100, 
+        "name": "list_attribute", 
+        "parent": 7, 
         "child": 4
-    },
-    "model": "mirrors.componentattribute",
-    "pk": 2
+    }
 },
 {
+    "pk": 3, 
+    "model": "mirrors.componentattribute", 
     "fields": {
-        "added_time": "2014-04-21T20:11:18.425Z",
-        "weight": 200,
-        "name": "list_attribute",
-        "parent": 7,
+        "added_time": "2014-04-21T20:11:18.425Z", 
+        "weight": 200, 
+        "name": "list_attribute", 
+        "parent": 7, 
         "child": 5
-    },
-    "model": "mirrors.componentattribute",
-    "pk": 3
+    }
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 1,
-        "created_at": "2014-05-29T23:33:40.094Z",
+        "created_at": "2014-04-21T19:32:53.029Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"component with one attribute\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 14
+    "pk": 1
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 2,
-        "created_at": "2014-05-29T23:35:00.323Z",
+        "created_at": "2014-04-21T19:34:52.060Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"attribute component 1\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 15
+    "pk": 2
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 3,
-        "created_at": "2014-05-29T23:35:41.200Z",
+        "created_at": "2014-04-21T19:34:52.065Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"attribute component 2\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 16
+    "pk": 3
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 4,
-        "created_at": "2014-05-29T23:36:31.944Z",
+        "created_at": "2014-04-21T19:34:52.071Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"attribute component 3\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 17
+    "pk": 4
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 5,
-        "created_at": "2014-05-29T23:36:45.985Z",
+        "created_at": "2014-04-21T19:34:52.077Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"attribute component 4\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 18
+    "pk": 5
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 6,
-        "created_at": "2014-05-29T23:37:08.152Z",
+        "created_at": "2014-04-21T19:34:52.082Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"attribute component 5\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 19
+    "pk": 6
 },
 {
     "fields": {
-        "data": "",
-        "version_number": 1,
         "component": 7,
-        "created_at": "2014-05-29T23:37:26.387Z",
+        "created_at": "2014-04-21T19:50:04.566Z", 
+        "version": 1,
+        "data": null,
         "metadata": "\"{\\\"title\\\": \\\"component with a list type attribute\\\"}\""
     },
     "model": "mirrors.componentrevision",
-    "pk": 20
+    "pk": 7
 }
 ]
