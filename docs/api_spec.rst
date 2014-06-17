@@ -354,6 +354,78 @@ receive a *204* response if the lock is successfully broken. If there is no
 lock, you will get a *404* response.
 
 
+Schemas
+-------
+
+Retrieving Component Schemas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A ``GET`` request made to ``/schemas`` will respond with ``JSON`` blob that
+contains all current component types and their js-schema. An example of that
+output looks like this:
+
+.. code:: json
+ {
+   "component": {
+     "title": "base compononent schema", 
+     "required": [
+       "metadata", 
+       "slug", 
+       "schema_name", 
+       "uri"
+     ], 
+     "type": "object", 
+     "properties": {
+       "content_type": {
+         "type": "string", 
+         "id": "stringSchema"
+       }, 
+       "data_uri": {
+         "type": "string", 
+         "id": "stringSchema"
+       }, 
+       "uri": {
+         "type": "string", 
+         "id": "stringSchema"
+       }, 
+       "schema_name": {
+         "type": "string", 
+         "id": "stringSchema"
+       }, 
+       "attributes": {
+         "additionalProperties": {
+           "anyOf": [
+             {
+               "$ref": "component"
+             }, 
+             {
+               "items": {
+                 "$ref": "component"
+               }, 
+               "type": "array"
+             }
+           ]
+         }, 
+         "required": [], 
+         "type": "object", 
+         "properties": {}
+       }, 
+       "slug": {
+         "type": "string", 
+         "id": "slugSchema"
+       }, 
+       "metadata": {
+         "required": [], 
+         "type": "object", 
+         "properties": {}
+       }
+     }, 
+     "id": "#component"
+   }, 
+   "id": "/mirrors/schemas"
+ }
+
+
 Scheduler
 ---------
 
