@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 from mirrors import views
 
 urlpatterns = patterns(
@@ -29,7 +29,9 @@ urlpatterns = patterns(
         name='component-revision-data'),
     url(r'^schemas$',
         views.component_schemas,
-        name='component-schemas')
+        name='component-schemas'),
+    url(r'api-auth/', include('rest_framework.urls',
+                              namespace='rest_framework')),
 )
 # url(r'^component/(?P<slug>[-\w]+)/attribute/(?P<attr_name>[-\w_]+)/(?P<index>[\d]+)$',
 #     views.ComponentAttributeDetail.as_view(),
