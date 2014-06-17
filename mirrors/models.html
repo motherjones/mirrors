@@ -80,6 +80,26 @@ in the future.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="mirrors.models.Component.binary_data_at_version">
+<tt class="descname">binary_data_at_version</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.binary_data_at_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the binary data for the <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> as it was at the
+provided version.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>version</strong> (<em>int</em>) &#8211; The version of the <cite>Component</cite> that you want to get
+the binary data for.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bytes</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">IndexError</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="mirrors.models.Component.data_uri">
 <tt class="descname">data_uri</tt><a class="headerlink" href="#mirrors.models.Component.data_uri" title="Permalink to this definition">¶</a></dt>
@@ -107,6 +127,59 @@ more than one</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attribute_name</strong> (<em>str</em>) &#8211; name of the attribute</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Component</cite> or list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mirrors.models.Component.max_version">
+<tt class="descname">max_version</tt><a class="headerlink" href="#mirrors.models.Component.max_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the version number for the most recent revision.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If there are no revisions, max_version will be 0</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mirrors.models.Component.metadata">
+<tt class="descname">metadata</tt><a class="headerlink" href="#mirrors.models.Component.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current metadata from the most recent revision of the
+component.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirrors.models.Component.metadata_at_version">
+<tt class="descname">metadata_at_version</tt><big>(</big><em>version</em><big>)</big><a class="headerlink" href="#mirrors.models.Component.metadata_at_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the metadata for the <a class="reference internal" href="#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt></a> as it was at the
+provided version.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>version</strong> (<em>int</em>) &#8211; The version of the <cite>Component</cite> that you want to get
+the metadata for.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">IndexError</span></tt></td>
 </tr>
 </tbody>
 </table>
@@ -159,7 +232,7 @@ being changed.</p>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#mirrors.models.ComponentRevision" title="mirrors.models.ComponentRevision"><tt class="xref py py-class docutils literal"><span class="pre">ComponentRevision</span></tt></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><cite>ValueError</cite></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">ValueError</span></tt></p>
 </td>
 </tr>
 </tbody>

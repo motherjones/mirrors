@@ -200,8 +200,8 @@ contents of the attribute.</p>
 </div>
 <div class="section" id="updating">
 <h4>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h4>
-<p>When dealing with regular, non-list attributes, when you send a <tt class="docutils literal"><span class="pre">PUT</span></tt> or
-<tt class="docutils literal"><span class="pre">PATCH</span></tt> request to an attribute using the URL
+<p>When dealing with regular, non-list attributes, when you send a <tt class="docutils literal"><span class="pre">PUT</span></tt> request
+to an attribute using the URL
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/attribute/&lt;attribute-name&gt;</span></tt> you can make changes to the
 value of that <tt class="xref py py-class docutils literal"><span class="pre">ComponentAttribute</span></tt>.</p>
 <div class="code json highlight-python"><div class="highlight"><pre>{
@@ -259,18 +259,20 @@ remain accessible for future use or reference.</p>
 <p>To view a summary of all of the revisions of a <tt class="docutils literal"><span class="pre">Component</span></tt>, make a <tt class="docutils literal"><span class="pre">GET</span></tt>
 request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision</span></tt> and you&#8217;ll receive a JSON object
 like this:</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
-  <span class="s">&#39;version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-  <span class="s">&#39;change_date&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of revision&gt;&#39;</span><span class="p">,</span>
-  <span class="s">&#39;changes_type&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;type of change&gt;&#39;</span><span class="p">,</span>
-<span class="p">}</span>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s">&#39;version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">&#39;change_date&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of revision&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;change_types&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;&lt;type of change&gt;&#39;</span><span class="p">],</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&#39;version&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&#39;change_date&#39;</span><span class="p">:</span> <span class="s">&#39;&lt;timestamp of revision&gt;&#39;</span><span class="p">,</span>
+    <span class="s">&#39;change_types&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;&lt;type of change&gt;&#39;</span><span class="p">],</span>
+  <span class="p">}</span>
+<span class="p">]</span>
 </pre></div>
 </div>
-<p>The type of change can be <tt class="docutils literal"><span class="pre">'metadata'</span></tt> or <tt class="docutils literal"><span class="pre">'data'</span></tt> currently. As more kinds
-of changes are tracked, this will probably expand.</p>
-</div>
-<div class="section" id="viewing-a-specific-revision">
-<h4>Viewing a Specific Revision<a class="headerlink" href="#viewing-a-specific-revision" title="Permalink to this headline">¶</a></h4>
 <p>If you want to view a specific version of the <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt>, just make
 a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/revision/&lt;revision-num&gt;</span></tt>. The
 data returned will be the same as those laid out in
@@ -338,6 +340,76 @@ response.</p>
 <tt class="docutils literal"><span class="pre">/component/&lt;slug-id&gt;/lock</span></tt> and the current lock will be removed. You will
 receive a <em>204</em> response if the lock is successfully broken. If there is no
 lock, you will get a <em>404</em> response.</p>
+</div>
+</div>
+</div>
+<div class="section" id="schemas">
+<h2>Schemas<a class="headerlink" href="#schemas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="retrieving-component-schemas">
+<h3>Retrieving Component Schemas<a class="headerlink" href="#retrieving-component-schemas" title="Permalink to this headline">¶</a></h3>
+<p>A <tt class="docutils literal"><span class="pre">GET</span></tt> request made to <tt class="docutils literal"><span class="pre">/schemas</span></tt> will respond with <tt class="docutils literal"><span class="pre">JSON</span></tt> blob that
+contains all current component types and their js-schema. An example of that
+output looks like this:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;component&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;base compononent schema&quot;</span><span class="p">,</span>
+    <span class="s">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s">&quot;metadata&quot;</span><span class="p">,</span>
+      <span class="s">&quot;slug&quot;</span><span class="p">,</span>
+      <span class="s">&quot;schema_name&quot;</span><span class="p">,</span>
+      <span class="s">&quot;uri&quot;</span>
+    <span class="p">],</span>
+    <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;object&quot;</span><span class="p">,</span>
+    <span class="s">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">&quot;content_type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;stringSchema&quot;</span>
+      <span class="p">},</span>
+      <span class="s">&quot;data_uri&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;stringSchema&quot;</span>
+      <span class="p">},</span>
+      <span class="s">&quot;uri&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;stringSchema&quot;</span>
+      <span class="p">},</span>
+      <span class="s">&quot;schema_name&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;stringSchema&quot;</span>
+      <span class="p">},</span>
+      <span class="s">&quot;attributes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s">&quot;anyOf&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+              <span class="s">&quot;$ref&quot;</span><span class="p">:</span> <span class="s">&quot;component&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">&quot;$ref&quot;</span><span class="p">:</span> <span class="s">&quot;component&quot;</span>
+              <span class="p">},</span>
+              <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;array&quot;</span>
+            <span class="p">}</span>
+          <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{}</span>
+      <span class="p">},</span>
+      <span class="s">&quot;slug&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;slugSchema&quot;</span>
+      <span class="p">},</span>
+      <span class="s">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;required&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;#component&quot;</span>
+  <span class="p">},</span>
+  <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;/mirrors/schemas&quot;</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
 </div>
@@ -435,7 +507,6 @@ date you wish to check.</p>
 </li>
 <li><a class="reference internal" href="#revisions">Revisions</a><ul>
 <li><a class="reference internal" href="#viewing-a-summary-of-changes">Viewing a Summary of Changes</a></li>
-<li><a class="reference internal" href="#viewing-a-specific-revision">Viewing a Specific Revision</a></li>
 <li><a class="reference internal" href="#getting-old-data">Getting Old Data</a></li>
 </ul>
 </li>
@@ -445,6 +516,10 @@ date you wish to check.</p>
 <li><a class="reference internal" href="#breaking-a-lock">Breaking a lock</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#schemas">Schemas</a><ul>
+<li><a class="reference internal" href="#retrieving-component-schemas">Retrieving Component Schemas</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#scheduler">Scheduler</a><ul>

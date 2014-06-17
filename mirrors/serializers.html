@@ -55,15 +55,8 @@
   <div class="section" id="module-mirrors.serializers">
 <span id="serializers"></span><h1>Serializers<a class="headerlink" href="#module-mirrors.serializers" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="mirrors.serializers.ComponentRevisionSerializer">
-<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">ComponentRevisionSerializer</tt><big>(</big><em>instance=None</em>, <em>data=None</em>, <em>files=None</em>, <em>context=None</em>, <em>partial=False</em>, <em>many=None</em>, <em>allow_add_remove=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentRevisionSerializer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used for turning a JSON blob into a
-<a class="reference internal" href="models.html#mirrors.models.ComponentRevision" title="mirrors.models.ComponentRevision"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.ComponentRevision</span></tt></a> and back again.</p>
-</dd></dl>
-
-<dl class="class">
 <dt id="mirrors.serializers.ComponentSerializer">
-<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">ComponentSerializer</tt><big>(</big><em>instance=None</em>, <em>data=None</em>, <em>files=None</em>, <em>context=None</em>, <em>partial=False</em>, <em>many=None</em>, <em>allow_add_remove=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">ComponentSerializer</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for turning a JSON blob into a <a class="reference internal" href="models.html#mirrors.models.Component" title="mirrors.models.Component"><tt class="xref py py-class docutils literal"><span class="pre">mirrors.models.Component</span></tt></a>
 object, and back again.</p>
 <dl class="method">
@@ -93,6 +86,21 @@ it, rather than to create a new <tt class="docutils literal"><span class="pre">C
 </dd></dl>
 
 <dl class="method">
+<dt id="mirrors.serializers.ComponentSerializer.save_object">
+<tt class="descname">save_object</tt><big>(</big><em>obj</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer.save_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the data in this object to the database, including any metadata
+that may have been passed to it through <tt class="docutils literal"><span class="pre">__init__()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<a class="reference internal" href="#mirrors.serializers.ComponentSerializer" title="mirrors.serializers.ComponentSerializer"><tt class="xref py py-class docutils literal"><span class="pre">ComponentSerializer</span></tt></a>) &#8211; the object we want to commit to the database</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="mirrors.serializers.ComponentSerializer.transform_metadata">
 <tt class="descname">transform_metadata</tt><big>(</big><em>obj</em>, <em>val</em><big>)</big><a class="headerlink" href="#mirrors.serializers.ComponentSerializer.transform_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform the contents of <cite>metadata</cite> from a string into a dict.</p>
@@ -113,6 +121,13 @@ it, rather than to create a new <tt class="docutils literal"><span class="pre">C
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="mirrors.serializers.WritableSerializerMethodField">
+<em class="property">class </em><tt class="descclassname">mirrors.serializers.</tt><tt class="descname">WritableSerializerMethodField</tt><big>(</big><em>get_method_name</em>, <em>set_method_name</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mirrors.serializers.WritableSerializerMethodField" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that gets and sets its value by calling a method on the serializer
+it&#8217;s attached to.</p>
 </dd></dl>
 
 </div>
