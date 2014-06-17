@@ -365,6 +365,7 @@ contains all current component types and their js-schema. An example of that
 output looks like this:
 
 .. code:: json
+
  {
    "component": {
      "title": "base compononent schema", 
