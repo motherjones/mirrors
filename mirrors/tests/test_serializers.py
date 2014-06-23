@@ -1,12 +1,15 @@
 import json
-import hashlib
 
 from django.core.urlresolvers import reverse
 
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 
-from mirrors.models import *
-from mirrors.serializers import *
+from mirrors.models import Component
+from mirrors.models import ComponentAttribute
+from mirrors.models import ComponentRevision
+from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentAttributeSerializer
+from mirrors.serializers import ComponentRevisionSerializer
 
 
 class ComponentResourceTests(APITestCase):
@@ -79,3 +82,91 @@ class ComponentResourceTests(APITestCase):
 
         self.assertTrue(isinstance(list_attr, list))
         self.assertEqual(len(list_attr), 2)
+
+    def test_transform_metadata_from_string(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_str = json.dumps({'test': 'value'})
+
+        result = serializer.transform_metadata(None, metadata_str)
+        self.assertEqual(result, {'test': 'value'})
+
+    def test_transform_metadata_from_dict(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+        metadata_dict = {'test': 'value'}
+
+        result = serializer.transform_metadata(None, metadata_dict)
+        self.assertEqual(result, {'test': 'value'})
+
+
+class ComponentAttributeResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentattributes.json']
+
+    def test_serialize_single_attribute(self):
+        parent = Component.objects.filter(
+            slug='component-with-regular-attribute'
+        ).first()
+
+        ca = ComponentAttribute.objects.filter(parent=parent).first()
+        content = ComponentAttributeSerializer(ca).data
+
+        self.assertIn('name', content)
+        self.assertIn('child', content)
+
+        self.assertEqual(content['child'], 'attribute-1')
+        self.assertEqual(content['name'], 'my_attribute')
+
+    def test_serialize_list_attribute(self):
+        cas = ComponentAttribute.objects.filter(
+            name='list_attribute').order_by('weight')
+        content = ComponentAttributeSerializer(cas).data
+
+        self.assertTrue(isinstance(content, list))
+        self.assertEqual(len(content), 2)
+
+        attr_1 = content[0]
+        attr_2 = content[1]
+
+        self.assertEqual(attr_1['child'], 'attribute-3')
+        self.assertEqual(attr_1['weight'], 100)
+
+        self.assertEqual(attr_2['child'], 'attribute-4')
+        self.assertEqual(attr_2['weight'], 200)
+
+
+class ComponentRevisionResourceTests(APITestCase):
+    fixtures = ['users.json', 'componentrevisions.json']
+
+    def test_serialize_revision_with_multiple_type_changes(self):
+        c_rev = ComponentRevision.objects.get(pk=4)
+        rev = ComponentRevisionSerializer(c_rev).data
+
+        self.assertTrue(isinstance(rev, dict))
+        self.assertEqual(rev['version'], 1)
+        self.assertEqual(str(rev['change_date']),
+                         '2014-06-09 19:50:40.797000+00:00')
+
+        self.assertTrue(isinstance(rev['change_types'], list))
+        self.assertEqual(len(rev['change_types']), 2)
+        self.assertIn('data', rev['change_types'])
+        self.assertIn('metadata', rev['change_types'])
+
+    def test_serialize_revision_summary(self):
+        rev_1 = ComponentRevisionSerializer(
+            ComponentRevision.objects.get(pk=3)
+        ).data
+        rev_2 = ComponentRevisionSerializer(
+            ComponentRevision.objects.get(pk=5)
+        ).data
+
+        self.assertTrue(isinstance(rev_1, dict))
+        self.assertEqual(rev_1['version'], 1)
+        self.assertEqual(str(rev_1['change_date']),
+                         '2014-06-09 19:44:12.459000+00:00')
+        self.assertEqual(rev_1['change_types'], ['metadata'])
+
+        self.assertEqual(rev_2['version'], 2)
+        self.assertEqual(str(rev_2['change_date']),
+                         '2014-06-09 19:56:42.455000+00:00')
+        self.assertEqual(rev_2['change_types'], ['data'])

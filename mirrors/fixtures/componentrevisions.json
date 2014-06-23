@@ -1,0 +1,592 @@
+[
+{
+    "fields": {
+        "model": "logentry",
+        "name": "log entry",
+        "app_label": "admin"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 1
+},
+{
+    "fields": {
+        "model": "permission",
+        "name": "permission",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 2
+},
+{
+    "fields": {
+        "model": "group",
+        "name": "group",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 3
+},
+{
+    "fields": {
+        "model": "user",
+        "name": "user",
+        "app_label": "auth"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 4
+},
+{
+    "fields": {
+        "model": "contenttype",
+        "name": "content type",
+        "app_label": "contenttypes"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 5
+},
+{
+    "fields": {
+        "model": "session",
+        "name": "session",
+        "app_label": "sessions"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 6
+},
+{
+    "fields": {
+        "model": "migrationhistory",
+        "name": "migration history",
+        "app_label": "south"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 7
+},
+{
+    "fields": {
+        "model": "component",
+        "name": "component",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 8
+},
+{
+    "fields": {
+        "model": "componentattribute",
+        "name": "component attribute",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 9
+},
+{
+    "fields": {
+        "model": "componentrevision",
+        "name": "component revision",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 10
+},
+{
+    "fields": {
+        "model": "componentlock",
+        "name": "component lock",
+        "app_label": "mirrors"
+    },
+    "model": "contenttypes.contenttype",
+    "pk": 11
+},
+{
+    "fields": {
+        "schema_name": "article",
+        "created_at": "2014-06-09T18:25:07.112Z",
+        "slug": "component-with-two-revisions",
+        "content_type": "application/x-markdown",
+        "updated_at": "2014-06-09T18:25:07.113Z"
+    },
+    "model": "mirrors.component",
+    "pk": 1
+},
+{
+    "fields": {
+        "schema_name": "none",
+        "created_at": "2014-06-09T19:50:16.335Z",
+        "slug": "component-with-revision-with-data-and-metadata",
+        "content_type": "none",
+        "updated_at": "2014-06-09T19:50:16.335Z"
+    },
+    "model": "mirrors.component",
+    "pk": 2
+},
+{
+    "fields": {
+        "schema_name": "none",
+        "created_at": "2014-06-09T20:05:14.594Z",
+        "slug": "component-with-no-revisions",
+        "content_type": "none",
+        "updated_at": "2014-06-09T20:05:14.594Z"
+    },
+    "model": "mirrors.component",
+    "pk": 3
+},
+{
+    "fields": {
+        "schema_name": "none",
+        "created_at": "2014-06-09T20:07:40.386Z",
+        "slug": "component-with-many-revisions",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-09T20:10:20.320Z"
+    },
+    "model": "mirrors.component",
+    "pk": 4
+},
+{
+    "fields": {
+        "schema_name": "none",
+        "created_at": "2014-06-09T20:07:40.386Z",
+        "slug": "component-with-no-data",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-09T20:10:20.320Z"
+    },
+    "model": "mirrors.component",
+    "pk": 5
+},
+{
+    "fields": {
+        "schema_name": "none",
+        "created_at": "2014-06-11T19:04:13.405Z",
+        "slug": "component-with-data-and-filename",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-11T19:04:13.405Z"
+    },
+    "model": "mirrors.component",
+    "pk": 6
+},
+{
+    "fields": {
+        "component": 1,
+        "created_at": "2014-06-09T19:44:12.459Z",
+        "version": 1,
+        "data": null,
+        "metadata": "{\"title\":\"a title\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 3
+},
+{
+    "fields": {
+        "component": 2,
+        "created_at": "2014-06-09T19:50:40.797Z",
+        "version": 1,
+        "data": "dGVzdCBkYXRh",
+        "metadata": "{\"title\":\"multiple changes\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 4
+},
+{
+    "fields": {
+        "component": 1,
+        "created_at": "2014-06-09T19:56:42.455Z",
+        "version": 2,
+        "data": "dGVzdCBkYXRh",
+        "metadata": null
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 5
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-06-09T20:08:05.071Z",
+        "version": 1,
+        "data": null,
+        "metadata": "{\"test\":\"first metadata\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 6
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-06-09T20:08:20.373Z",
+        "version": 2,
+        "data": "Zmlyc3QgZGF0YQ==",
+        "metadata": null
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 7
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-06-09T20:08:46.525Z",
+        "version": 3,
+        "data": "c2Vjb25kIGRhdGE=",
+        "metadata": null
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 8
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-06-09T20:10:03.635Z",
+        "version": 4,
+        "data": null,
+        "metadata": "{\"test\":\"second metadata\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 9
+},
+{
+    "fields": {
+        "component": 5,
+        "created_at": "2014-06-09T20:10:03.635Z",
+        "version": 1,
+        "data": null,
+        "metadata": "{\"test\":\"first metadata\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 10
+},
+{
+    "fields": {
+        "component": 5,
+        "created_at": "2014-06-09T20:10:03.635Z",
+        "version": 2,
+        "data": null,
+        "metadata": "{\"test\":\"second metadata\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 11
+},
+{
+    "fields": {
+        "component": 6,
+        "created_at": "2014-06-11T19:04:36.686Z",
+        "version": 1,
+        "data": "dGhpcyBpcyBzb21lIGRhdGE=",
+        "metadata": "{\"filename\":\"file.txt\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 12
+},
+{
+    "fields": {
+        "codename": "add_logentry",
+        "name": "Can add log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 1
+},
+{
+    "fields": {
+        "codename": "change_logentry",
+        "name": "Can change log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 2
+},
+{
+    "fields": {
+        "codename": "delete_logentry",
+        "name": "Can delete log entry",
+        "content_type": 1
+    },
+    "model": "auth.permission",
+    "pk": 3
+},
+{
+    "fields": {
+        "codename": "add_permission",
+        "name": "Can add permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 4
+},
+{
+    "fields": {
+        "codename": "change_permission",
+        "name": "Can change permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 5
+},
+{
+    "fields": {
+        "codename": "delete_permission",
+        "name": "Can delete permission",
+        "content_type": 2
+    },
+    "model": "auth.permission",
+    "pk": 6
+},
+{
+    "fields": {
+        "codename": "add_group",
+        "name": "Can add group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 7
+},
+{
+    "fields": {
+        "codename": "change_group",
+        "name": "Can change group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 8
+},
+{
+    "fields": {
+        "codename": "delete_group",
+        "name": "Can delete group",
+        "content_type": 3
+    },
+    "model": "auth.permission",
+    "pk": 9
+},
+{
+    "fields": {
+        "codename": "add_user",
+        "name": "Can add user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 10
+},
+{
+    "fields": {
+        "codename": "change_user",
+        "name": "Can change user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 11
+},
+{
+    "fields": {
+        "codename": "delete_user",
+        "name": "Can delete user",
+        "content_type": 4
+    },
+    "model": "auth.permission",
+    "pk": 12
+},
+{
+    "fields": {
+        "codename": "add_contenttype",
+        "name": "Can add content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 13
+},
+{
+    "fields": {
+        "codename": "change_contenttype",
+        "name": "Can change content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 14
+},
+{
+    "fields": {
+        "codename": "delete_contenttype",
+        "name": "Can delete content type",
+        "content_type": 5
+    },
+    "model": "auth.permission",
+    "pk": 15
+},
+{
+    "fields": {
+        "codename": "add_session",
+        "name": "Can add session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 16
+},
+{
+    "fields": {
+        "codename": "change_session",
+        "name": "Can change session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 17
+},
+{
+    "fields": {
+        "codename": "delete_session",
+        "name": "Can delete session",
+        "content_type": 6
+    },
+    "model": "auth.permission",
+    "pk": 18
+},
+{
+    "fields": {
+        "codename": "add_migrationhistory",
+        "name": "Can add migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 19
+},
+{
+    "fields": {
+        "codename": "change_migrationhistory",
+        "name": "Can change migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 20
+},
+{
+    "fields": {
+        "codename": "delete_migrationhistory",
+        "name": "Can delete migration history",
+        "content_type": 7
+    },
+    "model": "auth.permission",
+    "pk": 21
+},
+{
+    "fields": {
+        "codename": "add_component",
+        "name": "Can add component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 22
+},
+{
+    "fields": {
+        "codename": "change_component",
+        "name": "Can change component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 23
+},
+{
+    "fields": {
+        "codename": "delete_component",
+        "name": "Can delete component",
+        "content_type": 8
+    },
+    "model": "auth.permission",
+    "pk": 24
+},
+{
+    "fields": {
+        "codename": "add_componentattribute",
+        "name": "Can add component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 25
+},
+{
+    "fields": {
+        "codename": "change_componentattribute",
+        "name": "Can change component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 26
+},
+{
+    "fields": {
+        "codename": "delete_componentattribute",
+        "name": "Can delete component attribute",
+        "content_type": 9
+    },
+    "model": "auth.permission",
+    "pk": 27
+},
+{
+    "fields": {
+        "codename": "add_componentrevision",
+        "name": "Can add component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 28
+},
+{
+    "fields": {
+        "codename": "change_componentrevision",
+        "name": "Can change component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 29
+},
+{
+    "fields": {
+        "codename": "delete_componentrevision",
+        "name": "Can delete component revision",
+        "content_type": 10
+    },
+    "model": "auth.permission",
+    "pk": 30
+},
+{
+    "fields": {
+        "codename": "add_componentlock",
+        "name": "Can add component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 31
+},
+{
+    "fields": {
+        "codename": "change_componentlock",
+        "name": "Can change component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 32
+},
+{
+    "fields": {
+        "codename": "delete_componentlock",
+        "name": "Can delete component lock",
+        "content_type": 11
+    },
+    "model": "auth.permission",
+    "pk": 33
+},
+{
+    "fields": {
+        "username": "jonf",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-04-21T19:04:40.750Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$12000$r7AmprhvehSq$K9yc9TKqcrYMzyLxyQB1GIDb3AhBivti0bNWmPxKb1M=",
+        "email": "jfriedman@motherjones.com",
+        "date_joined": "2014-04-21T19:04:40.750Z"
+    },
+    "model": "auth.user",
+    "pk": 1
+}
+]

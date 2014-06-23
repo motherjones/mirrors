@@ -1,0 +1,189 @@
+[
+{
+    "pk": 1, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:32:53.029Z", 
+        "updated_at": "2014-04-21T19:32:53.030Z", 
+        "schema_name": "none", 
+        "slug": "component-with-regular-attribute"
+    }
+},
+{
+    "pk": 2, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.060Z", 
+        "updated_at": "2014-04-21T19:34:52.060Z", 
+        "schema_name": "none", 
+        "slug": "attribute-1"
+    }
+},
+{
+    "pk": 3, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.065Z", 
+        "updated_at": "2014-04-21T19:34:52.065Z", 
+        "schema_name": "none", 
+        "slug": "attribute-2"
+    }
+},
+{
+    "pk": 4, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.071Z", 
+        "updated_at": "2014-04-21T19:34:52.071Z", 
+        "schema_name": "none", 
+        "slug": "attribute-3"
+    }
+},
+{
+    "pk": 5, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.077Z", 
+        "updated_at": "2014-04-21T19:34:52.077Z", 
+        "schema_name": "none", 
+        "slug": "attribute-4"
+    }
+},
+{
+    "pk": 6, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:34:52.082Z", 
+        "updated_at": "2014-04-21T19:34:52.082Z", 
+        "schema_name": "none", 
+        "slug": "attribute-5"
+    }
+},
+{
+    "pk": 7, 
+    "model": "mirrors.component", 
+    "fields": {
+        "content_type": "none", 
+        "created_at": "2014-04-21T19:50:04.566Z", 
+        "updated_at": "2014-04-21T19:50:04.566Z", 
+        "schema_name": "none", 
+        "slug": "component-with-list-attribute"
+    }
+},
+{
+    "pk": 1, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-21T19:51:48.288Z", 
+        "weight": -1, 
+        "name": "my_attribute", 
+        "parent": 1, 
+        "child": 2
+    }
+},
+{
+    "pk": 2, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-21T20:10:52.934Z", 
+        "weight": 100, 
+        "name": "list_attribute", 
+        "parent": 7, 
+        "child": 4
+    }
+},
+{
+    "pk": 3, 
+    "model": "mirrors.componentattribute", 
+    "fields": {
+        "added_time": "2014-04-21T20:11:18.425Z", 
+        "weight": 200, 
+        "name": "list_attribute", 
+        "parent": 7, 
+        "child": 5
+    }
+},
+{
+    "fields": {
+        "component": 1,
+        "created_at": "2014-04-21T19:32:53.029Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"component with one attribute\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 1
+},
+{
+    "fields": {
+        "component": 2,
+        "created_at": "2014-04-21T19:34:52.060Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"attribute component 1\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 2
+},
+{
+    "fields": {
+        "component": 3,
+        "created_at": "2014-04-21T19:34:52.065Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"attribute component 2\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 3
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-04-21T19:34:52.071Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"attribute component 3\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 4
+},
+{
+    "fields": {
+        "component": 5,
+        "created_at": "2014-04-21T19:34:52.077Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"attribute component 4\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 5
+},
+{
+    "fields": {
+        "component": 6,
+        "created_at": "2014-04-21T19:34:52.082Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"attribute component 5\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 6
+},
+{
+    "fields": {
+        "component": 7,
+        "created_at": "2014-04-21T19:50:04.566Z", 
+        "version": 1,
+        "data": null,
+        "metadata": "\"{\\\"title\\\": \\\"component with a list type attribute\\\"}\""
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 7
+}
+]

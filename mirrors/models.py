@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models import Max
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 from jsonfield import JSONField
 
@@ -22,7 +21,6 @@ class Component(models.Model):
 
     """
     slug = models.SlugField(max_length=100, unique=True)
-    metadata = JSONField(default={})
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
@@ -38,17 +36,41 @@ class Component(models.Model):
         return reverse('component-data', kwargs={'slug': self.slug})
 
     @property
+    def metadata(self):
+        """Get the current metadata from the most recent revision of the
+        component.
+
+        :rtype: dict
+        """
+        return self.metadata_at_version(self.max_version)
+
+    @property
     def binary_data(self):
         """Get the data from the most recent revision of the data.
 
         :rtype: bytes
         """
-        rev = self.revisions.order_by('-created_at').first()
-
-        if rev:
-            return rev.data.tobytes()
-        else:
+        try:
+            return self.binary_data_at_version(self.max_version)
+        except IndexError:
             return None
+
+    @property
+    def max_version(self):
+        """Get the version number for the most recent revision.
+
+        :rtype: int
+
+        .. note :: If there are no revisions, max_version will be 0
+        """
+        version = self.revisions.all().aggregate(Max('version'))
+        if version['version__max'] is None:
+            return 0
+        else:
+            return version['version__max']
+
+    def _version_in_range(self, version):
+        return (version > 0) and (version <= self.max_version)
 
     def new_revision(self, data=None, metadata=None):
         """Create a new revision for this ``Component`` object. If the data is not in
@@ -63,23 +85,24 @@ class Component(models.Model):
         :type metadata: dict
 
         :rtype: :class:`ComponentRevision`
-        :raises: `ValueError`
+        :raises: :class:`ValueError`
 
         """
         if not data and not metadata:
-            raise ValueError('no new data was actually provided')
+            raise ValueError('no new revision data was actually provided')
 
-        cur_rev = self.revisions.all().order_by('created_at').first()
-
-        if cur_rev is None and data is None:
-            raise ValueError(
-                'both metadata and data must be provided for 1st revision'
-            )
+        next_version = 1
+        cur_rev = self.revisions.all().order_by('-version').first()
+        if cur_rev is not None:
+            next_version = cur_rev.version + 1
 
         new_rev = ComponentRevision.objects.create(
             data=data,
-            component=self
+            metadata=metadata,
+            component=self,
+            version=next_version
         )
+        new_rev.save()
 
         return new_rev
 
@@ -144,6 +167,53 @@ class Component(models.Model):
         elif attrs.count() > 1:
             return [attr.child for attr in attrs.order_by('weight')]
 
+    def metadata_at_version(self, version):
+        """Get the metadata for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the metadata for.
+        :type version: int
+
+        :rtype: dict
+        :raises: :class:`IndexError`
+        """
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(metadata__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.metadata
+        else:
+            return None
+
+    def binary_data_at_version(self, version):
+        """Get the binary data for the :class:`Component` as it was at the
+        provided version.
+
+        :param version: The version of the `Component` that you want to get
+                        the binary data for.
+        :type version: int
+
+        :rtype: bytes
+        :raises: :class:`IndexError`
+        """
+
+        if not self._version_in_range(version):
+            raise IndexError('No such version')
+
+        qs = self.revisions.filter(data__isnull=False,
+                                   version__lte=version).order_by('-version')
+        rev = qs.first()
+
+        if rev is not None:
+            return rev.data
+        else:
+            return None
+
     def __str__(self):
         return self.slug
 
@@ -187,12 +257,16 @@ class ComponentRevision(models.Model):
                   in the future.
 
     """
-    data = models.BinaryField()
+    data = models.BinaryField(null=True, blank=True)
+    metadata = JSONField(default=None, null=True, blank=True)
+    version = models.IntegerField(null=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     component = models.ForeignKey('Component', related_name='revisions')
 
     def __str__(self):
+        return "{} v{}".format(self.component.slug, self.version)
         return self.component.slug
 
 class ComponentLock(models.Model):
