@@ -1,5 +1,8 @@
 import json
 
+from datetime import timedelta
+
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.test import TestCase, Client
@@ -79,14 +82,41 @@ class ComponentModelTests(TestCase):
 class ComponentLockTests(TestCase):
     fixtures = ['component_lock_data.json', 'users.json']
 
+    def setUp(self):
+        self.test_user = User.objects.get(username='test_user')
+        self.test_staff = User.objects.get(username='test_staff')
+
     def test_lock_component(self):
-        self.fail('not implemented yet')
+        c = Component.objects.get(slug='unlocked-component')
+        c.lock(self.test_user)
+
+        cl = c.locked
+        expected_end_date = cl.locked_at + timedelta(minutes=60)
+
+        self.assertIsNot(cl, None)
+        self.assertTrue(isinstance(cl, ComponentLock))
+        self.assertEqual(cl.locked_by, self.test_user)
+        self.assertEqual(cl.lock_ends_at, expected_end_date)
+
+    def test_lock_component_specific_lock_length(self):
+        c = Component.objects.get(slug='unlocked-component')
+        c.lock(self.test_user, lock_length=30)
+
+        cl = c.locked
+        expected_end_date = cl.locked_at + timedelta(minutes=30)
+        self.assertEqual(cl.lock_ends_at, expected_end_date)
 
     def test_unlock_component(self):
-        self.fail('not implemented yet')
+        c = Component.objects.get(slug='locked-component')
+        c.unlock(self.test_user)
 
-    def test_lock_locked_component(self):
-        self.fail('not implemented yet')
+        self.assertIs(c.locked, None)
+
+    def test_break_locked_component(self):
+        c = Component.objects.get(slug='locked-component')
+
+        with self.assertRaises(PermissionError):
+            c.lock(self.test_staff)
 
 
 class ComponentRevisionModelTests(TestCase):
