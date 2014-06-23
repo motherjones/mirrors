@@ -657,6 +657,7 @@ class ComponentRevisionSummaryViewTests(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class ComponentLockRequestTest(APITestCase):
     fixtures = ['component_data.json']
 

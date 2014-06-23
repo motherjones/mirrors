@@ -1,6 +1,7 @@
 import re
 import sys
 
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
@@ -269,10 +270,11 @@ class ComponentRevision(models.Model):
         return "{} v{}".format(self.component.slug, self.version)
         return self.component.slug
 
+
 class ComponentLock(models.Model):
     """ Determines whether a ``Component`` can be edited.
     """
-    locked_by = models.ForeignKey(User) # username
+    locked_by = models.ForeignKey(User)  # username
     locked_at = models.DateTimeField(auto_now_add=True)
     lock_ends_at = models.DateTimeField()
     component = models.ForeignKey('Component', related_name='lock')
