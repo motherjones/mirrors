@@ -2,14 +2,14 @@ import hashlib
 import json
 import os
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client, RequestFactory
+from django.test import TestCase, Client
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from mirrors.models import Component, ComponentRevision
-from mirrors.views import ComponentData as ComponentDataView
+from mirrors.models import Component
 
 
 class ComponentViewTest(APITestCase):
@@ -659,28 +659,32 @@ class ComponentRevisionSummaryViewTests(APITestCase):
 
 
 class ComponentLockRequestTest(APITestCase):
-    fixtures = ['component_data.json']
+    fixtures = ['component_lock_data.json', 'users.json']
 
     def setUp(self):
-        self.client = Client()
+        # Friendly note:
+        # The account 'test_user' is the one that has locked the component
+        # 'locked-component'
+        user = User.objects.get(username='test_staff')
+        self.client.force_authenticate(user=user)
 
     def test_get_lock_status_unlocked(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'unlocked-component'
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_lock_status_locked(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'locked-component'
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_lock_unlocked_component(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'unlocked-component'
         })
         data = {
             'locked': True,
@@ -691,7 +695,7 @@ class ComponentLockRequestTest(APITestCase):
 
     def test_lock_unlocked_component_with_no_duration(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'unlocked-component'
         })
         data = {'locked': True}
         response = self.client.put(url, data)
@@ -699,7 +703,7 @@ class ComponentLockRequestTest(APITestCase):
 
     def test_lock_locked_component(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'locked-component'
         })
         data = {
             'locked': True,
@@ -708,16 +712,19 @@ class ComponentLockRequestTest(APITestCase):
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
-    def test_unlock_locked_component(self):
+    def test_unlock_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'locked-component'
         })
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_unlock_unlocked_component(self):
         url = reverse('component-lock', kwargs={
-            'slug': 'component-with-no-data'
+            'slug': 'unlocked-component'
         })
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -737,3 +744,23 @@ class ComponentLockRequestTest(APITestCase):
 
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_patch_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

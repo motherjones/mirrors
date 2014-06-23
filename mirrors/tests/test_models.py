@@ -76,6 +76,19 @@ class ComponentModelTests(TestCase):
         self.assertIs(c.binary_data_at_version(1), None)
 
 
+class ComponentLockTests(TestCase):
+    fixtures = ['component_lock_data.json', 'users.json']
+
+    def test_lock_component(self):
+        self.fail('not implemented yet')
+
+    def test_unlock_component(self):
+        self.fail('not implemented yet')
+
+    def test_lock_locked_component(self):
+        self.fail('not implemented yet')
+
+
 class ComponentRevisionModelTests(TestCase):
     fixtures = ['components.json']
 

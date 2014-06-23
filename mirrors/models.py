@@ -70,6 +70,14 @@ class Component(models.Model):
         else:
             return version['version__max']
 
+    @property
+    def locked(self):
+        """Get the currently active lock on this ``Component``, if any.
+
+        :rtype: :class:`ComponentLock`
+        """
+        raise NotImplementedError
+
     def _version_in_range(self, version):
         return (version > 0) and (version <= self.max_version)
 
@@ -215,6 +223,30 @@ class Component(models.Model):
         else:
             return None
 
+    def lock(self, locking_user, lock_length=None):
+        """Lock the :class:`Component`, preventing other users from altering it
+        until the lock expires.
+
+        :param locking_user: The user that has requested the lock be created.
+        :type locking_user: :class:`User`
+
+        :param lock_length: The length of time, in minutes, that the lock
+                            should be active before it is automatically broken.
+        :type lock_length: int
+
+        :rtype: :class:`ComponentLock`
+        :raises: :class:`PermissionError`
+        """
+        raise NotImplementedError
+
+    def unlock(self, unlocking_user):
+        """Unlock the :class:`Component`.
+
+        :param unlocking_user: The user that has requested the lock be broken.
+        :type unlocking_user: :class:`User`
+        """
+        raise NotImplementedError
+
     def __str__(self):
         return self.slug
 
@@ -277,4 +309,4 @@ class ComponentLock(models.Model):
     locked_by = models.ForeignKey(User)  # username
     locked_at = models.DateTimeField(auto_now_add=True)
     lock_ends_at = models.DateTimeField()
-    component = models.ForeignKey('Component', related_name='lock')
+    component = models.ForeignKey('Component', related_name='locks')
