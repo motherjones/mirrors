@@ -285,6 +285,40 @@ request to <tt class="docutils literal"><span class="pre">/component/&lt;slug-id
 <a class="reference internal" href="#components-data-reading"><em>Reading</em></a>, you&#8217;ll get the binary data served to you.</p>
 </div>
 </div>
+<div class="section" id="checking-validity">
+<h3>Checking Validity<a class="headerlink" href="#checking-validity" title="Permalink to this headline">¶</a></h3>
+<p>Before publishing something, the related <tt class="xref py py-class docutils literal"><span class="pre">Component</span></tt> objects must be
+checked to make sure that they are valid instances of their type, as defined by
+the schema in their <tt class="docutils literal"><span class="pre">schema_name</span></tt> (see <a class="reference internal" href="#components-schemas"><em>Retrieving Component Schemas</em></a> for more
+information on that).</p>
+<p>To check the validity of a component, issue a <tt class="docutils literal"><span class="pre">GET</span></tt> request to the URI
+<tt class="docutils literal"><span class="pre">/component/&lt;slug&gt;/validity</span></tt>. If the component is valid, which is to say that
+it has all of the required metadata and attributes, the you will get this
+response:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;valid&#39;</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If there were any problems, such as missing attributes, you will get something
+a lot more like this:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&#39;valid&#39;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+  <span class="s">&#39;errors&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">&#39;missing&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;social-header&#39;</span><span class="p">],</span>
+      <span class="s">&#39;malformed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">&#39;attributes&#39;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">&#39;missing&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;byline&#39;</span><span class="p">,</span> <span class="s">&#39;header-image&#39;</span><span class="p">],</span>
+      <span class="s">&#39;malformed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;sub-header-image&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Both results will return with a <em>200</em> HTTP response code.</p>
+</div>
 <div class="section" id="locking">
 <h3>Locking<a class="headerlink" href="#locking" title="Permalink to this headline">¶</a></h3>
 <p>To prevent simultaneous editing of the same component, creating conflicting
@@ -346,7 +380,7 @@ lock, you will get a <em>404</em> response.</p>
 <div class="section" id="schemas">
 <h2>Schemas<a class="headerlink" href="#schemas" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="retrieving-component-schemas">
-<h3>Retrieving Component Schemas<a class="headerlink" href="#retrieving-component-schemas" title="Permalink to this headline">¶</a></h3>
+<span id="components-schemas"></span><h3>Retrieving Component Schemas<a class="headerlink" href="#retrieving-component-schemas" title="Permalink to this headline">¶</a></h3>
 <p>A <tt class="docutils literal"><span class="pre">GET</span></tt> request made to <tt class="docutils literal"><span class="pre">/schemas</span></tt> will respond with <tt class="docutils literal"><span class="pre">JSON</span></tt> blob that
 contains all current component types and their js-schema. An example of that
 output looks like this:</p>
@@ -510,6 +544,7 @@ date you wish to check.</p>
 <li><a class="reference internal" href="#getting-old-data">Getting Old Data</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#checking-validity">Checking Validity</a></li>
 <li><a class="reference internal" href="#locking">Locking</a><ul>
 <li><a class="reference internal" href="#checking-lock-status">Checking lock status</a></li>
 <li><a class="reference internal" href="#making-a-lock">Making a lock</a></li>
