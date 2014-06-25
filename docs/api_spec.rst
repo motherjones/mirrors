@@ -287,6 +287,46 @@ Getting the binary data from an older revision is as simple as making a ``GET``
 request to ``/component/<slug-id>/revision/<revision-num>/data``. Just like with
 :ref:`components-data-reading`, you'll get the binary data served to you.
 
+Checking Validity
+^^^^^^^^^^^^^^^^^
+
+Before publishing something, the related :class:`Component` objects must be
+checked to make sure that they are valid instances of their type, as defined by
+the schema in their ``schema_name`` (see :ref:`components-schemas` for more
+information on that).
+
+To check the validity of a component, issue a ``GET`` request to the URI
+``/component/<slug>/validity``. If the component is valid, which is to say that
+it has all of the required metadata and attributes, the you will get this
+response:
+
+.. code:: json
+
+ {
+   'valid': true
+ }
+
+If there were any problems, such as missing attributes, you will get something
+a lot more like this:
+
+.. code:: json
+
+ {
+   'valid': false,
+   'errors': {
+     'metadata': {
+       'missing': ['title', 'social-header'],
+       'malformed': ['data']
+     },
+     'attributes': {
+       'missing': ['byline', 'header-image'],
+       'malformed': ['sub-header-image']
+     }
+   }
+ }
+
+Both results will return with a *200* HTTP response code.
+
 Locking
 ^^^^^^^
 
@@ -356,6 +396,7 @@ lock, you will get a *404* response.
 
 Schemas
 -------
+.. _components-schemas:
 
 Retrieving Component Schemas
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
