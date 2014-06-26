@@ -1,0 +1,189 @@
+[
+{
+    "fields": {
+        "schema_name": "testcomponent",
+        "created_at": "2014-06-26T17:53:58.995Z",
+        "slug": "valid-component-with-optional-text-optional-attribute",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-26T17:54:49.651Z"
+    },
+    "model": "mirrors.component",
+    "pk": 1
+},
+{
+    "fields": {
+        "schema_name": "testattribute",
+        "created_at": "2014-06-26T17:55:58.186Z",
+        "slug": "test-attribute-1",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-26T18:12:24.404Z"
+    },
+    "model": "mirrors.component",
+    "pk": 2
+},
+{
+    "fields": {
+        "schema_name": "testcomponent",
+        "created_at": "2014-06-26T17:58:22.322Z",
+        "slug": "invalid-component-missing-required-metadata",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-26T18:21:33.266Z"
+    },
+    "model": "mirrors.component",
+    "pk": 3
+},
+{
+    "fields": {
+        "schema_name": "testcomponent",
+        "created_at": "2014-06-26T18:04:33.415Z",
+        "slug": "valid-component-only-required-fields",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-26T21:54:25.698Z"
+    },
+    "model": "mirrors.component",
+    "pk": 4
+},
+{
+    "fields": {
+        "schema_name": "testcomponent",
+        "created_at": "2014-06-26T18:07:20.830Z",
+        "slug": "invalid-component-invalid-content-type",
+        "content_type": "application/json",
+        "updated_at": "2014-06-26T18:07:20.830Z"
+    },
+    "model": "mirrors.component",
+    "pk": 5
+},
+{
+    "fields": {
+        "schema_name": "testattribute",
+        "created_at": "2014-06-26T18:12:32.516Z",
+        "slug": "test-attribute-2",
+        "content_type": "text/plain",
+        "updated_at": "2014-06-26T18:12:32.516Z"
+    },
+    "model": "mirrors.component",
+    "pk": 6
+},
+{
+    "fields": {
+        "schema_name": "testcomponent",
+        "created_at": "2014-06-26T18:23:49.705Z",
+        "slug": "invalid-component-missing-required-attribute",
+        "content_type": "application/json",
+        "updated_at": "2014-06-26T18:23:49.705Z"
+    },
+    "model": "mirrors.component",
+    "pk": 7
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T17:56:30.440Z",
+        "weight": -1,
+        "name": "optional_attribute",
+        "parent": 1,
+        "child": 2
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 1
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T17:58:47.999Z",
+        "weight": -1,
+        "name": "optional_attribute",
+        "parent": 3,
+        "child": 2
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 2
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T18:04:46.644Z",
+        "weight": -1,
+        "name": "optional_attribute",
+        "parent": 4,
+        "child": 2
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 4
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T18:12:52.139Z",
+        "weight": -1,
+        "name": "required_attribute",
+        "parent": 1,
+        "child": 6
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 5
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T18:21:14.502Z",
+        "weight": -1,
+        "name": "required_attribute",
+        "parent": 3,
+        "child": 6
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 6
+},
+{
+    "fields": {
+        "added_time": "2014-06-26T21:54:23.637Z",
+        "weight": -1,
+        "name": "required_attribute",
+        "parent": 4,
+        "child": 6
+    },
+    "model": "mirrors.componentattribute",
+    "pk": 7
+},
+{
+    "fields": {
+        "component": 1,
+        "created_at": "2014-06-26T17:54:06.855Z",
+        "version": 1,
+        "data": "dGhpcyBpcyB0aGUgZGF0YQ==",
+        "metadata": "{\"optional_text\":\"optional!\",\"required_text\":\"required!\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 2
+},
+{
+    "fields": {
+        "component": 3,
+        "created_at": "2014-06-26T17:59:23.323Z",
+        "version": 1,
+        "data": "dGhpcyBpcyB0aGUgZGF0YQ==",
+        "metadata": null
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 3
+},
+{
+    "fields": {
+        "component": 5,
+        "created_at": "2014-06-26T18:07:54.254Z",
+        "version": 1,
+        "data": "dGhpcyBpcyB0aGUgZGF0YQ==",
+        "metadata": "{\"optional_text\":\"optional!\",\"required_text\":\"required!\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 4
+},
+{
+    "fields": {
+        "component": 7,
+        "created_at": "2014-06-26T18:23:50.373Z",
+        "version": 1,
+        "data": "dGhpcyBpcyB0aGUgZGF0YQ==",
+        "metadata": "{\"optional_text\":\"optional!\",\"required_text\":\"required!\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 5
+}
+]
