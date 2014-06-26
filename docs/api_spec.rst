@@ -321,7 +321,8 @@ a lot more like this:
      'attributes': {
        'missing': ['byline', 'header-image'],
        'malformed': ['sub-header-image']
-     }
+     },
+     'content_type': ['all', 'valid', 'types']
    }
  }
 
