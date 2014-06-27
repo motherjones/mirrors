@@ -54,6 +54,10 @@ ROOT_URLCONF = 'mirrors_server.urls'
 WSGI_APPLICATION = 'mirrors_server.wsgi.application'
 
 
+LOGIN_URL = '/login'
+LOGOUT_URL = '/logout'
+
+
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
@@ -94,7 +98,10 @@ LOGGING = {
 # Rest framework
 # http://www.django-rest-framework.org/api-guide/testing
 REST_FRAMEWORK = {
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 # Internationalization

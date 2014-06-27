@@ -3,6 +3,7 @@ import json
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.test import TestCase, Client
@@ -115,7 +116,7 @@ class ComponentLockTests(TestCase):
     def test_break_locked_component(self):
         c = Component.objects.get(slug='locked-component')
 
-        with self.assertRaises(PermissionError):
+        with self.assertRaises(SuspiciousOperation):
             c.lock(self.test_staff)
 
 
