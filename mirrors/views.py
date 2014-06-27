@@ -218,6 +218,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         version = int(kwargs['version'])
@@ -241,6 +242,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
 class ComponentData(View):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         data = component.binary_data
