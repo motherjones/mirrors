@@ -65,14 +65,15 @@ class AttributeList(Attribute):
 
 
 class Component(dict):
+    id = 'component'
+    schema_title = 'base compononent schema'
+    content_type = []
+
     def __init__(self):
         """
         TODO: Split this up into modules and private/public
         properties.
         """
-        self.id = 'component'
-        self.schema_title = 'base compononent schema'
-        self.content_type = []
         required_metadata = []
         metadata = {}
         required_attributes = []
