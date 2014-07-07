@@ -1,41 +1,42 @@
 class MetaData(dict):
-    _dict = {}  # TODO rename this to schema
+    _default_dict = {}
 
     def __init__(self, _dict=None, required=None):
         self.required = required
         if _dict:
-            self._dict = _dict
+            self._dict = self._default_dict
         self.update(self._dict)
 
 
 class StringSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'stringSchema',
         'type': 'string'
     }
 
     def __init__(self, enum=None, required=None):
+        self._dict = self._default_dict
         if enum:
             self._dict['enum'] = enum
         super(StringSchema, self).__init__(required=required)
 
 
 class SlugSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'slugSchema',
         'type': 'string'
     }
 
 
 class UriSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'uriSchema',
         'type': 'string'
     }
 
 
 class EmailSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'emailSchema',
         'type': 'string'
         }
