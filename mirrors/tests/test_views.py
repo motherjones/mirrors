@@ -3,14 +3,13 @@ import json
 import os
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client, RequestFactory
+from django.test import TestCase, Client
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from mirrors import components
-from mirrors.models import Component, ComponentRevision
-from mirrors.views import ComponentData as ComponentDataView
+from mirrors.models import Component
 
 
 class ComponentViewTest(APITestCase):
@@ -702,13 +701,16 @@ class ComponentValidityTest(APITestCase):
 
     def test_valid_component_only_required_stuff(self):
         url = reverse('component-validity', kwargs={
-            'slug': 'valid-component-with-only-required-fields'
+            'slug': 'valid-component-only-required-fields'
         })
 
         res = self.client.get(url)
-        data = json.loads(res.content.decode('UTF-8'))
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        try:
+            data = json.loads(res.content.decode('UTF-8'))
+        except ValueError as e:
+            self.fail(e)
 
         self.assertIn('valid', data)
         self.assertEqual(data, {'valid': True})

@@ -1,5 +1,7 @@
 import json
 
+import jsonschema
+
 from django.core.urlresolvers import reverse
 
 from rest_framework.test import APITestCase
@@ -88,7 +90,7 @@ class ComponentResourceTests(APITestCase):
         serializer = ComponentSerializer(c)
         metadata_str = json.dumps({'test': 'value'})
 
-        result = serializer.transform_metadata(None, metadata_str)
+        result = serializer.transform_metadata(serializer, metadata_str)
         self.assertEqual(result, {'test': 'value'})
 
     def test_transform_metadata_from_dict(self):
@@ -98,6 +100,13 @@ class ComponentResourceTests(APITestCase):
 
         result = serializer.transform_metadata(None, metadata_dict)
         self.assertEqual(result, {'test': 'value'})
+
+    def validate_non_string_or_dict_metadata(self):
+        c = Component.objects.get(slug='test-component-mixed-attributes')
+        serializer = ComponentSerializer(c)
+
+        with self.assertRaises(jsonschema.exceptions.ValidationError):
+            serializer.validate_metadata({'metadata': 32}, 'metadata')
 
 
 class ComponentAttributeResourceTests(APITestCase):

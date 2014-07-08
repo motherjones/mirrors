@@ -1,6 +1,8 @@
 import json
 import logging
 
+import jsonschema
+
 # TODO: these will have to be used at some point, but not yet
 # from django.core.files.storage import default_storage
 # from django.core.files import File
@@ -15,6 +17,7 @@ from rest_framework import generics, mixins, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from mirrors.components import get_component, MissingComponentException
 from mirrors.models import Component, ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
@@ -264,6 +267,56 @@ class ComponentData(View):
         return HttpResponse({'received': len(filedata)},
                             content_type='application/json',
                             status=status.HTTP_201_CREATED)
+
+
+class ComponentValidity(View):
+    def get(self, request, *args, **kwargs):
+        component_slug = kwargs['slug']
+        component = get_object_or_404(Component, slug=component_slug)
+
+        try:
+            schema = get_component(component.schema_name)
+        except MissingComponentException:
+            response_dict = {
+                'valid': False,
+                'errors': {'schema': 'Invalid schema name'}
+            }
+            return HttpResponse(response_dict,
+                                content_type='application/json',
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try:
+            serialized_component = ComponentSerializer(component).data
+        except IndexError as ex:
+            response_dict = {
+                'valid': True,
+                'errors': {
+                    'version': 'Unable to retrieve requested component version'
+                }
+            }
+
+            if str(ex) == 'No such version':
+                return HttpResponse(
+                    response_dict,
+                    content_type='application/json',
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            else:
+                raise ex
+
+        validator = jsonschema.Draft3Validator(schema())
+        errors = validator.iter_errors(serialized_component)
+
+        if errors is None:
+            response_dict = {'valid': True}
+        else:
+            response_dict = {
+                'valid': False,
+                'errors': [e.message for e in errors]
+            }
+
+        return HttpResponse(response_dict,
+                            content_type='application/json',
+                            status=status.HTTP_200_OK)
 
 
 def component_schemas(request):

@@ -306,8 +306,8 @@ response:
    'valid': true
  }
 
-If there were any problems, such as missing attributes, you will get something
-a lot more like this:
+If there were any problems with the validation itself, such as missing
+attributes, you will get something a lot more like this:
 
 .. code:: json
 
@@ -326,7 +326,18 @@ a lot more like this:
    }
  }
 
-Both results will return with a *200* HTTP response code.
+Both of the above results will return with a *200* HTTP response code.
+
+If the schema name itself is invalid then the following response will be
+returned, along with a *500* status:
+
+.. code:: json
+
+ {
+   'valid': false,
+   'errors': { 'schema': 'Invalid schema name'}
+ }
+
 
 Locking
 ^^^^^^^

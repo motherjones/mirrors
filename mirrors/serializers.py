@@ -113,10 +113,14 @@ class ComponentSerializer(serializers.ModelSerializer):
             return val
 
     def _get_metadata(self, obj):
-        if self._version is not None:
-            return obj.metadata_at_version(self._version)
-        else:
-            return obj.metadata
+        try:
+            if self._version is not None and self._version != 0:
+                return obj.metadata_at_version(self._version)
+            else:
+                return obj.metadata
+        except IndexError as e:
+            if str(e) == 'No such version':
+                return {}
 
     def _set_metadata(self, data, *args, **kwargs):
         if 'metadata' in data:
