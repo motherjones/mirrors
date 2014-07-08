@@ -4,7 +4,7 @@ class MetaData(dict):
     def __init__(self, _dict=None, required=None):
         self.required = required
         if not hasattr(self, '_dict'):
-            self._dict = self._default_dict
+            self._dict = self._default_dict.copy()
             if _dict:
                 self._dict = _dict
         self.update(self._dict)
@@ -17,7 +17,7 @@ class StringSchema(MetaData):
     }
 
     def __init__(self, enum=None, required=None):
-        self._dict = self._default_dict
+        self._dict = self._default_dict.copy()
         if enum:
             self._dict['enum'] = enum
         super(StringSchema, self).__init__(required=required)
