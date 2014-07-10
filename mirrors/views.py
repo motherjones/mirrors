@@ -307,9 +307,7 @@ class ComponentValidity(generics.GenericAPIView):
             }
 
             LOGGER.error(
-                "User attempted to use invalid schema name {}".format(
-                    component.schema_name
-                ),
+                "Invalid schema name {}".format(component.schema_name),
                 exc
             )
             return HttpResponse(json.dumps(response_dict),
