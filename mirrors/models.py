@@ -1,10 +1,7 @@
 import re
-import sys
 
-from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
@@ -210,7 +207,7 @@ class Component(models.Model):
         rev = qs.first()
 
         if rev is not None:
-            return rev.data
+            return bytes(rev.data)
         else:
             return None
 

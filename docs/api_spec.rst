@@ -247,6 +247,39 @@ same method. Issuing a ``PUT`` query to ``/component/<slug-id>/data`` where the
 request body is the data itself.
 
 
+.. _components-validity:
+
+Checking Validity
+^^^^^^^^^^^^^^^^^
+
+Before publishing something, the related :class:`Component` objects must be
+checked to make sure that they are valid instances of their type, as defined by
+the schema in their ``schema_name`` (see :ref:`components-schemas` for more
+information on that).
+
+To check the validity of a component, issue a ``GET`` request to the URI
+``/component/<slug>/validity``. If the component is valid, which is to say that
+it has all of the required metadata and attributes, the you will get this
+response:
+
+.. code:: json
+
+ {
+   'valid': true
+ }
+
+If there were any problems with the validation itself, such as missing
+attributes, you will get this:
+
+.. code:: json
+
+ {
+   'valid': false
+ }
+
+Both of the above results will return with a *200* HTTP response code.
+
+
 Revisions
 ^^^^^^^^^
 
@@ -288,55 +321,12 @@ request to ``/component/<slug-id>/revision/<revision-num>/data``. Just like with
 :ref:`components-data-reading`, you'll get the binary data served to you.
 
 Checking Validity
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 
-Before publishing something, the related :class:`Component` objects must be
-checked to make sure that they are valid instances of their type, as defined by
-the schema in their ``schema_name`` (see :ref:`components-schemas` for more
-information on that).
-
-To check the validity of a component, issue a ``GET`` request to the URI
-``/component/<slug>/validity``. If the component is valid, which is to say that
-it has all of the required metadata and attributes, the you will get this
-response:
-
-.. code:: json
-
- {
-   'valid': true
- }
-
-If there were any problems with the validation itself, such as missing
-attributes, you will get something a lot more like this:
-
-.. code:: json
-
- {
-   'valid': false,
-   'errors': {
-     'metadata': {
-       'missing': ['title', 'social-header'],
-       'malformed': ['data']
-     },
-     'attributes': {
-       'missing': ['byline', 'header-image'],
-       'malformed': ['sub-header-image']
-     },
-     'content_type': ['all', 'valid', 'types']
-   }
- }
-
-Both of the above results will return with a *200* HTTP response code.
-
-If the schema name itself is invalid then the following response will be
-returned, along with a *500* status:
-
-.. code:: json
-
- {
-   'valid': false,
-   'errors': { 'schema': 'Invalid schema name'}
- }
+To check whether a specific revision is meets the requirements to be a valid
+instance of the Component type, issue a ``GET`` request to
+``/component/<slug-id>/revision/<revision-num>/valid``. You will get the same
+responses as descriped in :ref:`components-validity`.
 
 
 Locking

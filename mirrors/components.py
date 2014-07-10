@@ -114,9 +114,8 @@ class Component(dict):
             'id': '#%s' % self.id,
             'title': self.schema_title,
             'type': 'object',
-            'required': ['metadata', 'slug', 'schema_name', 'uri'],
+            'required': ['metadata', 'slug', 'schema_name'],
             'properties': {
-                'uri': StringSchema(),
                 'data_uri': StringSchema(),
                 'slug': SlugSchema(),
                 'content_type': StringSchema(enum=self.content_type),

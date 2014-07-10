@@ -269,24 +269,30 @@ class ComponentData(View):
                             status=status.HTTP_201_CREATED)
 
 
-class ComponentValidity(View):
+class ComponentValidity(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         component_slug = kwargs['slug']
         component = get_object_or_404(Component, slug=component_slug)
 
         try:
             schema = get_component(component.schema_name)
-        except MissingComponentException:
+        except MissingComponentException as exc:
             response_dict = {
-                'valid': False,
-                'errors': {'schema': 'Invalid schema name'}
+                'valid': False
             }
-            return HttpResponse(response_dict,
+
+            LOGGER.error(
+                "User attempted to use invalid schema name {}".format(
+                    component.schema_name
+                ),
+                exc
+            )
+            return HttpResponse(json.dumps(response_dict),
                                 content_type='application/json',
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                status=status.HTTP_200_OK)
         try:
             serialized_component = ComponentSerializer(component).data
-        except IndexError as ex:
+        except IndexError:
             response_dict = {
                 'valid': True,
                 'errors': {
@@ -294,27 +300,19 @@ class ComponentValidity(View):
                 }
             }
 
-            if str(ex) == 'No such version':
-                return HttpResponse(
-                    response_dict,
-                    content_type='application/json',
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            else:
-                raise ex
+        # TODO: in the future we may want to go and actually inspect the data
+        # to see *what* is wrong, but for now all we're interested in is
+        # whether the thing is or isn't a valid Component
+        schemas = {k: v() for k, v in components.get_components().items()}
 
-        validator = jsonschema.Draft3Validator(schema())
-        errors = validator.iter_errors(serialized_component)
-
-        if errors is None:
+        try:
+            validator = jsonschema.Draft3Validator(schemas)
+            validator.validate(serialized_component, schema())
             response_dict = {'valid': True}
-        else:
-            response_dict = {
-                'valid': False,
-                'errors': [e.message for e in errors]
-            }
+        except jsonschema.ValidationError:
+            response_dict = {'valid': False}
 
-        return HttpResponse(response_dict,
+        return HttpResponse(json.dumps(response_dict),
                             content_type='application/json',
                             status=status.HTTP_200_OK)
 
@@ -322,7 +320,7 @@ class ComponentValidity(View):
 def component_schemas(request):
     schemas = components.get_components()
     for key, schema in schemas.items():
-        schemas[key] = schema
+        schemas[key] = schema()
     schemas['id'] = reverse('component-schemas')
     return HttpResponse(json.dumps(schemas, indent=4),
                         content_type="application/json")

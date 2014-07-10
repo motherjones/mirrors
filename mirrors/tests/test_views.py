@@ -2,6 +2,8 @@ import hashlib
 import json
 import os
 
+import jsonschema
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 
@@ -674,7 +676,8 @@ class ComponentValidityTest(APITestCase):
         required_text = components.StringSchema(required=True)
         optional_text = components.StringSchema()
 
-        required_attribute = components.Attribute('testattribute')
+        required_attribute = components.Attribute('testattribute',
+                                                  required=True)
         optional_attribute = components.Attribute('testattribute')
 
     def setUp(self):
@@ -687,16 +690,22 @@ class ComponentValidityTest(APITestCase):
     def tearDown(self):
         components.ComponentSchemaCache = self.old_schema_cache
 
+    def _parse_data(self, response):
+        try:
+            return json.loads(response.content.decode('UTF-8'))
+        except ValueError as e:
+            self.fail(e)
+
     def test_valid_component(self):
         url = reverse('component-validity', kwargs={
             'slug': 'valid-component-with-optional-text-optional-attribute'
         })
 
         res = self.client.get(url)
-        data = json.loads(res.content.decode('UTF-8'))
-
-        self.assertIn('valid', data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = self._parse_data(res)
+        self.assertIn('valid', data)
         self.assertEqual(data, {'valid': True})
 
     def test_valid_component_only_required_stuff(self):
@@ -707,13 +716,9 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        try:
-            data = json.loads(res.content.decode('UTF-8'))
-        except ValueError as e:
-            self.fail(e)
-
+        data = self._parse_data(res)
         self.assertIn('valid', data)
-        self.assertEqual(data, {'valid': True})
+        self.assertTrue(data['valid'])
 
     def test_invalid_component_missing_required_metadata(self):
         url = reverse('component-validity', kwargs={
@@ -721,32 +726,11 @@ class ComponentValidityTest(APITestCase):
         })
 
         res = self.client.get(url)
-        data = json.loads(res.content.decode('UTF-8'))
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = self._parse_data(res)
         self.assertIn('valid', data)
-        self.assertin('errors', data)
         self.assertFalse(data['valid'])
-
-        self.assertIn('metadata', data['errors'])
-        self.assertIn('attributes', data['errors'])
-        self.assertIn('content_type', data['errors'])
-
-        m_errors = data['errors']['metadata']
-        a_errors = data['errors']['attributes']
-        ct_errors = data['errors']['content_type']
-
-        self.assertIn('missing', m_errors)
-        self.assertIn('malformed', m_errors)
-        self.assertEqual(m_errors['missing'], ['required_text'])
-        self.assertEqual(m_errors['malformed'], [])
-
-        self.assertIn('missing', a_errors)
-        self.assertIn('malformed', a_errors)
-        self.assertEqual(a_errors['missing'], [])
-        self.assertEqual(a_errors['malformed'], [])
-
-        self.assertEqual(ct_errors, [])
 
     def test_invalid_component_missing_required_attribute(self):
         url = reverse('component-validity', kwargs={
@@ -754,32 +738,11 @@ class ComponentValidityTest(APITestCase):
         })
 
         res = self.client.get(url)
-        data = json.loads(res.content.decode('UTF-8'))
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = self._parse_data(res)
         self.assertIn('valid', data)
-        self.assertin('errors', data)
         self.assertFalse(data['valid'])
-
-        self.assertIn('metadata', data['errors'])
-        self.assertIn('attributes', data['errors'])
-        self.assertIn('content_type', data['errors'])
-
-        m_errors = data['errors']['metadata']
-        a_errors = data['errors']['attributes']
-        ct_errors = data['errors']['content_type']
-
-        self.assertIn('missing', m_errors)
-        self.assertIn('malformed', m_errors)
-        self.assertEqual(m_errors['missing'], [])
-        self.assertEqual(m_errors['malformed'], [])
-
-        self.assertIn('missing', a_errors)
-        self.assertIn('malformed', a_errors)
-        self.assertEqual(a_errors['missing'], ['required_attribute'])
-        self.assertEqual(a_errors['malformed'], [])
-
-        self.assertEqual(ct_errors, [])
 
     def test_invalid_component_invalid_content_type(self):
         url = reverse('component-validity', kwargs={
@@ -787,29 +750,37 @@ class ComponentValidityTest(APITestCase):
         })
 
         res = self.client.get(url)
-        data = json.loads(res.content.decode('UTF-8'))
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = self._parse_data(res)
         self.assertIn('valid', data)
-        self.assertin('errors', data)
         self.assertFalse(data['valid'])
 
-        self.assertIn('metadata', data['errors'])
-        self.assertIn('attributes', data['errors'])
-        self.assertIn('content_type', data['errors'])
+    def test_invalid_component_missing_schema(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'invalid-component-no-such-schema',
+        })
 
-        m_errors = data['errors']['metadata']
-        a_errors = data['errors']['attributes']
-        ct_errors = data['errors']['content_type']
+        res = self.client.get(url)
+        
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        self.assertIn('missing', m_errors)
-        self.assertIn('malformed', m_errors)
-        self.assertEqual(m_errors['missing'], [])
-        self.assertEqual(m_errors['malformed'], [])
+        data = self._parse_data(res)
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
 
-        self.assertIn('missing', a_errors)
-        self.assertIn('malformed', a_errors)
-        self.assertEqual(a_errors['missing'], [])
-        self.assertEqual(a_errors['malformed'], [])
+    def test_get_component_schemas(self):
+        url = reverse('component-schemas')
 
-        self.assertEqual(ct_errors, ['text/plain'])
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = self._parse_data(res)
+        self.assertEqual(len(data.keys()), 3)
+        self.assertIn('testattribute', data)
+        self.assertIn('testcomponent', data)
+        self.assertIn('id', data)
+
+        jsonschema.validate({}, data)
+
+

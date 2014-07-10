@@ -1,3 +1,4 @@
+
 [
 {
     "fields": {
@@ -75,6 +76,17 @@
     },
     "model": "mirrors.component",
     "pk": 7
+},
+{
+    "fields": {
+        "schema_name": "nosuchschema",
+        "created_at": "2014-06-26T18:23:49.705Z",
+        "slug": "invalid-component-no-such-schema",
+        "content_type": "application/json",
+        "updated_at": "2014-06-26T18:23:49.705Z"
+    },
+    "model": "mirrors.component",
+    "pk": 8
 },
 {
     "fields": {

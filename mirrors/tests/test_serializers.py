@@ -4,6 +4,7 @@ import jsonschema
 
 from django.core.urlresolvers import reverse
 
+from rest_framework import serializers
 from rest_framework.test import APITestCase
 
 from mirrors.models import Component
@@ -101,11 +102,11 @@ class ComponentResourceTests(APITestCase):
         result = serializer.transform_metadata(None, metadata_dict)
         self.assertEqual(result, {'test': 'value'})
 
-    def validate_non_string_or_dict_metadata(self):
+    def test_validate_non_string_or_dict_metadata(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
         serializer = ComponentSerializer(c)
 
-        with self.assertRaises(jsonschema.exceptions.ValidationError):
+        with self.assertRaises(serializers.ValidationError):
             serializer.validate_metadata({'metadata': 32}, 'metadata')
 
 
