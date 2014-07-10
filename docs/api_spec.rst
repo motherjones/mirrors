@@ -243,8 +243,8 @@ Creating/Updating
 """""""""""""""""
 
 Both creating and updating the data for a :py:class:`Component` is done by the
-same method. Issuing a ``PUT`` query to ``/component/<slug-id>/data`` where the
-request body is the data itself.
+same method. Issuing a ``POST`` query to ``/component/<slug-id>/data`` where
+the request body is the data itself.
 
 
 .. _components-validity:

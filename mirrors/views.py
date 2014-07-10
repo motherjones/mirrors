@@ -13,7 +13,8 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 
-from rest_framework import generics, mixins, status
+from rest_framework import generics, mixins, status, permissions
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -35,6 +36,9 @@ class ComponentList(mixins.CreateModelMixin,
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -46,6 +50,9 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     """View for a single Component instance."""
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
+
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -62,6 +69,9 @@ class ComponentAttributeList(mixins.CreateModelMixin,
 
     queryset = ComponentAttribute.objects.all()
     serializer_class = ComponentAttributeSerializer
+
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         parent = Component.objects.get(slug=kwargs['slug'])
@@ -86,6 +96,9 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
     queryset = ComponentAttribute.objects.all()
     lookup_field = 'name'
     serializer_class = ComponentAttributeSerializer
+
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def _normalize_request_data(self, data):
         """Turn a single or list of client-submitted component attributes into
@@ -174,6 +187,9 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
 
 class ComponentRevisionList(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         qs = component.revisions.order_by('version')
@@ -187,6 +203,9 @@ class ComponentRevisionList(mixins.RetrieveModelMixin,
 
 class ComponentRevisionDetail(mixins.RetrieveModelMixin,
                               generics.GenericAPIView):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         version = int(kwargs['version'])
@@ -200,6 +219,8 @@ class ComponentRevisionDetail(mixins.RetrieveModelMixin,
 
 class ComponentRevisionData(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         version = int(kwargs['version'])
@@ -221,6 +242,8 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
 
 
 class ComponentData(View):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         data = component.binary_data

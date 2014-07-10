@@ -4,8 +4,9 @@ import os
 
 import jsonschema
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client
+from django.test import Client
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -25,6 +26,9 @@ class ComponentViewTest(APITestCase):
                 'title': 'Valid component'
             })
         }
+
+        user = User.objects.get(username='test_admin')
+        self.client.force_authenticate(user=user)
 
     def test_get_component(self):
         url = reverse('component-detail', kwargs={
@@ -216,6 +220,10 @@ class ComponentViewTest(APITestCase):
 
 class ComponentAttributeViewTests(APITestCase):
     fixtures = ['users.json', 'componentattributes.json']
+
+    def setUp(self):
+        user = User.objects.get(username='test_admin')
+        self.client.force_authenticate(user=user)
 
     def test_get_attribute(self):
         url = reverse('component-attribute-detail', kwargs={
@@ -446,15 +454,16 @@ class ComponentAttributeViewTests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class ComponentDataViewTest(TestCase):
-    fixtures = ['component_data.json']
+class ComponentDataViewTest(APITestCase):
+    fixtures = ['users.json', 'component_data.json']
 
     def setUp(self):
-        self.client = Client()
-
         self.svg_hash = '01d5a1a9d1452f1b013bfc74da44d52e'
         self.jpeg_hash = '6367446e537b50e363f26e385f47e99d'
         self.md_hash = 'eb867962bfff036e98b5e59dc6153caf'
+
+        user = User.objects.get(username='test_admin')
+        self.client.force_authenticate(user=user)
 
     def test_get_data(self):
         url = reverse('component-data', kwargs={
@@ -538,6 +547,9 @@ class ComponentRevisionViewTest(APITestCase):
             })
         }
 
+        user = User.objects.get(username='test_admin')
+        self.client.force_authenticate(user=user)
+
     def test_get_component_at_version(self):
         url = reverse('component-revision-detail', kwargs={
             'slug': 'component-with-many-revisions',
@@ -605,6 +617,10 @@ class ComponentRevisionViewTest(APITestCase):
 
 class ComponentRevisionSummaryViewTests(APITestCase):
     fixtures = ['users.json', 'componentrevisions.json']
+
+    def setUp(self):
+        user = User.objects.get(username='test_admin')
+        self.client.force_authenticate(user=user)
 
     def test_serialize_revision_summary_with_multiple_type_changes(self):
         url = reverse('component-revision-list', kwargs={
