@@ -8,14 +8,14 @@ import jsonschema
 # from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.utils import IntegrityError
+# from django.db.utils import IntegrityError
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.views import APIView
+# from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from mirrors.components import get_component, MissingComponentException
@@ -221,6 +221,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         version = int(kwargs['version'])
@@ -244,6 +245,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
 class ComponentData(View):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         data = component.binary_data

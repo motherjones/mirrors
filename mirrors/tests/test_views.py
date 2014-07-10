@@ -778,7 +778,7 @@ class ComponentValidityTest(APITestCase):
         })
 
         res = self.client.get(url)
-        
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
         data = self._parse_data(res)
@@ -798,5 +798,3 @@ class ComponentValidityTest(APITestCase):
         self.assertIn('id', data)
 
         jsonschema.validate({}, data)
-
-
