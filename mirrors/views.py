@@ -313,6 +313,9 @@ class ComponentValidity(generics.GenericAPIView):
             return HttpResponse(json.dumps(response_dict),
                                 content_type='application/json',
                                 status=status.HTTP_200_OK)
+
+        if component.binary_data is None and 
+
         try:
             serialized_component = ComponentSerializer(component).data
         except IndexError:
