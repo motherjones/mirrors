@@ -1,3 +1,4 @@
+import datetime
 import re
 import sys
 
@@ -7,9 +8,24 @@ from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
 from django.utils import timezone
+from django.utils.timezone import utc
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
+
+
+class ComponentLockedException(Exception):
+    locking_user = None
+    lock_ends_at = None
+
+    def __init__(self, *args, **kwargs):
+        if 'locking_user' in kwargs:
+            self.locking_user = kwargs['locking_user']
+
+        if 'expires_at' in kwargs:
+            self.lock_ends_at = kwargs['ends_at']
+
+        super().__init__("This component is locked")
 
 
 class Component(models.Model):
@@ -71,14 +87,6 @@ class Component(models.Model):
         else:
             return version['version__max']
 
-    @property
-    def locked(self):
-        """Get the currently active lock on this ``Component``, if any.
-
-        :rtype: :class:`ComponentLock`
-        """
-        raise NotImplementedError
-
     def _version_in_range(self, version):
         return (version > 0) and (version <= self.max_version)
 
@@ -96,7 +104,6 @@ class Component(models.Model):
 
         :rtype: :class:`ComponentRevision`
         :raises: :class:`ValueError`
-
         """
         if not data and not metadata:
             raise ValueError('no new revision data was actually provided')
@@ -224,21 +231,42 @@ class Component(models.Model):
         else:
             return None
 
-    def lock(self, locking_user, lock_length=None):
+    @property
+    def lock(self):
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        cur_lock = self.locks.exclude(broken=True)
+        cur_lock = cur_lock.exclude(lock_ends_at__lte=now)
+
+        if cur_lock.count() > 0:
+            return cur_lock.first()
+        else:
+            return None
+
+
+    def lock_by(self, user):
         """Lock the :class:`Component`, preventing other users from altering it
         until the lock expires.
 
-        :param locking_user: The user that has requested the lock be created.
-        :type locking_user: :class:`User`
-
-        :param lock_length: The length of time, in minutes, that the lock
-                            should be active before it is automatically broken.
-        :type lock_length: int
+        :param value: The user that has requested the lock be created.
+        :type User: :class:`User`
 
         :rtype: :class:`ComponentLock`
-        :raises: :class:`PermissionError`
         """
-        raise NotImplementedError
+        if self.lock is not None:
+            raise ComponentLockedException(locking_user=self.lock.locked_by,
+                                           ends_at=self.lock.lock_ends_at)
+
+        lock = ComponentLock()
+        t_delta = datetime.timedelta(hours=1)
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        lock.component = self
+        lock.locked_by = user
+        lock.lock_ends_at = now + t_delta
+        lock.save()
+
+        return lock
 
     def unlock(self, unlocking_user):
         """Unlock the :class:`Component`.
@@ -246,7 +274,16 @@ class Component(models.Model):
         :param unlocking_user: The user that has requested the lock be broken.
         :type unlocking_user: :class:`User`
         """
-        raise NotImplementedError
+        # TODO: right now we don't care who breaks a lock, but eventually
+        # authorization will have to be implemented
+
+        # we have to assign self.lock to a new variable because if we don't,
+        # because otherwise it'll keep executing SQL queries
+        lock = self.lock
+
+        if lock is not None:
+            lock.broken = True
+            lock.save()
 
     def __str__(self):
         return self.slug
@@ -307,7 +344,28 @@ class ComponentRevision(models.Model):
 class ComponentLock(models.Model):
     """ Determines whether a ``Component`` can be edited.
     """
-    locked_by = models.ForeignKey(User)  # username
+    locked_by = models.ForeignKey(User)
     locked_at = models.DateTimeField(auto_now_add=True)
     lock_ends_at = models.DateTimeField()
     component = models.ForeignKey('Component', related_name='locks')
+
+    broken = models.BooleanField(default=False)
+
+    def extend_lock(self, *args, **kwargs):
+        """Extend the life time of the current lock. The arguments excepted are the
+        same as what is acceptable for use when creating a
+        :class:`datetime.timedelta` object.
+
+        :raises: :class:`ValueError`
+        """
+        delta = datetime.timedelta(**kwargs)
+        if delta.total_seconds() < 0:
+            raise ValueError()
+
+        self.lock_ends_at = self.lock_ends_at + delta
+        self.save()
+
+    def __str__(self):
+        return "{} locked by {} until {}".format(self.component.slug,
+                                                 self.locked_by.username,
+                                                 self.lock_ends_at)
