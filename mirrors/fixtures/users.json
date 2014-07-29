@@ -52,5 +52,24 @@
     },
     "model": "auth.user",
     "pk": 5
+},
+{
+    "fields": {
+        "username": "test_user2",
+        "first_name": "",
+        "last_name": "",
+        "is_active": true,
+        "is_superuser": false,
+        "is_staff": false,
+        "last_login": "2014-06-17T22:27:57.475Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$12000$Gwj40lvmBVLJ$gL4c+kypFeG3fUhe+uNWBIvo+vTXw4kdGwco0FCzMUM=",
+        "email": "",
+        "date_joined": "2014-06-17T22:27:57.475Z"
+    },
+    "model": "auth.user",
+    "pk": 6
 }
+
 ]

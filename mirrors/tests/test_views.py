@@ -696,6 +696,22 @@ class ComponentLockRequestTest(APITestCase):
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        import pdb;pdb.set_trace()
+        data = json.loads(response.content.decode('UTF-8'))
+        self.assertTrue(isinstance(data, dict))
+
+        self.assertEqual(len(data), 4)
+        self.assertIn('locked', data)
+        self.assertIn('locked_by', data)
+        self.assertIn('locked_at', data)
+        self.assertIn('lock_ends_at', data)
+
+        self.assertTrue(data['locked'])
+        self.assertEqual(data['locked_by'], 'test_user')
+        self.assertEqual(data['locked_at'].strftime("%Y-%m-%d %H:%M:%S"),
+                         '2014-06-23 21:29:46')
+        self.assertEqual(data['lock_ends_at'].strftime("%Y-%m-%d %H:%M:%S"),
+                         '9999-01-31 01:01:01')
 
     def test_lock_unlocked_component(self):
         url = reverse('component-lock', kwargs={

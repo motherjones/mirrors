@@ -20,6 +20,7 @@ from mirrors.models import Component, ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
 from mirrors.serializers import ComponentRevisionSerializer
+from mirrors.serializers import ComponentLockSerializer
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -239,7 +240,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
         return resp
 
 
-class ComponentData(View):
+class ComponentData(generics.GenericAPIView):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -291,6 +292,39 @@ class ComponentData(View):
                             status=status.HTTP_201_CREATED)
 
 
+class ComponentLock(generics.GenericAPIView):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        lock = component.lock
+
+        if lock:
+            # lock_info = {'locked': True,
+            #              'locked_by': lock.locked_by,
+            #              'locked_at': lock.locked_at,
+            #              'lock_ends_at': lock.lock_ends_at}
+            # return HttpResponse(json.dumps(lock_info),
+            #                     content_type="application/json")
+            serializer = ComponentLockSerializer(lock)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, *args, **kwargs):
+        # user = request.user
+        # component = get_object_or_404(Component, slug=kwargs['slug'])
+
+        # if not component.locked:
+        #     component.lock(user)
+        # elif component.locked and component.
+        raise NotImplementedError()
+
+    def delete(self, request, *args, **kwargs):
+        raise NotImplementedError()
+
+
 def component_schemas(request):
     schemas = components.get_components()
     for key, schema in schemas.items():
@@ -298,35 +332,3 @@ def component_schemas(request):
     schemas['id'] = reverse('component-schemas')
     return HttpResponse(json.dumps(schemas, indent=4),
                         content_type="application/json")
-
-
-class ComponentLock(View):
-    def get(self, request, *args, **kwargs):
-        component = get_object_or_404(Component, slug=kwargs['slug'])
-        # data = component.binary_data
-
-        # if data is None:
-        #     raise Http404
-
-        # if we have a real filename stored in metadata, we should provide that
-        # to the browser as the filename. if not, just give it the slug instead
-        # if 'filename' in component.metadata:
-        #     filename = component.metadata['filename']
-        # else:
-        #     filename = component.slug
-
-        # resp = HttpResponse(data,
-        #                     content_type=component.content_type,
-        #                     status=status.HTTP_200_OK)
-        # resp['Content-Disposition'] = "inline; filename={}".format(filename)
-        # return resp
-
-        if component.lock:
-            lock_info = {'locked': True}
-            return HttpResponse(json.dumps(lock_info, indent=4),
-                                content_type="application/json")
-        else:
-            return Response(None, status=HTTP_404_NOT_FOUND)
-
-    def post(self, request, *args, **kwargs):
-        raise NotImplementedError()

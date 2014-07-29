@@ -2,7 +2,7 @@ import json
 import logging
 
 from rest_framework import serializers
-from mirrors.models import Component, ComponentAttribute, ComponentRevision
+from mirrors.models import *
 
 LOGGER = logging.getLogger(__name__)
 
@@ -182,3 +182,15 @@ class ComponentRevisionSerializer(serializers.ModelSerializer):
             changes.append('metadata')
 
         return changes
+
+
+class ComponentLockSerializer(serializers.ModelSerializer):
+    locked = serializers.SerializerMethodField('return_true')
+    locked_by = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = ComponentLock
+        fields = ('locked', 'locked_by', 'locked_at', 'lock_ends_at',)
+
+    def return_true(self, obj):
+        return True

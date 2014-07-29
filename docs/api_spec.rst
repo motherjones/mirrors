@@ -332,8 +332,7 @@ the following format:
   }
 
 
-.. note:: ``lock_duration`` is optional and the duration will default to 30
-          minutes when not specified.
+.. note:: ``lock_duration`` is optional and the duration will default to 1 hour
 
 .. note:: The currently logged in user account will be recorded as having made
           the lock in the database.
