@@ -330,7 +330,7 @@ class ComponentValidity(generics.GenericAPIView):
         schemas = {k: v() for k, v in components.get_components().items()}
 
         try:
-            validator = jsonschema.Draft3Validator(schemas)
+            validator = jsonschema.Draft4Validator(schemas)
             validator.validate(serialized_component, schema())
             response_dict = {'valid': True}
         except jsonschema.ValidationError:
