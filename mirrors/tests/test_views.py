@@ -701,8 +701,6 @@ class ComponentValidityTest(APITestCase):
         schema_title = 'test component with data'
         content_type = ['text/plain']
 
-        require_binary_data = True
-
     def setUp(self):
         self.old_schema_cache = components.ComponentSchemaCache
         components.ComponentSchemaCache = {
@@ -792,31 +790,31 @@ class ComponentValidityTest(APITestCase):
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
-    def test_component_with_required_data(self):
-        url = reverse('component-validity', kwargs={
-            'slug': 'component-with-required-data',
-        })
+    # def test_component_with_required_data(self):
+    #     url = reverse('component-validity', kwargs={
+    #         'slug': 'component-with-required-data',
+    #     })
 
-        res = self.client.get(url)
+    #     res = self.client.get(url)
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
-        self.assertIn('valid', data)
-        self.assertTrue(data['valid']),
+    #     data = self._parse_data(res)
+    #     self.assertIn('valid', data)
+    #     self.assertTrue(data['valid']),
 
-    def test_invalid_component_missing_required_data(self):
-        url = reverse('component-validity', kwargs={
-            'slug': 'component-missing-required-data',
-        })
+    # def test_invalid_component_missing_required_data(self):
+    #     url = reverse('component-validity', kwargs={
+    #         'slug': 'component-missing-required-data',
+    #     })
 
-        res = self.client.get(url)
+    #     res = self.client.get(url)
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
-        self.assertIn('valid', data)
-        self.assertFalse(data['valid']),
+    #     data = self._parse_data(res)
+    #     self.assertIn('valid', data)
+    #     self.assertFalse(data['valid']),
 
     def test_get_component_schemas(self):
         url = reverse('component-schemas')
