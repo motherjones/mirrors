@@ -714,12 +714,6 @@ class ComponentValidityTest(APITestCase):
     def tearDown(self):
         components.ComponentSchemaCache = self.old_schema_cache
 
-    def _parse_data(self, response):
-        try:
-            return json.loads(response.content.decode('UTF-8'))
-        except ValueError as e:
-            self.fail(e)
-
     def test_valid_component(self):
         url = reverse('component-validity', kwargs={
             'slug': 'valid-component-with-optional-text-optional-attribute'
@@ -728,7 +722,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertEqual(data, {'valid': True})
 
@@ -740,7 +734,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertTrue(data['valid'])
 
@@ -752,7 +746,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
@@ -764,7 +758,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
@@ -776,7 +770,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
@@ -789,7 +783,7 @@ class ComponentValidityTest(APITestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
@@ -802,7 +796,7 @@ class ComponentValidityTest(APITestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertTrue(data['valid']),
 
@@ -812,10 +806,9 @@ class ComponentValidityTest(APITestCase):
         })
 
         res = self.client.get(url)
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertIn('valid', data)
         self.assertFalse(data['valid'])
 
@@ -825,7 +818,7 @@ class ComponentValidityTest(APITestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        data = self._parse_data(res)
+        data = json.loads(res.content.decode('UTF-8'))
         self.assertEqual(set(data.keys()), {'testattribute',
                                             'testcomponent',
                                             'testrequireddata',
