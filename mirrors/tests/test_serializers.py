@@ -11,6 +11,7 @@ from mirrors.models import Component
 from mirrors.models import ComponentAttribute
 from mirrors.models import ComponentRevision
 from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentWithDataSerializer
 from mirrors.serializers import ComponentAttributeSerializer
 from mirrors.serializers import ComponentRevisionSerializer
 
@@ -28,12 +29,17 @@ class ComponentResourceTests(APITestCase):
         c = Component.objects.get(slug='test-component-with-no-attributes')
         content = ComponentSerializer(c).data
 
-        expected_url = reverse('component-detail', kwargs={
-            'slug': 'test-component-with-no-attributes'
-        }) + '/data'
+        self.assertTrue(isinstance(content, dict))
+        self.assertEqual(set(content.keys()), {'slug',
+                                               'content_type',
+                                               'schema_name',
+                                               'metadata',
+                                               'attributes',
+                                               'created_at',
+                                               'revisions',
+                                               'updated_at'})
 
         self.assertEqual(content['slug'], 'test-component-with-no-attributes')
-        self.assertEqual(content['data_uri'], expected_url)
         self.assertEqual(content['content_type'], 'application/x-markdown')
         self.assertEqual(content['schema_name'], 'article')
         self.assertEqual(content['metadata'], {
@@ -44,7 +50,7 @@ class ComponentResourceTests(APITestCase):
     def test_serialize_component_with_attribute(self):
         c = Component.objects.get(
             slug='test-component-with-one-named-attribute')
-        content = ComponentSerializer(c).data
+        content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'],
                          'test-component-with-one-named-attribute')
@@ -56,7 +62,7 @@ class ComponentResourceTests(APITestCase):
 
     def test_serialize_component_with_attribute_list(self):
         c = Component.objects.get(slug='test-component-with-list-attribute')
-        content = ComponentSerializer(c).data
+        content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'], 'test-component-with-list-attribute')
         self.assertTrue(self._has_attribute(content, 'my_list_attribute'))
@@ -74,7 +80,7 @@ class ComponentResourceTests(APITestCase):
 
     def test_serialize_component_with_mixed_attributes(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
-        content = ComponentSerializer(c).data
+        content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'], 'test-component-mixed-attributes')
         self.assertTrue(self._has_attribute(content, 'my_list_attribute'))
@@ -88,7 +94,7 @@ class ComponentResourceTests(APITestCase):
 
     def test_transform_metadata_from_string(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
-        serializer = ComponentSerializer(c)
+        serializer = ComponentWithDataSerializer(c)
         metadata_str = json.dumps({'test': 'value'})
 
         result = serializer.transform_metadata(serializer, metadata_str)
@@ -96,7 +102,7 @@ class ComponentResourceTests(APITestCase):
 
     def test_transform_metadata_from_dict(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
-        serializer = ComponentSerializer(c)
+        serializer = ComponentWithDataSerializer(c)
         metadata_dict = {'test': 'value'}
 
         result = serializer.transform_metadata(None, metadata_dict)
@@ -104,7 +110,7 @@ class ComponentResourceTests(APITestCase):
 
     def test_validate_non_string_or_dict_metadata(self):
         c = Component.objects.get(slug='test-component-mixed-attributes')
-        serializer = ComponentSerializer(c)
+        serializer = ComponentWithDataSerializer(c)
 
         with self.assertRaises(serializers.ValidationError):
             serializer.validate_metadata({'metadata': 32}, 'metadata')

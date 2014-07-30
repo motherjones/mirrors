@@ -229,5 +229,16 @@
     },
     "model": "mirrors.componentrevision",
     "pk": 6
+},
+{
+    "fields": {
+        "component": 4,
+        "created_at": "2014-06-26T21:54:25.698Z",
+        "version": 1,
+        "data": "dGhpcyBpcyB0aGUgZGF0YQ==",
+        "metadata": "{\"required_text\":\"present!\"}"
+    },
+    "model": "mirrors.componentrevision",
+    "pk": 7
 }
 ]

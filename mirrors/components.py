@@ -114,7 +114,7 @@ class Component(dict):
             'id': '#%s' % self.id,
             'title': self.schema_title,
             'type': 'object',
-            'required': ['metadata', 'slug', 'schema_name'],
+            'required': self._required_top_level,
             'properties': {
                 'data_uri': StringSchema(),
                 'slug': SlugSchema(),
@@ -125,6 +125,15 @@ class Component(dict):
             }
         }
         return self.update(schema)
+
+    @property
+    def _required_top_level(self):
+        fields = ['metadata', 'slug', 'schema_name']
+
+        if hasattr(self, 'requires_data') and self.requires_data is True:
+            fields.append('data_uri')
+
+        return fields
 
 
 ComponentSchemaCache = {}

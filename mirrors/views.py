@@ -20,9 +20,7 @@ from rest_framework.response import Response
 
 from mirrors.components import get_component, MissingComponentException
 from mirrors.models import Component, ComponentAttribute
-from mirrors.serializers import ComponentSerializer
-from mirrors.serializers import ComponentAttributeSerializer
-from mirrors.serializers import ComponentRevisionSerializer
+from mirrors.serializers import *
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -55,6 +53,13 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=self.kwargs['slug'])
+
+        if component.data_uri is not None:
+            self.serializer_class = ComponentWithDataSerializer
+        else:
+            self.serializer_class = ComponentSerializer
+
         return self.retrieve(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
@@ -312,10 +317,16 @@ class ComponentValidity(generics.GenericAPIView):
             )
             return HttpResponse(json.dumps(response_dict),
                                 content_type='application/json',
+
                                 status=status.HTTP_200_OK)
 
         try:
-            serialized_component = ComponentSerializer(component).data
+            if component.data_uri is not None:
+                serializer = ComponentWithDataSerializer
+            else:
+                serializer = ComponentSerializer
+
+            serialized_component = serializer(component).data
         except IndexError:
             response_dict = {
                 'valid': True,
@@ -329,11 +340,13 @@ class ComponentValidity(generics.GenericAPIView):
         # whether the thing is or isn't a valid Component
         schemas = {k: v() for k, v in components.get_components().items()}
 
-        try:
-            validator = jsonschema.Draft4Validator(schemas)
-            validator.validate(serialized_component, schema())
+        v = jsonschema.Draft4Validator(schemas)
+        errors = sorted(v.iter_errors(serialized_component, schema()),
+                        key=lambda e: e.path)
+
+        if len(errors) == 0:
             response_dict = {'valid': True}
-        except jsonschema.ValidationError:
+        else:
             response_dict = {'valid': False}
 
         return HttpResponse(json.dumps(response_dict),
