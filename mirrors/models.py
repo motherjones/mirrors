@@ -1,13 +1,9 @@
 import datetime
 import re
-import sys
 
-from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import User
-from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
-from django.utils import timezone
 from django.utils.timezone import utc
 from django.core.urlresolvers import reverse
 
@@ -149,8 +145,9 @@ class Component(models.Model):
         if not re.match('^\w[-\w]*$', name):
             raise KeyError('invalid attribute name')
 
-        if self.attributes.filter(name=name).count() == 1:
-            attr = self.attributes.get(name=name)
+        # attr never gets used again... just comented this out for now 
+        # if self.attributes.filter(name=name).count() == 1:
+        #     attr = self.attributes.get(name=name)
 
         new_attr = ComponentAttribute(
             name=name,
@@ -243,8 +240,7 @@ class Component(models.Model):
         else:
             return None
 
-
-    def lock_by(self, user):
+    def lock_by(self, user, lock_period=60):
         """Lock the :class:`Component`, preventing other users from altering it
         until the lock expires.
 
@@ -258,7 +254,7 @@ class Component(models.Model):
                                            ends_at=self.lock.lock_ends_at)
 
         lock = ComponentLock()
-        t_delta = datetime.timedelta(hours=1)
+        t_delta = datetime.timedelta(minutes=lock_period)
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
 
         lock.component = self
