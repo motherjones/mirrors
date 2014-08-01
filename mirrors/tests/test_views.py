@@ -505,6 +505,7 @@ class ComponentDataViewTest(APITestCase):
 
     def test_post_data(self):
         c = Client()
+        c.login(username='test_user', password='password1')
 
         url = reverse('component-data', kwargs={
             'slug': 'component-with-no-data'
@@ -518,10 +519,7 @@ class ComponentDataViewTest(APITestCase):
         component = Component.objects.get(slug='component-with-no-data')
 
         with open(file_path, 'rb') as upload_file:
-            # req = rf.post(url, data={'file': upload_file})
-            # res = ComponentDataView.post(req)
-            res = c.post(url,
-                         data={'file': upload_file})
+            res = c.post(url, data={'file': upload_file})
 
             self.assertTrue(res.status_code, status.HTTP_204_NO_CONTENT)
             self.assertEqual(component.revisions.count(), 1)
@@ -696,7 +694,7 @@ class ComponentLockRequestTest(APITestCase):
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        import pdb;pdb.set_trace()
+
         data = json.loads(response.content.decode('UTF-8'))
         self.assertTrue(isinstance(data, dict))
 
@@ -708,10 +706,8 @@ class ComponentLockRequestTest(APITestCase):
 
         self.assertTrue(data['locked'])
         self.assertEqual(data['locked_by'], 'test_user')
-        self.assertEqual(data['locked_at'].strftime("%Y-%m-%d %H:%M:%S"),
-                         '2014-06-23 21:29:46')
-        self.assertEqual(data['lock_ends_at'].strftime("%Y-%m-%d %H:%M:%S"),
-                         '9999-01-31 01:01:01')
+        self.assertEqual(data['locked_at'], '2014-06-23T21:29:46.993Z')
+        self.assertEqual(data['lock_ends_at'], '9999-01-31T01:01:01.001Z')
 
     def test_lock_unlocked_component(self):
         url = reverse('component-lock', kwargs={
@@ -724,6 +720,14 @@ class ComponentLockRequestTest(APITestCase):
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        data = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(set(data.keys()), {'locked',
+                                            'locked_by',
+                                            'locked_at',
+                                            'lock_ends_at'})
+        self.assertTrue(data['locked'])
+        self.assertEqual(data['locked_by'], 'test_staff')
+
     def test_lock_unlocked_component_with_no_duration(self):
         url = reverse('component-lock', kwargs={
             'slug': 'unlocked-component'
@@ -732,16 +736,21 @@ class ComponentLockRequestTest(APITestCase):
         response = self.client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_lock_locked_component(self):
+    def test_lock_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+
         url = reverse('component-lock', kwargs={
             'slug': 'locked-component'
         })
-        data = {
+        put_data = {
             'locked': True,
             'lock_duration': 60
         }
-        response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+        response = self.client.put(url, put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unlock_locked_by_me_component(self):
         user = User.objects.get(username='test_user')
@@ -761,6 +770,9 @@ class ComponentLockRequestTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_locked_component(self):
+        user = User.objects.get(username='test_staff')
+        self.client.force_authenticate(user=user)
+
         url = reverse('component-detail', kwargs={
             'slug': 'locked-component'
         })

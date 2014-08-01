@@ -47,6 +47,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'mirrors.middleware.MirrorsLockEnforcementMiddleware',
 )
 
 ROOT_URLCONF = 'mirrors_server.urls'

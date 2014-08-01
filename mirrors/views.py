@@ -6,16 +6,14 @@ import logging
 # from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.utils import IntegrityError
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic import View
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from mirrors.exceptions import LockEnforcementError
 from mirrors.models import Component, ComponentAttribute
 from mirrors.serializers import ComponentSerializer
 from mirrors.serializers import ComponentAttributeSerializer
@@ -24,6 +22,39 @@ from mirrors.serializers import ComponentLockSerializer
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
+
+# def login_required(f):
+
+#   # This function is what we "replace" hello with
+#   def wrapper(*args, **kw):
+#     args[0].client_session['test'] = True
+#     logged_in = 0
+#     if logged_in:
+#       return f(*args, **kw)  # Call hello
+#     else:
+#       return redirect(url_for('login'))
+
+#   return wrapper
+
+
+def requires_lock_access(f):
+    def wrapper(view, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+
+        if component.lock is None or component.lock.locked_by == request.user:
+            return f(view, request, *args, **kwargs)
+        else:
+            raise LockEnforcementError()
+    return wrapper
+
+
+def can_update_component(user, component_slug):
+    component = get_object_or_404(Component, slug=component_slug)
+
+    if component.lock is not None:
+        return component.lock.locked_by == user
+    else:
+        return True
 
 
 class ComponentList(mixins.CreateModelMixin,
@@ -55,9 +86,11 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+    @requires_lock_access
     def patch(self, request, *args, **kwargs):
         return self.update(request, *args, partial=True, **kwargs)
 
+    @requires_lock_access
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
@@ -71,6 +104,7 @@ class ComponentAttributeList(mixins.CreateModelMixin,
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
+    @requires_lock_access
     def post(self, request, *args, **kwargs):
         parent = Component.objects.get(slug=kwargs['slug'])
         attrs = parent.attributes.filter(name=request.DATA['name'])
@@ -104,7 +138,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
         `attribute['parent']` to the component slug and `attribute['name']` to
         the attribute name.
 
-        :param data: The data to normalize; generally requset.DATA
+        :param data: The data to normalize; generally request.DATA
         :type data: `list` or `dict`
         :raise TypeError: If data is not a list or or dict
         :return: the normalized data
@@ -148,6 +182,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @requires_lock_access
     def put(self, request, *args, **kwargs):
         try:
             data = self._normalize_request_data(request.DATA)
@@ -175,6 +210,7 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+    @requires_lock_access
     def delete(self, request, *args, **kwargs):
         if self.get_queryset().count() == 0:
             raise Http404
@@ -277,6 +313,7 @@ class ComponentData(generics.GenericAPIView):
 
         return data
 
+    @requires_lock_access
     def post(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
 
@@ -312,17 +349,31 @@ class ComponentLock(generics.GenericAPIView):
         else:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
+    @requires_lock_access
     def put(self, request, *args, **kwargs):
-        # user = request.user
-        # component = get_object_or_404(Component, slug=kwargs['slug'])
+        component = get_object_or_404(Component, slug=kwargs['slug'])
 
-        # if not component.locked:
-        #     component.lock(user)
-        # elif component.locked and component.
-        raise NotImplementedError()
+        if component.lock is not None:
+            raise LockEnforcementError()
 
+        component.lock_by(request.user)
+
+        serializer = ComponentLockSerializer(component.lock)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @requires_lock_access
     def delete(self, request, *args, **kwargs):
-        raise NotImplementedError()
+        component = get_object_or_404(Component, slug=kwargs['slug'])
+        lock = component.lock
+
+        if lock is not None:
+            lock.broken = True
+            lock.save()
+
+            return Response({'message': 'This component is unlocked'},
+                            status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise Http404()
 
 
 def component_schemas(request):

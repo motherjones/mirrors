@@ -1,14 +1,14 @@
+import datetime
 import json
 
-from datetime import timedelta
-
 from django.contrib.auth.models import User
-from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.test import TestCase, Client
+from django.test import TestCase
 
-from mirrors.models import *
+from mirrors.exceptions import LockEnforcementError
+from mirrors.models import Component
+from mirrors.models import ComponentLock
+from mirrors.models import ComponentAttribute
 
 
 class ComponentModelTests(TestCase):
@@ -105,7 +105,7 @@ class ComponentLockTests(TestCase):
     def test_lock_locked_component(self):
         c = Component.objects.get(slug='locked-component')
 
-        with self.assertRaises(ComponentLockedException):
+        with self.assertRaises(LockEnforcementError):
             c.lock_by(self.test_staff)
 
     def test_extend_lock(self):

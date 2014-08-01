@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
+from mirrors.exceptions import LockEnforcementError
+
 
 class ComponentLockedException(Exception):
     locking_user = None
@@ -145,7 +147,7 @@ class Component(models.Model):
         if not re.match('^\w[-\w]*$', name):
             raise KeyError('invalid attribute name')
 
-        # attr never gets used again... just comented this out for now 
+        # attr never gets used again... just comented this out for now
         # if self.attributes.filter(name=name).count() == 1:
         #     attr = self.attributes.get(name=name)
 
@@ -250,8 +252,8 @@ class Component(models.Model):
         :rtype: :class:`ComponentLock`
         """
         if self.lock is not None:
-            raise ComponentLockedException(locking_user=self.lock.locked_by,
-                                           ends_at=self.lock.lock_ends_at)
+            raise LockEnforcementError(locking_user=self.lock.locked_by,
+                                       ends_at=self.lock.lock_ends_at)
 
         lock = ComponentLock()
         t_delta = datetime.timedelta(minutes=lock_period)
