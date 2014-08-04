@@ -2,6 +2,8 @@ import hashlib
 import json
 import os
 
+import jsonschema
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
@@ -9,6 +11,7 @@ from django.test import Client
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from mirrors import components
 from mirrors.models import Component
 
 
@@ -671,3 +674,154 @@ class ComponentRevisionSummaryViewTests(APITestCase):
 
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ComponentValidityTest(APITestCase):
+    fixtures = ['users.json', 'component_validity.json']
+
+    class TestAttributeSchema(components.Component):
+        id = 'testattribute'
+        schema_title = 'test attribute'
+        content_type = ['text/plain']
+
+    class TestComponentSchema(components.Component):
+        id = 'testcomponent'
+        schema_title = 'test component'
+        content_type = ['text/plain']
+
+        required_text = components.StringSchema(required=True)
+        optional_text = components.StringSchema()
+
+        required_attribute = components.Attribute('testattribute',
+                                                  required=True)
+        optional_attribute = components.Attribute('testattribute')
+
+    class TestDataSchema(components.Component):
+        id = 'testrequireddata'
+        schema_title = 'test component with data'
+        content_type = ['text/plain']
+
+        requires_data = True
+
+    def setUp(self):
+        self.old_schema_cache = components.ComponentSchemaCache
+        components.ComponentSchemaCache = {
+            'testcomponent': self.TestComponentSchema,
+            'testattribute': self.TestAttributeSchema,
+            'testrequireddata': self.TestDataSchema
+        }
+
+    def tearDown(self):
+        components.ComponentSchemaCache = self.old_schema_cache
+
+    def test_valid_component(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'valid-component-with-optional-text-optional-attribute'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertEqual(data, {'valid': True})
+
+    def test_valid_component_only_required_stuff(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'valid-component-only-required-fields'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertTrue(data['valid'])
+
+    def test_invalid_component_missing_required_metadata(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'invalid-component-missing-required-metadata'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
+
+    def test_invalid_component_missing_required_attribute(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'invalid-component-missing-required-attribute'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
+
+    def test_invalid_component_invalid_content_type(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'invalid-component-invalid-content-type'
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
+
+    def test_invalid_component_missing_schema(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'invalid-component-no-such-schema',
+        })
+
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
+
+    def test_component_with_required_data(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'component-with-required-data',
+        })
+
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertTrue(data['valid']),
+
+    def test_invalid_component_missing_required_data(self):
+        url = reverse('component-validity', kwargs={
+            'slug': 'component-missing-required-data',
+        })
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertIn('valid', data)
+        self.assertFalse(data['valid'])
+
+    def test_get_component_schemas(self):
+        url = reverse('component-schemas')
+
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        self.assertEqual(set(data.keys()), {'testattribute',
+                                            'testcomponent',
+                                            'testrequireddata',
+                                            'id'})
+
+        jsonschema.validate({}, data)

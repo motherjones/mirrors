@@ -1,25 +1,26 @@
 import json
 import logging
 
+import jsonschema
+
 # TODO: these will have to be used at some point, but not yet
 # from django.core.files.storage import default_storage
 # from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.utils import IntegrityError
+# from django.db.utils import IntegrityError
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.views import APIView
+# from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from mirrors.components import get_component, MissingComponentException
 from mirrors.models import Component, ComponentAttribute
-from mirrors.serializers import ComponentSerializer
-from mirrors.serializers import ComponentAttributeSerializer
-from mirrors.serializers import ComponentRevisionSerializer
+from mirrors.serializers import *
 from mirrors import components
 
 LOGGER = logging.getLogger(__name__)
@@ -52,6 +53,13 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        component = get_object_or_404(Component, slug=self.kwargs['slug'])
+
+        if component.data_uri is not None:
+            self.serializer_class = ComponentWithDataSerializer
+        else:
+            self.serializer_class = ComponentSerializer
+
         return self.retrieve(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
@@ -218,6 +226,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         version = int(kwargs['version'])
@@ -241,6 +250,7 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
 class ComponentData(View):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         component = get_object_or_404(Component, slug=kwargs['slug'])
         data = component.binary_data
@@ -289,10 +299,65 @@ class ComponentData(View):
                             status=status.HTTP_201_CREATED)
 
 
+class ComponentValidity(generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        component_slug = kwargs['slug']
+        component = get_object_or_404(Component, slug=component_slug)
+
+        try:
+            schema = get_component(component.schema_name)
+        except MissingComponentException as exc:
+            response_dict = {
+                'valid': False
+            }
+
+            LOGGER.error(
+                "Invalid schema name {}".format(component.schema_name),
+                exc
+            )
+            return HttpResponse(json.dumps(response_dict),
+                                content_type='application/json',
+
+                                status=status.HTTP_200_OK)
+
+        try:
+            if component.data_uri is not None:
+                serializer = ComponentWithDataSerializer
+            else:
+                serializer = ComponentSerializer
+
+            serialized_component = serializer(component).data
+        except IndexError:
+            response_dict = {
+                'valid': True,
+                'errors': {
+                    'version': 'Unable to retrieve requested component version'
+                }
+            }
+
+        # TODO: in the future we may want to go and actually inspect the data
+        # to see *what* is wrong, but for now all we're interested in is
+        # whether the thing is or isn't a valid Component
+        schemas = {k: v() for k, v in components.get_components().items()}
+
+        v = jsonschema.Draft4Validator(schemas)
+        errors = sorted(v.iter_errors(serialized_component, schema()),
+                        key=lambda e: e.path)
+
+        if len(errors) == 0:
+            response_dict = {'valid': True}
+        else:
+            response_dict = {'valid': False}
+
+        return HttpResponse(json.dumps(response_dict),
+                            content_type='application/json',
+                            status=status.HTTP_200_OK)
+
+
 def component_schemas(request):
     schemas = components.get_components()
     for key, schema in schemas.items():
-        schemas[key] = schema
+        schemas[key] = schema()
     schemas['id'] = reverse('component-schemas')
     return HttpResponse(json.dumps(schemas, indent=4),
                         content_type="application/json")

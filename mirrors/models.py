@@ -1,10 +1,7 @@
 import re
-import sys
 
-from django.dispatch import receiver
 from django.db import models
 from django.db.models import Max
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
@@ -33,7 +30,10 @@ class Component(models.Model):
 
         :rtype: str
         """
-        return reverse('component-data', kwargs={'slug': self.slug})
+        if self.binary_data is not None:
+            return reverse('component-data', kwargs={'slug': self.slug})
+        else:
+            return None
 
     @property
     def metadata(self):
@@ -188,7 +188,7 @@ class Component(models.Model):
         if rev is not None:
             return rev.metadata
         else:
-            return None
+            return {}
 
     def binary_data_at_version(self, version):
         """Get the binary data for the :class:`Component` as it was at the
@@ -210,7 +210,7 @@ class Component(models.Model):
         rev = qs.first()
 
         if rev is not None:
-            return rev.data
+            return bytes(rev.data)
         else:
             return None
 
