@@ -1,41 +1,44 @@
 class MetaData(dict):
-    _dict = {}  # TODO rename this to schema
+    _default_dict = {}
 
     def __init__(self, _dict=None, required=None):
         self.required = required
-        if _dict:
-            self._dict = _dict
+        if not hasattr(self, '_dict'):
+            self._dict = self._default_dict.copy()
+            if _dict:
+                self._dict = _dict
         self.update(self._dict)
 
 
 class StringSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'stringSchema',
         'type': 'string'
     }
 
     def __init__(self, enum=None, required=None):
+        self._dict = self._default_dict.copy()
         if enum:
             self._dict['enum'] = enum
         super(StringSchema, self).__init__(required=required)
 
 
 class SlugSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'slugSchema',
         'type': 'string'
     }
 
 
 class UriSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'uriSchema',
         'type': 'string'
     }
 
 
 class EmailSchema(MetaData):
-    _dict = {
+    _default_dict = {
         'id': 'emailSchema',
         'type': 'string'
         }
@@ -111,9 +114,8 @@ class Component(dict):
             'id': '#%s' % self.id,
             'title': self.schema_title,
             'type': 'object',
-            'required': ['metadata', 'slug', 'schema_name', 'uri'],
+            'required': self._required_top_level,
             'properties': {
-                'uri': StringSchema(),
                 'data_uri': StringSchema(),
                 'slug': SlugSchema(),
                 'content_type': StringSchema(enum=self.content_type),
@@ -123,6 +125,15 @@ class Component(dict):
             }
         }
         return self.update(schema)
+
+    @property
+    def _required_top_level(self):
+        fields = ['metadata', 'slug', 'schema_name']
+
+        if hasattr(self, 'requires_data') and self.requires_data is True:
+            fields.append('data_uri')
+
+        return fields
 
 
 ComponentSchemaCache = {}

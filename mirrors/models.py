@@ -1,29 +1,16 @@
 import datetime
 import re
+import sys
 
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Max
 from django.utils.timezone import utc
+from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
-
-from mirrors.exceptions import LockEnforcementError
-
-
-class ComponentLockedException(Exception):
-    locking_user = None
-    lock_ends_at = None
-
-    def __init__(self, *args, **kwargs):
-        if 'locking_user' in kwargs:
-            self.locking_user = kwargs['locking_user']
-
-        if 'expires_at' in kwargs:
-            self.lock_ends_at = kwargs['ends_at']
-
-        super().__init__("This component is locked")
 
 
 class Component(models.Model):
@@ -49,7 +36,10 @@ class Component(models.Model):
 
         :rtype: str
         """
-        return reverse('component-data', kwargs={'slug': self.slug})
+        if self.binary_data is not None:
+            return reverse('component-data', kwargs={'slug': self.slug})
+        else:
+            return None
 
     @property
     def metadata(self):
@@ -204,7 +194,7 @@ class Component(models.Model):
         if rev is not None:
             return rev.metadata
         else:
-            return None
+            return {}
 
     def binary_data_at_version(self, version):
         """Get the binary data for the :class:`Component` as it was at the
@@ -226,7 +216,7 @@ class Component(models.Model):
         rev = qs.first()
 
         if rev is not None:
-            return rev.data
+            return bytes(rev.data)
         else:
             return None
 
@@ -336,7 +326,6 @@ class ComponentRevision(models.Model):
 
     def __str__(self):
         return "{} v{}".format(self.component.slug, self.version)
-        return self.component.slug
 
 
 class ComponentLock(models.Model):

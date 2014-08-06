@@ -23,14 +23,17 @@ class ComponentModelTests(TestCase):
         c = Component.objects.get(slug='test-component-with-no-revisions')
         self.assertEqual(c.binary_data, None)
 
+    def test_get_nonexisttant_data_uri(self):
+        c = Component.objects.get(slug='test-component-1')
+        self.assertIsNone(c.data_uri)
+
     def test_get_data_uri(self):
         expected_url = reverse('component-detail', kwargs={
-            'slug': 'test-component-with-no-revisions'
+            'slug': 'component-with-binary-data'
         }) + '/data'
 
-        c = Component.objects.get(slug='test-component-with-no-revisions')
-        url = c.data_uri
-        self.assertEqual(url, expected_url)
+        c = Component.objects.get(slug='component-with-binary-data')
+        self.assertEqual(c.data_uri, expected_url)
 
     def test_get_str(self):
         c = Component.objects.get(
@@ -54,7 +57,7 @@ class ComponentModelTests(TestCase):
             slug='test-component-with-no-metadata'
         )
 
-        self.assertIs(c.metadata, None)
+        self.assertEqual(c.metadata, {})
 
     def test_get_metadata_missing_version(self):
         c = Component.objects.get(

@@ -99,6 +99,17 @@
         }
     }, 
     {
+        "pk": 26,
+        "fields": {
+            "schema_name": "schemaname",
+            "created_at": "2014-07-30T22:57:18.411Z",
+            "updated_at": "2014-07-30T22:57:18.411Z",
+            "content_type": "none",
+            "slug": "test-component-with-data"
+        },
+        "model": "mirrors.component"
+    },
+    {
         "pk": 13, 
         "model": "mirrors.componentattribute", 
         "fields": {
@@ -273,5 +284,16 @@
         },
         "model": "mirrors.componentrevision",
         "pk": 10
+    },
+    {
+        "fields": {
+            "component": 26,
+            "created_at": "2014-07-30T22:58:11.027Z",
+            "version": 1,
+            "data": "dGhpcyBpcyBkYXRh",
+            "metadata": null
+        },
+        "model": "mirrors.componentrevision",
+        "pk": 11
     }
 ]

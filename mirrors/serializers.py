@@ -41,7 +41,6 @@ class ComponentSerializer(serializers.ModelSerializer):
 
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
-    data_uri = serializers.URLField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
     attributes = serializers.SerializerMethodField('_get_attributes')
     metadata = WritableSerializerMethodField('_get_metadata',
@@ -55,8 +54,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Component
         fields = ('slug', 'metadata', 'content_type', 'created_at',
-                  'updated_at', 'schema_name', 'revisions', 'data_uri',
-                  'attributes')
+                  'updated_at', 'schema_name', 'revisions', 'attributes')
 
     def __init__(self, *args, **kwargs):
         self._version = kwargs.pop('version', None)
@@ -117,10 +115,14 @@ class ComponentSerializer(serializers.ModelSerializer):
             return val
 
     def _get_metadata(self, obj):
-        if self._version is not None:
-            return obj.metadata_at_version(self._version)
-        else:
-            return obj.metadata
+        try:
+            if self._version is not None and self._version != 0:
+                return obj.metadata_at_version(self._version)
+            else:
+                return obj.metadata
+        except IndexError as e:
+            if str(e) == 'No such version':
+                return {}
 
     def _set_metadata(self, data, *args, **kwargs):
         if 'metadata' in data:
@@ -153,6 +155,20 @@ class ComponentSerializer(serializers.ModelSerializer):
                 result[n] = ComponentSerializer(attr).data
 
         return result
+
+
+class ComponentWithDataSerializer(ComponentSerializer):
+    """This is the exact same thing as a :py:class:`ComponentSerializer` but with
+    the added presence of the data_uri field, which is the URI that corresponds
+    to the component's binary data.
+    """
+    data_uri = serializers.URLField(read_only=True)
+
+    class Meta:
+        model = Component
+        fields = ('slug', 'metadata', 'content_type', 'created_at',
+                  'updated_at', 'schema_name', 'revisions', 'data_uri',
+                  'attributes')
 
 
 class ComponentAttributeSerializer(serializers.ModelSerializer):
