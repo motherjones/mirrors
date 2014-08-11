@@ -243,8 +243,8 @@ Creating/Updating
 """""""""""""""""
 
 Both creating and updating the data for a :py:class:`Component` is done by the
-same method. Issuing a ``POST`` query to ``/component/<slug-id>/data`` where
-the request body is the data itself.
+same method. Issuing a ``PUT`` query to ``/component/<slug-id>/data`` where the
+request body is the data itself.
 
 
 .. _components-validity:
@@ -339,6 +339,16 @@ other than the user who locked it initially.
 The locks themselves can be of any period of time, but they default to 30
 minutes long.
 
+When a user attempts to change a Component that has been locked by another
+user, they will receive a *403* error and this JSON object:
+
+.. code:: json
+
+  {
+    'message': 'This component is locked'}
+  }
+
+
 Checking lock status
 """"""""""""""""""""
 
@@ -374,8 +384,7 @@ the following format:
   }
 
 
-.. note:: ``lock_duration`` is optional and the duration will default to 30
-          minutes when not specified.
+.. note:: ``lock_duration`` is optional and the duration will default to 1 hour
 
 .. note:: The currently logged in user account will be recorded as having made
           the lock in the database.
@@ -385,7 +394,11 @@ along with data that matches what you would get if you issued a ``GET``
 statement to ``/component/<slug-id>/lock``.
 
 If there is already a lock in place then you will get a response with a *409*
-response.
+response with the following JSON object:
+
+.. code:: json
+
+  {'message': 'This component is already locked'}
 
 Breaking a lock
 """""""""""""""
@@ -542,4 +555,3 @@ For a Range
 
 Issue a ``GET`` request to ``/scheduler/?start=<day>&end=<day>``, where the day is the
 date you wish to check.
-

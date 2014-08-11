@@ -1,10 +1,14 @@
+import datetime
 import json
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.test import TestCase, Client
+from django.test import TestCase
 
-from mirrors.models import *
+from mirrors.exceptions import LockEnforcementError
+from mirrors.models import Component
+from mirrors.models import ComponentLock
+from mirrors.models import ComponentAttribute
 
 
 class ComponentModelTests(TestCase):
@@ -79,6 +83,51 @@ class ComponentModelTests(TestCase):
         self.assertIs(c.binary_data_at_version(1), None)
 
 
+class ComponentLockTests(TestCase):
+    fixtures = ['users.json', 'component_lock_data.json']
+
+    def setUp(self):
+        self.test_user = User.objects.get(username='test_user')
+        self.test_staff = User.objects.get(username='test_staff')
+
+    def test_lock_component(self):
+        c = Component.objects.get(slug='unlocked-component')
+        c.lock_by(self.test_user)
+
+        cl = c.lock
+        t_delta = datetime.timedelta(hours=1)
+        expected_end_date = cl.locked_at + t_delta
+
+        self.assertIsNot(cl, None)
+        self.assertTrue(isinstance(cl, ComponentLock))
+        self.assertEqual(cl.locked_by, self.test_user)
+
+        self.assertEqual(cl.lock_ends_at.strftime("%Y-%m-%d %H:%M:%S"),
+                         expected_end_date.strftime("%Y-%m-%d %H:%M:%S"))
+
+    def test_lock_locked_component(self):
+        c = Component.objects.get(slug='locked-component')
+
+        with self.assertRaises(LockEnforcementError):
+            c.lock_by(self.test_staff)
+
+    def test_extend_lock(self):
+        c = Component.objects.get(slug='locked-component')
+
+        cur_end = c.lock.lock_ends_at
+        new_end = cur_end + datetime.timedelta(hours=1)
+
+        c.lock.extend_lock(hours=1)
+
+        self.assertEqual(c.lock.lock_ends_at, new_end)
+
+    def test_unlock_component(self):
+        c = Component.objects.get(slug='locked-component')
+        c.unlock(self.test_user)
+
+        self.assertIs(c.lock, None)
+
+
 class ComponentRevisionModelTests(TestCase):
     fixtures = ['components.json']
 
@@ -140,8 +189,9 @@ class ComponentAttributeModelTests(TestCase):
 
     def test_get_attribute_nonexistent(self):
         c = Component.objects.get(slug='test-component-1')
+
         with self.assertRaises(KeyError):
-            c_2 = c.get_attribute('no-such-attribute')
+            c.get_attribute('no-such-attribute')
 
     def test_new_attribute(self):
         c = Component.objects.get(slug='component-with-list-attribute')

@@ -1,11 +1,19 @@
+import datetime
 import re
+import sys
 
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Max
+from django.utils.timezone import utc
+from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
+
+from mirrors.exceptions import LockEnforcementError
 
 class Component(models.Model):
     """A ``Component`` is the basic type of object for all things in the Mirrors
@@ -86,7 +94,6 @@ class Component(models.Model):
 
         :rtype: :class:`ComponentRevision`
         :raises: :class:`ValueError`
-
         """
         if not data and not metadata:
             raise ValueError('no new revision data was actually provided')
@@ -132,8 +139,9 @@ class Component(models.Model):
         if not re.match('^\w[-\w]*$', name):
             raise KeyError('invalid attribute name')
 
-        if self.attributes.filter(name=name).count() == 1:
-            attr = self.attributes.get(name=name)
+        # attr never gets used again... just comented this out for now
+        # if self.attributes.filter(name=name).count() == 1:
+        #     attr = self.attributes.get(name=name)
 
         new_attr = ComponentAttribute(
             name=name,
@@ -214,6 +222,59 @@ class Component(models.Model):
         else:
             return None
 
+    @property
+    def lock(self):
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        cur_lock = self.locks.exclude(broken=True)
+        cur_lock = cur_lock.exclude(lock_ends_at__lte=now)
+
+        if cur_lock.count() > 0:
+            return cur_lock.first()
+        else:
+            return None
+
+    def lock_by(self, user, lock_period=60):
+        """Lock the :class:`Component`, preventing other users from altering it
+        until the lock expires.
+
+        :param value: The user that has requested the lock be created.
+        :type User: :class:`User`
+
+        :rtype: :class:`ComponentLock`
+        """
+        if self.lock is not None:
+            raise LockEnforcementError(locking_user=self.lock.locked_by,
+                                       ends_at=self.lock.lock_ends_at)
+
+        lock = ComponentLock()
+        t_delta = datetime.timedelta(minutes=lock_period)
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        lock.component = self
+        lock.locked_by = user
+        lock.lock_ends_at = now + t_delta
+        lock.save()
+
+        return lock
+
+    def unlock(self, unlocking_user):
+        """Unlock the :class:`Component`.
+
+        :param unlocking_user: The user that has requested the lock be broken.
+        :type unlocking_user: :class:`User`
+        """
+        # TODO: right now we don't care who breaks a lock, but eventually
+        # authorization will have to be implemented
+
+        # we have to assign self.lock to a new variable because if we don't,
+        # because otherwise it'll keep executing SQL queries
+        lock = self.lock
+
+        if lock is not None:
+            lock.broken = True
+            lock.save()
+
     def __str__(self):
         return self.slug
 
@@ -267,3 +328,33 @@ class ComponentRevision(models.Model):
 
     def __str__(self):
         return "{} v{}".format(self.component.slug, self.version)
+
+
+class ComponentLock(models.Model):
+    """ Determines whether a ``Component`` can be edited.
+    """
+    locked_by = models.ForeignKey(User)
+    locked_at = models.DateTimeField(auto_now_add=True)
+    lock_ends_at = models.DateTimeField()
+    component = models.ForeignKey('Component', related_name='locks')
+
+    broken = models.BooleanField(default=False)
+
+    def extend_lock(self, *args, **kwargs):
+        """Extend the life time of the current lock. The arguments excepted are the
+        same as what is acceptable for use when creating a
+        :class:`datetime.timedelta` object.
+
+        :raises: :class:`ValueError`
+        """
+        delta = datetime.timedelta(**kwargs)
+        if delta.total_seconds() < 0:
+            raise ValueError()
+
+        self.lock_ends_at = self.lock_ends_at + delta
+        self.save()
+
+    def __str__(self):
+        return "{} locked by {} until {}".format(self.component.slug,
+                                                 self.locked_by.username,
+                                                 self.lock_ends_at)

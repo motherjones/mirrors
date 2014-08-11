@@ -508,6 +508,7 @@ class ComponentDataViewTest(APITestCase):
 
     def test_post_data(self):
         c = Client()
+        c.login(username='test_user', password='password1')
 
         url = reverse('component-data', kwargs={
             'slug': 'component-with-no-data'
@@ -521,10 +522,7 @@ class ComponentDataViewTest(APITestCase):
         component = Component.objects.get(slug='component-with-no-data')
 
         with open(file_path, 'rb') as upload_file:
-            # req = rf.post(url, data={'file': upload_file})
-            # res = ComponentDataView.post(req)
-            res = c.post(url,
-                         data={'file': upload_file})
+            res = c.post(url, data={'file': upload_file})
 
             self.assertTrue(res.status_code, status.HTTP_204_NO_CONTENT)
             self.assertEqual(component.revisions.count(), 1)
@@ -674,6 +672,144 @@ class ComponentRevisionSummaryViewTests(APITestCase):
 
         res = self.client.get(url)
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ComponentLockRequestTest(APITestCase):
+    fixtures = ['component_lock_data.json', 'users.json']
+
+    def setUp(self):
+        # Friendly note:
+        # The account 'test_user' is the one that has locked the component
+        # 'locked-component'
+        user = User.objects.get(username='test_staff')
+        self.client.force_authenticate(user=user)
+
+    def test_get_lock_status_unlocked(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'unlocked-component'
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_lock_status_locked(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'locked-component'
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = json.loads(response.content.decode('UTF-8'))
+        self.assertTrue(isinstance(data, dict))
+
+        self.assertEqual(len(data), 4)
+        self.assertIn('locked', data)
+        self.assertIn('locked_by', data)
+        self.assertIn('locked_at', data)
+        self.assertIn('lock_ends_at', data)
+
+        self.assertTrue(data['locked'])
+        self.assertEqual(data['locked_by'], 'test_user')
+        self.assertEqual(data['locked_at'], '2014-06-23T21:29:46.993Z')
+        self.assertEqual(data['lock_ends_at'], '9999-01-31T01:01:01.001Z')
+
+    def test_lock_unlocked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'unlocked-component'
+        })
+        data = {
+            'locked': True,
+            'lock_duration': 60
+        }
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(set(data.keys()), {'locked',
+                                            'locked_by',
+                                            'locked_at',
+                                            'lock_ends_at'})
+        self.assertTrue(data['locked'])
+        self.assertEqual(data['locked_by'], 'test_staff')
+
+    def test_lock_unlocked_component_with_no_duration(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'unlocked-component'
+        })
+        data = {'locked': True}
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_lock_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+
+        url = reverse('component-lock', kwargs={
+            'slug': 'locked-component'
+        })
+        put_data = {
+            'locked': True,
+            'lock_duration': 60
+        }
+
+        response = self.client.put(url, put_data)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unlock_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+
+        url = reverse('component-lock', kwargs={
+            'slug': 'locked-component'
+        })
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_unlock_unlocked_component(self):
+        url = reverse('component-lock', kwargs={
+            'slug': 'unlocked-component'
+        })
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_locked_component(self):
+        user = User.objects.get(username='test_staff')
+        self.client.force_authenticate(user=user)
+
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_locked_component(self):
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_patch_locked_by_me_component(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user)
+        url = reverse('component-detail', kwargs={
+            'slug': 'locked-component'
+        })
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class ComponentValidityTest(APITestCase):
