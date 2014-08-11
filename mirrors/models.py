@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse
 from jsonfield import JSONField
 
 
+from mirrors.exceptions import LockEnforcementError
+
 class Component(models.Model):
     """A ``Component`` is the basic type of object for all things in the Mirrors
     content repository. Anything that has a presence in the final output of the

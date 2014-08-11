@@ -19,6 +19,7 @@ from mirrors.exceptions import LockEnforcementError
 from mirrors.components import get_component, MissingComponentException
 from mirrors.models import Component, ComponentAttribute
 from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentWithDataSerializer
 from mirrors.serializers import ComponentAttributeSerializer
 from mirrors.serializers import ComponentRevisionSerializer
 from mirrors.serializers import ComponentLockSerializer

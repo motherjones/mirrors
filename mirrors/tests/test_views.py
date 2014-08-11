@@ -811,7 +811,8 @@ class ComponentLockRequestTest(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
- ComponentValidityTest(APITestCase):
+
+class ComponentValidityTest(APITestCase):
     fixtures = ['users.json', 'component_validity.json']
 
     class TestAttributeSchema(components.Component):
