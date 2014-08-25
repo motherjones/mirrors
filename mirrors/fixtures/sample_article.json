@@ -7,6 +7,8 @@
         "created_at": "2014-01-30T19:32:34.555Z",  
         "updated_at": "2014-01-30T19:32:34.555Z", 
         "slug": "peter-van-buren", 
+        "year": 2014,
+        "month": 1,
         "content_type": "application/json", 
         "metadata": {
             "first_name": "Peter", 
@@ -25,6 +27,8 @@
         "created_at": "2014-01-30T19:32:34.555Z",  
         "updated_at": "2014-01-30T19:32:34.555Z", 
         "slug": "obama-drone-pakistan-us-citizen-leak-killing-img-td2-18-jpg", 
+        "year": 2014,
+        "month": 1,
         "content_type": "image/jpeg", 
         "metadata": {
             "alt_text": "The White house", 
@@ -41,6 +45,8 @@
         "created_at": "2014-01-30T19:32:34.555Z",  
         "updated_at": "2014-01-30T19:32:34.555Z", 
         "slug": "obama-drone-pakistan-us-citizen-leak-killing", 
+        "year": 2014,
+        "month": 1,
         "content_type": "text/x-markdown", 
         "metadata": {
             "social_title": "Are we living in a post-constitutional America?", 

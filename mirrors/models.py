@@ -1,6 +1,5 @@
 import datetime
 import re
-import sys
 
 from django.dispatch import receiver
 from django.contrib.auth.models import User
@@ -12,8 +11,34 @@ from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
-
 from mirrors.exceptions import LockEnforcementError
+
+
+class YearField(models.IntegerField):
+    description = 'A year'
+
+    def validate(self, value):
+        """Check to make sure that the value of the year is valid by checking
+        to make sure that it is greater than 0.
+        """
+
+        super(YearField, self).validate(value)
+
+        if value < 0:
+            raise forms.ValidationError("Not a valid year")
+
+class MonthField(models.IntegerField):
+    description = 'A month'
+
+    def validate(self, value):
+        """Check to make sure that the value of the month is valid, ie 1 <=
+        month <= 12."""
+
+        super(MonthField, self).validate(value)
+        
+        if value < 1 or value > 12:
+            raise forms.ValidationError("Not a valid month")
+
 
 class Component(models.Model):
     """A ``Component`` is the basic type of object for all things in the Mirrors
@@ -25,12 +50,19 @@ class Component(models.Model):
                   in the future.
 
     """
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, null=False, blank=False)
+    year = YearField(default=0, null=False, blank=False)
+    month = MonthField(default=0, null=False, blank=False)
+
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('slug', 'year', 'month'),)
+        index_together = ['slug', 'year', 'month']
 
     @property
     def data_uri(self):
@@ -39,7 +71,9 @@ class Component(models.Model):
         :rtype: str
         """
         if self.binary_data is not None:
-            return reverse('component-data', kwargs={'slug': self.slug})
+            return reverse('component-data', kwargs={'slug': self.slug,
+                                                     'year': self.year,
+                                                     'month': self.month})
         else:
             return None
 

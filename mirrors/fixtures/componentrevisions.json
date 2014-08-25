@@ -4,6 +4,8 @@
         "schema_name": "article",
         "created_at": "2014-06-09T18:25:07.112Z",
         "slug": "component-with-two-revisions",
+        "year": 2014,
+        "month": 6,
         "content_type": "application/x-markdown",
         "updated_at": "2014-06-09T18:25:07.113Z"
     },
@@ -15,6 +17,8 @@
         "schema_name": "none",
         "created_at": "2014-06-09T19:50:16.335Z",
         "slug": "component-with-revision-with-data-and-metadata",
+        "year": 2014,
+        "month": 6,
         "content_type": "none",
         "updated_at": "2014-06-09T19:50:16.335Z"
     },
@@ -26,6 +30,8 @@
         "schema_name": "none",
         "created_at": "2014-06-09T20:05:14.594Z",
         "slug": "component-with-no-revisions",
+        "year": 2014,
+        "month": 6,
         "content_type": "none",
         "updated_at": "2014-06-09T20:05:14.594Z"
     },
@@ -37,6 +43,8 @@
         "schema_name": "none",
         "created_at": "2014-06-09T20:07:40.386Z",
         "slug": "component-with-many-revisions",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-09T20:10:20.320Z"
     },
@@ -48,6 +56,8 @@
         "schema_name": "none",
         "created_at": "2014-06-09T20:07:40.386Z",
         "slug": "component-with-no-data",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-09T20:10:20.320Z"
     },
@@ -59,6 +69,8 @@
         "schema_name": "none",
         "created_at": "2014-06-11T19:04:13.405Z",
         "slug": "component-with-data-and-filename",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-11T19:04:13.405Z"
     },

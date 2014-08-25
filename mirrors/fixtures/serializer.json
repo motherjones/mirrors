@@ -7,7 +7,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "application/x-markdown", 
-            "slug": "test-component-with-no-attributes"
+            "slug": "test-component-with-no-attributes",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -18,7 +20,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-with-one-named-attribute"
+            "slug": "test-component-with-one-named-attribute",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -29,7 +33,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-1"
+            "slug": "attribute-1",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -40,7 +46,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-2"
+            "slug": "attribute-2",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -51,7 +59,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-3"
+            "slug": "attribute-3",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -62,7 +72,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "attribute-4"
+            "slug": "attribute-4",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -73,7 +85,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-with-list-attribute"
+            "slug": "test-component-with-list-attribute",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -84,7 +98,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
-            "slug": "test-component-mixed-attributes"
+            "slug": "test-component-mixed-attributes",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -95,7 +111,9 @@
             "created_at": "2014-02-06T00:03:40.660Z", 
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "application/json", 
-            "slug": "this-is-for-testing-on"
+            "slug": "this-is-for-testing-on",
+            "year": 2014,
+            "month": 2
         }
     }, 
     {
@@ -105,7 +123,9 @@
             "created_at": "2014-07-30T22:57:18.411Z",
             "updated_at": "2014-07-30T22:57:18.411Z",
             "content_type": "none",
-            "slug": "test-component-with-data"
+            "slug": "test-component-with-data",
+            "year": 2014,
+            "month": 2
         },
         "model": "mirrors.component"
     },

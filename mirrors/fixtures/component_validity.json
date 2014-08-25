@@ -4,6 +4,8 @@
         "schema_name": "testcomponent",
         "created_at": "2014-06-26T17:53:58.995Z",
         "slug": "valid-component-with-optional-text-optional-attribute",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-26T17:54:49.651Z"
     },
@@ -15,6 +17,8 @@
         "schema_name": "testattribute",
         "created_at": "2014-06-26T17:55:58.186Z",
         "slug": "test-attribute-1",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-26T18:12:24.404Z"
     },
@@ -26,6 +30,8 @@
         "schema_name": "testcomponent",
         "created_at": "2014-06-26T17:58:22.322Z",
         "slug": "invalid-component-missing-required-metadata",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-26T18:21:33.266Z"
     },
@@ -37,6 +43,8 @@
         "schema_name": "testcomponent",
         "created_at": "2014-06-26T18:04:33.415Z",
         "slug": "valid-component-only-required-fields",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-26T21:54:25.698Z"
     },
@@ -48,6 +56,8 @@
         "schema_name": "testcomponent",
         "created_at": "2014-06-26T18:07:20.830Z",
         "slug": "invalid-component-invalid-content-type",
+        "year": 2014,
+        "month": 6,
         "content_type": "application/json",
         "updated_at": "2014-06-26T18:07:20.830Z"
     },
@@ -59,6 +69,8 @@
         "schema_name": "testattribute",
         "created_at": "2014-06-26T18:12:32.516Z",
         "slug": "test-attribute-2",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-06-26T18:12:32.516Z"
     },
@@ -70,6 +82,8 @@
         "schema_name": "testcomponent",
         "created_at": "2014-06-26T18:23:49.705Z",
         "slug": "invalid-component-missing-required-attribute",
+        "year": 2014,
+        "month": 6,
         "content_type": "application/json",
         "updated_at": "2014-06-26T18:23:49.705Z"
     },
@@ -81,6 +95,8 @@
         "schema_name": "nosuchschema",
         "created_at": "2014-06-26T18:23:49.705Z",
         "slug": "invalid-component-no-such-schema",
+        "year": 2014,
+        "month": 6,
         "content_type": "application/json",
         "updated_at": "2014-06-26T18:23:49.705Z"
     },
@@ -92,6 +108,8 @@
         "schema_name": "testrequireddata",
         "created_at": "2014-07-14T18:28:05.359Z",
         "slug": "component-with-required-data",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-07-14T18:28:05.359Z"
     },
@@ -103,6 +121,8 @@
         "schema_name": "testrequireddata",
         "created_at": "2014-07-14T18:28:35.971Z",
         "slug": "component-missing-required-data",
+        "year": 2014,
+        "month": 6,
         "content_type": "text/plain",
         "updated_at": "2014-07-14T18:28:35.971Z"
     },

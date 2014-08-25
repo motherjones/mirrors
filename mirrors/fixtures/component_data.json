@@ -5,7 +5,9 @@
         "created_at": "2014-05-05T23:37:19.263Z",
         "updated_at": "2014-05-05T23:37:19.264Z",
         "schema_name": null,
-        "slug": "component-with-no-data"
+        "slug": "component-with-no-data",
+        "year": 2014,
+        "month": 5
     },
     "model": "mirrors.component",
     "pk": 1
@@ -16,7 +18,9 @@
         "created_at": "2014-05-05T23:37:35.654Z",
         "updated_at": "2014-05-05T23:39:13.408Z",
         "schema_name": "image",
-        "slug": "component-with-svg-data"
+        "slug": "component-with-svg-data",
+        "year": 2014,
+        "month": 5
     },
     "model": "mirrors.component",
     "pk": 2
@@ -27,7 +31,9 @@
         "created_at": "2014-05-06T17:50:47.544Z",
         "updated_at": "2014-05-06T18:12:42.883Z",
         "schema_name": "image",
-        "slug": "component-with-svg-data-and-metadata-filename"
+        "slug": "component-with-svg-data-and-metadata-filename",
+        "year": 2014,
+        "month": 5
     },
     "model": "mirrors.component",
     "pk": 3
