@@ -26,11 +26,15 @@ class ComponentResourceTests(APITestCase):
         return content['attributes'][name]
 
     def test_serialize_component_resource(self):
-        c = Component.objects.get(slug='test-component-with-no-attributes')
+        c = Component.objects.get(slug='test-component-with-no-attributes',
+                                  year=2014,
+                                  month=2)
         content = ComponentSerializer(c).data
 
         self.assertTrue(isinstance(content, dict))
         self.assertEqual(set(content.keys()), {'slug',
+                                               'year',
+                                               'month',
                                                'content_type',
                                                'schema_name',
                                                'metadata',
@@ -40,6 +44,8 @@ class ComponentResourceTests(APITestCase):
                                                'updated_at'})
 
         self.assertEqual(content['slug'], 'test-component-with-no-attributes')
+        self.assertEqual(content['year'], 2014)
+        self.assertEqual(content['month'], 2)
         self.assertEqual(content['content_type'], 'application/x-markdown')
         self.assertEqual(content['schema_name'], 'article')
         self.assertEqual(content['metadata'], {
@@ -49,7 +55,10 @@ class ComponentResourceTests(APITestCase):
 
     def test_serialize_component_with_attribute(self):
         c = Component.objects.get(
-            slug='test-component-with-one-named-attribute')
+            slug='test-component-with-one-named-attribute',
+            year=2014,
+            month=2
+        )
         content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'],
@@ -61,7 +70,9 @@ class ComponentResourceTests(APITestCase):
         self.assertTrue(isinstance(attribute, dict))
 
     def test_serialize_component_with_attribute_list(self):
-        c = Component.objects.get(slug='test-component-with-list-attribute')
+        c = Component.objects.get(slug='test-component-with-list-attribute',
+                                  year=2014,
+                                  month=2)
         content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'], 'test-component-with-list-attribute')
@@ -79,7 +90,9 @@ class ComponentResourceTests(APITestCase):
             self.assertEqual(e[0], e[1])
 
     def test_serialize_component_with_mixed_attributes(self):
-        c = Component.objects.get(slug='test-component-mixed-attributes')
+        c = Component.objects.get(slug='test-component-mixed-attributes',
+                                  year=2014,
+                                  month=2)
         content = ComponentWithDataSerializer(c).data
 
         self.assertEqual(content['slug'], 'test-component-mixed-attributes')
@@ -93,7 +106,9 @@ class ComponentResourceTests(APITestCase):
         self.assertEqual(len(list_attr), 2)
 
     def test_transform_metadata_from_string(self):
-        c = Component.objects.get(slug='test-component-mixed-attributes')
+        c = Component.objects.get(slug='test-component-mixed-attributes',
+                                  year=2014,
+                                  month=2)
         serializer = ComponentWithDataSerializer(c)
         metadata_str = json.dumps({'test': 'value'})
 
@@ -101,7 +116,9 @@ class ComponentResourceTests(APITestCase):
         self.assertEqual(result, {'test': 'value'})
 
     def test_transform_metadata_from_dict(self):
-        c = Component.objects.get(slug='test-component-mixed-attributes')
+        c = Component.objects.get(slug='test-component-mixed-attributes',
+                                  year=2014,
+                                  month=2)
         serializer = ComponentWithDataSerializer(c)
         metadata_dict = {'test': 'value'}
 
@@ -109,7 +126,9 @@ class ComponentResourceTests(APITestCase):
         self.assertEqual(result, {'test': 'value'})
 
     def test_validate_non_string_or_dict_metadata(self):
-        c = Component.objects.get(slug='test-component-mixed-attributes')
+        c = Component.objects.get(slug='test-component-mixed-attributes',
+                                  year=2014,
+                                  month=2)
         serializer = ComponentWithDataSerializer(c)
 
         with self.assertRaises(serializers.ValidationError):
@@ -121,7 +140,9 @@ class ComponentAttributeResourceTests(APITestCase):
 
     def test_serialize_single_attribute(self):
         parent = Component.objects.filter(
-            slug='component-with-regular-attribute'
+            slug='component-with-regular-attribute',
+            year=2014,
+            month=4
         ).first()
 
         ca = ComponentAttribute.objects.filter(parent=parent).first()
