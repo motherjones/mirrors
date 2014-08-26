@@ -130,6 +130,32 @@
         "model": "mirrors.component"
     },
     {
+        "pk": 27,
+        "fields": {
+            "schema_name": "schemaname",
+            "created_at": "2014-07-30T22:57:18.411Z",
+            "updated_at": "2014-07-30T22:57:18.411Z",
+            "content_type": "none",
+            "slug": "test-component-with-another-slug",
+            "year": 2014,
+            "month": 2
+        },
+        "model": "mirrors.component"
+    },
+    {
+        "pk": 28,
+        "fields": {
+            "schema_name": "schemaname",
+            "created_at": "2014-07-30T22:57:18.411Z",
+            "updated_at": "2014-07-30T22:57:18.411Z",
+            "content_type": "none",
+            "slug": "test-component-with-another-slug",
+            "year": 2014,
+            "month": 3
+        },
+        "model": "mirrors.component"
+    },
+    {
         "pk": 13, 
         "model": "mirrors.componentattribute", 
         "fields": {

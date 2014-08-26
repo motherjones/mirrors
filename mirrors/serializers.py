@@ -38,7 +38,6 @@ class ComponentSerializer(serializers.ModelSerializer):
     object, and back again.
 
     """
-
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
     revisions = serializers.RelatedField(many=True, read_only=True)
@@ -54,7 +53,8 @@ class ComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Component
         fields = ('slug', 'metadata', 'content_type', 'created_at',
-                  'updated_at', 'schema_name', 'revisions', 'attributes')
+                  'updated_at', 'schema_name', 'revisions', 'attributes',
+                  'year', 'month')
 
     def __init__(self, *args, **kwargs):
         self._version = kwargs.pop('version', None)
@@ -168,7 +168,7 @@ class ComponentWithDataSerializer(ComponentSerializer):
         model = Component
         fields = ('slug', 'metadata', 'content_type', 'created_at',
                   'updated_at', 'schema_name', 'revisions', 'data_uri',
-                  'attributes')
+                  'attributes', 'year', 'month')
 
 
 class ComponentAttributeSerializer(serializers.ModelSerializer):

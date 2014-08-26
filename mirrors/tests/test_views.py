@@ -65,6 +65,38 @@ class ComponentViewTest(APITestCase):
         self.assertEqual(attribute['metadata']['title'], 'attribute 1')
         self.assertEqual(len(attribute['attributes']), 0)
 
+    def test_get_component_with_the_same_slug(self):
+        url_1 = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-another-slug',
+            'year': 2014,
+            'month': 2
+        })
+        url_2 = reverse('component-detail', kwargs={
+            'slug': 'test-component-with-another-slug',
+            'year': 2014,
+            'month': 3
+        })
+
+        res_1 = self.client.get(url_1)
+        res_2 = self.client.get(url_2)
+
+        self.assertEqual(res_1.status_code, 200)
+        self.assertEqual(res_2.status_code, 200)
+
+        data_1 = json.loads(res_1.content.decode('UTF-8'))
+        data_2 = json.loads(res_2.content.decode('UTF-8'))
+
+        expected_keys = ('slug', 'year', 'month')
+        self.assertTrue(expected_keys.issubset(set(data_1.keys())))
+        self.assertTrue(expected_keys.issubset(set(data_2.keys())))
+
+        self.assertEqual(data_1['slug'], 'test-component-with-another-slug')
+        self.assertEqual(data_1['slug'], data_2['slug'])
+        self.assertEqual(data_1['year'], 2014)
+        self.assertEqual(data_1['year'], data_2['year'])
+        self.assertEqual(data_1['month'], 2)
+        self.assertEqual(data_2['month'], 3)
+
     def test_get_404_component(self):
         url = reverse('component-detail', kwargs={
             'slug': 'no-such-component-here',
@@ -620,7 +652,7 @@ class ComponentRevisionViewTest(APITestCase):
         url = reverse('component-revision-detail', kwargs={
             'slug': 'component-with-many-revisions',
             'year': 2014,
-            'month' 6,
+            'month': 6,
             'version': 3
         })
 
@@ -640,7 +672,7 @@ class ComponentRevisionViewTest(APITestCase):
         url = reverse('component-revision-data', kwargs={
             'slug': 'component-with-many-revisions',
             'year': 2014,
-            'month': 6
+            'month': 6,
             'version': 3
         })
 
@@ -655,7 +687,7 @@ class ComponentRevisionViewTest(APITestCase):
         url = reverse('component-revision-data', kwargs={
             'slug': 'component-with-data-and-filename',
             'year': 2014,
-            'month': 6
+            'month': 6,
             'version': 1
         })
 
@@ -672,7 +704,7 @@ class ComponentRevisionViewTest(APITestCase):
         url = reverse('component-revision-data', kwargs={
             'slug': 'component-with-no-data',
             'year': 2014,
-            'month': 6
+            'month': 6,
             'version': 2
         })
 
@@ -683,7 +715,7 @@ class ComponentRevisionViewTest(APITestCase):
         url = reverse('component-revision-detail', kwargs={
             'slug': 'component-with-many-revisions',
             'year': 2014,
-            'month' 6,
+            'month': 6,
             'version': 999
         })
 
@@ -702,7 +734,7 @@ class ComponentRevisionSummaryViewTests(APITestCase):
         url = reverse('component-revision-list', kwargs={
             'slug': 'component-with-revision-with-data-and-metadata',
             'year': 2014,
-            'month: 6
+            'month': 6
         })
 
         res = self.client.get(url)
@@ -726,7 +758,7 @@ class ComponentRevisionSummaryViewTests(APITestCase):
         url = reverse('component-revision-list', kwargs={
             'slug': 'component-with-two-revisions',
             'year': 2014,
-            'month: 6
+            'month': 6
         })
 
         res = self.client.get(url)
