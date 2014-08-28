@@ -2,14 +2,44 @@ import datetime
 import json
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.test import TestCase
 
 from mirrors.exceptions import LockEnforcementError
+from mirrors.models import validate_is_month, validate_is_year
 from mirrors.models import Component
 from mirrors.models import ComponentLock
 from mirrors.models import ComponentAttribute
+
+
+class ComponentModelValidatorsTest(TestCase):
+    def test_non_int_year(self):
+        with self.assertRaises(TypeError):
+            validate_is_year('not-an-int')
+
+    def test_negative_number_year(self):
+        with self.assertRaises(ValidationError):
+            validate_is_year(-1)
+
+    def test_valid_year(self):
+        validate_is_year(1900)
+
+    def test_non_int_month(self):
+        with self.assertRaises(TypeError):
+            validate_is_month('not-an-int')
+
+    def test_out_of_range_month(self):
+        with self.assertRaises(ValidationError):
+            validate_is_month(0)
+
+        with self.assertRaises(ValidationError):
+            validate_is_month(13)
+
+    def test_valid_month(self):
+        for i in range(1, 13):
+            validate_is_month(i)
 
 
 class ComponentModelTests(TestCase):
@@ -127,7 +157,7 @@ class ComponentModelTests(TestCase):
 
 
 class ComponentURITests(TestCase):
-    fixtures = ['users.json', 'component_lock_data.json']
+    fixtures = ['users.json', 'components.json']
 
     def test_get_data_uri(self):
         expected_url = reverse('component-detail', kwargs={
@@ -186,6 +216,14 @@ class ComponentLockTests(TestCase):
 
         self.assertEqual(c.lock.lock_ends_at, new_end)
 
+    def test_extend_lock_negative_length(self):
+        c = Component.objects.get(slug='locked-component',
+                                  year=2014,
+                                  month=6)
+
+        with self.assertRaises(ValueError):
+            c.lock.extend_lock(hours=-1)
+
     def test_unlock_component(self):
         c = Component.objects.get(slug='locked-component',
                                   year=2014,
@@ -193,6 +231,12 @@ class ComponentLockTests(TestCase):
         c.unlock(self.test_user)
 
         self.assertIs(c.lock, None)
+
+    def test_componentlock_str(self):
+        c = ComponentLock.objects.get(pk=1)
+        self.assertEqual(c.__str__(),
+                         'locked-component locked by test_user until ' +
+                         '9999-01-31 01:01:01.001000+00:00')
 
 
 class ComponentRevisionModelTests(TestCase):

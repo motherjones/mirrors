@@ -6,6 +6,7 @@ import jsonschema
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.test import Client
 
 from rest_framework import status
@@ -13,6 +14,9 @@ from rest_framework.test import APITestCase
 
 from mirrors import components
 from mirrors.models import Component
+from mirrors.serializers import ComponentSerializer
+from mirrors.serializers import ComponentWithDataSerializer
+from mirrors.views import ComponentGetterMixin
 
 
 class ComponentViewTest(APITestCase):
@@ -86,7 +90,7 @@ class ComponentViewTest(APITestCase):
         data_1 = json.loads(res_1.content.decode('UTF-8'))
         data_2 = json.loads(res_2.content.decode('UTF-8'))
 
-        expected_keys = ('slug', 'year', 'month')
+        expected_keys = set(['slug', 'year', 'month'])
         self.assertTrue(expected_keys.issubset(set(data_1.keys())))
         self.assertTrue(expected_keys.issubset(set(data_2.keys())))
 
@@ -122,17 +126,41 @@ class ComponentViewTest(APITestCase):
         self.assertIn('metadata', data)
         self.assertEqual(data['metadata']['title'], 'Valid component')
 
-    def test_post_new_component_used_name(self):
+    def test_post_new_component_used_name_diff_dates(self):
         url = reverse('component-list')
         self.valid_component['slug'] = 'this-is-for-testing-on'
+
+        res = self.client.post(url, self.valid_component)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        data = json.loads(res.content.decode('UTF-8'))
+        expected_keys = set(['slug', 'metadata', 'content_type', 'created_at',
+                             'updated_at', 'schema_name', 'revisions',
+                             'attributes', 'year', 'month'])
+        self.assertTrue(expected_keys.issubset(set(data.keys())))
+
+        self.assertEqual(data['slug'], 'this-is-for-testing-on')
+        self.assertEqual(data['metadata'], {'title': 'Valid component'})
+        self.assertEqual(data['content_type'], 'application/x-markdown')
+        self.assertEqual(data['schema_name'], 'article')
+        self.assertEqual(data['attributes'], {})
+        self.assertEqual(data['year'], 2014)
+        self.assertEqual(data['month'], 6)
+
+    def test_post_new_component_used_name_same_dates(self):
+        url = reverse('component-list')
+        self.valid_component['slug'] = 'this-is-for-testing-on'
+        self.valid_component['month'] = 2
 
         res = self.client.post(url, self.valid_component)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
         data = json.loads(res.content.decode('UTF-8'))
-        self.assertIn('slug', data)
-        self.assertEqual(data['slug'],
-                         ['Component with this Slug already exists.'])
+        self.assertIn('__all__', data)
+        self.assertEqual(
+            data['__all__'],
+            ['Component with this Slug, Year and Month already exists.']
+        )
 
     def test_post_new_component_missing_data(self):
         url = reverse('component-list')
@@ -619,7 +647,7 @@ class ComponentDataViewTest(APITestCase):
 
         component = Component.objects.get(slug='component-with-no-data',
                                           year=2014,
-                                          month=2)
+                                          month=5)
 
         with open(file_path, 'rb') as upload_file:
             res = c.post(url, data={'file': upload_file})
@@ -1115,3 +1143,42 @@ class ComponentValidityTest(APITestCase):
                                             'id'})
 
         jsonschema.validate({}, data)
+
+
+class ComponentGetterMixinTest(APITestCase):
+    fixtures = ['users.json', 'component_data.json']
+
+    def setUp(self):
+        self.getter = ComponentGetterMixin()
+
+    def test_non_int_component_year(self):
+        self.getter.kwargs = {'year': 'notanint',
+                              'month': '4'}
+        with self.assertRaises(Http404):
+            self.getter.get_object()
+
+    def test_non_int_component_month(self):
+        self.getter.kwargs = {'year': '2014',
+                              'month': 'notanint'}
+        with self.assertRaises(Http404):
+            self.getter.get_object()
+
+    def test_get_no_data_serializer(self):
+        self.getter.object = Component.objects.get(
+            slug='component-with-no-data',
+            year=2014,
+            month=5
+        )
+        self.assertEqual(self.getter.get_serializer_class(),
+                         ComponentSerializer)
+
+    def test_get_data_serializer(self):
+        obj = Component.objects.get(
+            slug='component-with-svg-data',
+            year=2014,
+            month=5
+        )
+        self.getter.get_object = lambda: obj
+
+        self.assertEqual(self.getter.get_serializer_class(),
+                         ComponentWithDataSerializer)

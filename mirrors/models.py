@@ -1,12 +1,11 @@
 import datetime
 import re
 
-from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Max
 from django.utils.timezone import utc
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
@@ -14,30 +13,28 @@ from jsonfield import JSONField
 from mirrors.exceptions import LockEnforcementError
 
 
-class YearField(models.IntegerField):
-    description = 'A year'
+def validate_is_year(value):
+    """Validate that the given value is a year (ie >= 0).
+    :param value: the value to validate
+    :type value: int
 
-    def validate(self, value):
-        """Check to make sure that the value of the year is valid by checking
-        to make sure that it is greater than 0.
-        """
+    :raises: :class:`ValidationError`
+    """
 
-        super(YearField, self).validate(value)
+    if value < 0:
+        raise ValidationError('Not a valid year value')
 
-        if value < 0:
-            raise forms.ValidationError("Not a valid year")
 
-class MonthField(models.IntegerField):
-    description = 'A month'
+def validate_is_month(value):
+    """Validate that the given value is a month (ie 1 <= value <= 12)
 
-    def validate(self, value):
-        """Check to make sure that the value of the month is valid, ie 1 <=
-        month <= 12."""
+    :param value: the value to validate
+    :type value: int
 
-        super(MonthField, self).validate(value)
-        
-        if value < 1 or value > 12:
-            raise forms.ValidationError("Not a valid month")
+    :raises: :class:`ValidationError`
+    """
+    if value < 1 or value > 12:
+        raise ValidationError('Not a valid month value')
 
 
 class Component(models.Model):
@@ -51,8 +48,14 @@ class Component(models.Model):
 
     """
     slug = models.SlugField(max_length=100, null=False, blank=False)
-    year = YearField(default=0, null=False, blank=False)
-    month = MonthField(default=0, null=False, blank=False)
+    year = models.IntegerField(default=0,
+                               null=False,
+                               blank=False,
+                               validators=[validate_is_year])
+    month = models.IntegerField(default=0,
+                                null=False,
+                                blank=False,
+                                validators=[validate_is_month])
 
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)

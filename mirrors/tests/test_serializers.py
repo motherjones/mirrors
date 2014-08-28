@@ -1,9 +1,5 @@
 import json
 
-import jsonschema
-
-from django.core.urlresolvers import reverse
-
 from rest_framework import serializers
 from rest_framework.test import APITestCase
 

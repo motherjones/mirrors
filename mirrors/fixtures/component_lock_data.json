@@ -50,7 +50,7 @@
 {
     "fields": {
         "locked_at": "2014-06-23T21:29:46.993Z",
-        "lock_ends_at": "9999-01-31T01:01:01.001Z",
+        "lock_ends_at": "9999-01-31T01:01:01.001Z",V
         "locked_by": 4,
         "component": 2
     },

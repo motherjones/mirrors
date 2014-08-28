@@ -48,6 +48,41 @@ def can_update_component(user, component_slug):
         return True
 
 
+class ComponentGetterMixin(object):
+    def __init__(self):
+        self.object = None
+
+    def get_object(self, queryset=None):
+        """Return the Component object that is indicated by the URI in the request.
+
+        :rtype: :class:`Component`
+        :raises: :class:`Http404`
+        """
+
+        slug = self.kwargs.get('slug', None)
+        try:
+            year = int(self.kwargs.get('year', None))
+            month = int(self.kwargs.get('month', None))
+        except ValueError:
+            raise Http404()
+
+        return get_object_or_404(Component,
+                                 slug=slug,
+                                 year=year,
+                                 month=month)
+
+    def get_serializer_class(self):
+        if self.object is None:
+            self.object = self.get_object()
+
+        if self.object.data_uri is None:
+            serializer_class = ComponentSerializer
+        else:
+            serializer_class = ComponentWithDataSerializer
+
+        return serializer_class
+
+
 class ComponentList(mixins.CreateModelMixin,
                     generics.GenericAPIView):
     """Handle the POST requests made to ``/component`` to allow the creation of
@@ -66,22 +101,17 @@ class ComponentList(mixins.CreateModelMixin,
 class ComponentDetail(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
+                      ComponentGetterMixin,
                       generics.GenericAPIView):
     """View for a single Component instance."""
-    queryset = Component.objects.all()
+#    queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
     authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
+
     def get(self, request, *args, **kwargs):
-        component = get_object_or_404(Component, slug=self.kwargs['slug'])
-
-        if component.data_uri is not None:
-            self.serializer_class = ComponentWithDataSerializer
-        else:
-            self.serializer_class = ComponentSerializer
-
         return self.retrieve(request, *args, **kwargs)
 
     @requires_lock_access
