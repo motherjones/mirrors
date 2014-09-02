@@ -6,7 +6,7 @@ setup(name='mirrors',
     install_requires=[
         'jsonfield>=0.9.20',
         'psycopg2>=2.5.1',
-        'djangorestframework>=2.3.13',
+        'djangorestframework==2.3.14',
         'jsonschema>=2.3.0',
     ],
     extras_require = {
