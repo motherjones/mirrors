@@ -142,7 +142,7 @@ class ComponentRevisionModelTests(TestCase):
 
         self.assertEqual(c.revisions.count(), 1)
         self.assertEqual(cr.component, c)
-        self.assertEqual(cr.data, b'this is a new revision')
+        self.assertEqual(bytes(cr.data), b'this is a new revision')
 
     def test_new_revision_no_data(self):
         c = Component.objects.get(slug='test-component-with-no-revisions')
