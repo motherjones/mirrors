@@ -13,7 +13,7 @@ class ComponentAuthenticationTest(APITestCase):
         })
 
         res = self.client.get(url)
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authed_as_user_accepts(self):
         url = reverse('component-detail', kwargs={
