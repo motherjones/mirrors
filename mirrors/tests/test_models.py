@@ -171,7 +171,7 @@ class ComponentModelTests(TestCase):
                       schema_name='test_schema')
 
         with self.assertRaises(ValidationError):
-            c.save()
+            c.full_clean()
 
     def test_missing_month(self):
         c = Component(slug='test-component-missing-year',
@@ -180,7 +180,7 @@ class ComponentModelTests(TestCase):
                       schema_name='test_schema')
 
         with self.assertRaises(ValidationError):
-            c.save()
+            c.full_clean()
 
 
 class ComponentURITests(TestCase):
