@@ -9,7 +9,9 @@ class ComponentAuthenticationTest(APITestCase):
 
     def test_noauthed_rejects(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'component-with-svg-data'
+            'slug': 'component-with-svg-data',
+            'year': 2014,
+            'month': 5
         })
 
         res = self.client.get(url)
@@ -17,7 +19,9 @@ class ComponentAuthenticationTest(APITestCase):
 
     def test_authed_as_user_accepts(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'component-with-svg-data'
+            'slug': 'component-with-svg-data',
+            'year': 2014,
+            'month': 5
         })
 
         self.client.login(username='test_user', password='password1')
@@ -26,7 +30,9 @@ class ComponentAuthenticationTest(APITestCase):
 
     def test_authed_as_staff_accepts(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'component-with-svg-data'
+            'slug': 'component-with-svg-data',
+            'year': 2014,
+            'month': 5
         })
 
         self.client.login(username='test_staff', password='password1')
@@ -35,7 +41,9 @@ class ComponentAuthenticationTest(APITestCase):
 
     def test_authed_as_admin_accepts(self):
         url = reverse('component-detail', kwargs={
-            'slug': 'component-with-svg-data'
+            'slug': 'component-with-svg-data',
+            'year': 2014,
+            'month': 5
         })
 
         self.client.login(username='test_admin', password='password1')

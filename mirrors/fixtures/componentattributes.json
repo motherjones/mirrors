@@ -7,7 +7,9 @@
         "created_at": "2014-04-21T19:32:53.029Z", 
         "updated_at": "2014-04-21T19:32:53.030Z", 
         "schema_name": "none", 
-        "slug": "component-with-regular-attribute"
+        "slug": "component-with-regular-attribute",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -18,7 +20,9 @@
         "created_at": "2014-04-21T19:34:52.060Z", 
         "updated_at": "2014-04-21T19:34:52.060Z", 
         "schema_name": "none", 
-        "slug": "attribute-1"
+        "slug": "attribute-1",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -29,7 +33,9 @@
         "created_at": "2014-04-21T19:34:52.065Z", 
         "updated_at": "2014-04-21T19:34:52.065Z", 
         "schema_name": "none", 
-        "slug": "attribute-2"
+        "slug": "attribute-2",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -40,7 +46,9 @@
         "created_at": "2014-04-21T19:34:52.071Z", 
         "updated_at": "2014-04-21T19:34:52.071Z", 
         "schema_name": "none", 
-        "slug": "attribute-3"
+        "slug": "attribute-3",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -51,7 +59,9 @@
         "created_at": "2014-04-21T19:34:52.077Z", 
         "updated_at": "2014-04-21T19:34:52.077Z", 
         "schema_name": "none", 
-        "slug": "attribute-4"
+        "slug": "attribute-4",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -62,7 +72,9 @@
         "created_at": "2014-04-21T19:34:52.082Z", 
         "updated_at": "2014-04-21T19:34:52.082Z", 
         "schema_name": "none", 
-        "slug": "attribute-5"
+        "slug": "attribute-5",
+        "year": 2014,
+        "month": 4
     }
 },
 {
@@ -73,7 +85,9 @@
         "created_at": "2014-04-21T19:50:04.566Z", 
         "updated_at": "2014-04-21T19:50:04.566Z", 
         "schema_name": "none", 
-        "slug": "component-with-list-attribute"
+        "slug": "component-with-list-attribute",
+        "year": 2014,
+        "month": 4
     }
 },
 {

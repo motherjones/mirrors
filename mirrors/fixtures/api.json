@@ -8,6 +8,8 @@
             "updated_at": "2014-01-30T19:32:34.555Z", 
             "content_type": "none", 
             "slug": "test-component-1", 
+            "year": 2014,
+            "month": 1,
             "metadata": "{\"author\": \"author one\", \"title\": \"test component 1\"}"
         }
     }, 
@@ -20,6 +22,8 @@
             "updated_at": "2014-02-06T00:01:24.061Z", 
             "content_type": "none", 
             "slug": "test-component-with-multiple-levels", 
+            "year": 2014,
+            "month": 2,
             "metadata": "{\"title\": \"test component with children with children of their own\", \"author\": \"bobby tables\"}"
         }
     }, 
@@ -32,6 +36,8 @@
             "updated_at": "2014-02-06T00:03:10.332Z", 
             "content_type": "none", 
             "slug": "test-component-with-multiple-levels-sub-1", 
+            "year": 2014,
+            "month": 2,
             "metadata": "{\"author\": \"bobby tables\", \"title\": \"test component with children with children of their own sub-1\"}"
         }
     }, 
@@ -44,6 +50,8 @@
             "updated_at": "2014-02-06T00:03:40.660Z", 
             "content_type": "none", 
             "slug": "test-component-with-multiple-levels-sub-2", 
+            "year": 2014,
+            "month": 2,
             "metadata": "{\"author\": \"bobby tables\", \"title\": \"test component with children with children of their own sub-2\"}"
         }
     }, 
@@ -56,6 +64,8 @@
             "updated_at": "2014-02-06T00:03:54.924Z", 
             "content_type": "none", 
             "slug": "test-component-with-multiple-levels-sub-1-1", 
+            "year": 2014,
+            "month": 2,
             "metadata": "{\"title\": \"test component with children with children of their own sub-1-1\", \"author\": \"bobby tables\"}"
         }
     }, 
@@ -68,6 +78,8 @@
             "updated_at": "2014-02-06T00:04:11.612Z", 
             "content_type": "none", 
             "slug": "test-component-with-multiple-levels-sub-1-2", 
+            "year": 2014,
+            "month": 2,
             "metadata": "{\"title\": \"test component with children with children of their own sub-1-2\", \"author\": \"bobby tables\"}"
         }
     }, 

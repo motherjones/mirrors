@@ -1,19 +1,41 @@
 import datetime
 import re
-import sys
 
-from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Max
 from django.utils.timezone import utc
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 from jsonfield import JSONField
 
-
 from mirrors.exceptions import LockEnforcementError
+
+
+def validate_is_year(value):
+    """Validate that the given value is a year (ie >= 0).
+    :param value: the value to validate
+    :type value: int
+
+    :raises: :class:`ValidationError`
+    """
+
+    if value < 0:
+        raise ValidationError('Not a valid year value')
+
+
+def validate_is_month(value):
+    """Validate that the given value is a month (ie 1 <= value <= 12)
+
+    :param value: the value to validate
+    :type value: int
+
+    :raises: :class:`ValidationError`
+    """
+    if value < 1 or value > 12:
+        raise ValidationError('Not a valid month value')
+
 
 class Component(models.Model):
     """A ``Component`` is the basic type of object for all things in the Mirrors
@@ -21,16 +43,42 @@ class Component(models.Model):
     website is made of at least one ``Component`` object, and will generally be
     made from several few.
 
+    .. note :: ``Component`` objects all have a year and associated with them
+               so that they can be presented in
+               ``/component/<YYYY>/<MM>/<slug>`` format. If the value of both
+               of those are 0, they are treated as having no associated year
+               and month and are presented in ``/component/<slug>`` format.
+    
+
     .. warning :: The implementation of this class is incomplete and may change
                   in the future.
 
     """
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, null=False, blank=False)
+    year = models.IntegerField(default=0,
+                               null=False,
+                               blank=False,
+                               validators=[validate_is_year])
+    month = models.IntegerField(default=0,
+                                null=False,
+                                blank=False,
+                                validators=[validate_is_month])
+
     content_type = models.CharField(max_length=50, default='none')
     schema_name = models.CharField(max_length=50, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('slug', 'year', 'month'),)
+        index_together = ['slug', 'year', 'month']
+
+    def clean(self):
+        if bool(self.year != 0) != bool(self.month != 0):
+            # logical xor
+            raise ValidationError(
+                'Either both year and month must be defined, or neither')
 
     @property
     def data_uri(self):
@@ -39,7 +87,9 @@ class Component(models.Model):
         :rtype: str
         """
         if self.binary_data is not None:
-            return reverse('component-data', kwargs={'slug': self.slug})
+            return reverse('component-data', kwargs={'slug': self.slug,
+                                                     'year': self.year,
+                                                     'month': self.month})
         else:
             return None
 
