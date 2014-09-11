@@ -1,0 +1,6 @@
+image: bradrydzewski/python:3.3
+script:
+  - pip install ./
+  - python sample_project/manage.py test mirrors
+services:
+  - orchardup/postgresql:9.3
