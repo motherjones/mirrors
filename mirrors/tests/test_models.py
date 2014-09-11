@@ -155,6 +155,33 @@ class ComponentModelTests(TestCase):
         self.assertEqual(c.created_at, new_c.created_at)
         self.assertEqual(c.updated_at, new_c.updated_at)
 
+    def test_no_year_month(self):
+        c = Component(slug='test-component-with-no-dates',
+                      content_type='test_contenttype',
+                      schema_name='test_schema')
+
+        c.save()
+        self.assertEqual(c.year, 0)
+        self.assertEqual(c.month, 0)
+
+    def test_missing_year(self):
+        c = Component(slug='test-component-missing-year',
+                      month=3,
+                      content_type='test_contenttype',
+                      schema_name='test_schema')
+
+        with self.assertRaises(ValidationError):
+            c.save()
+
+    def test_missing_month(self):
+        c = Component(slug='test-component-missing-year',
+                      year=2014,
+                      content_type='test_contenttype',
+                      schema_name='test_schema')
+
+        with self.assertRaises(ValidationError):
+            c.save()
+
 
 class ComponentURITests(TestCase):
     fixtures = ['users.json', 'components.json']

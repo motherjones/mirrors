@@ -43,6 +43,13 @@ class Component(models.Model):
     website is made of at least one ``Component`` object, and will generally be
     made from several few.
 
+    .. note :: ``Component`` objects all have a year and associated with them
+               so that they can be presented in
+               ``/component/<YYYY>/<MM>/<slug>`` format. If the value of both
+               of those are 0, they are treated as having no associated year
+               and month and are presented in ``/component/<slug>`` format.
+    
+
     .. warning :: The implementation of this class is incomplete and may change
                   in the future.
 
@@ -66,6 +73,12 @@ class Component(models.Model):
     class Meta:
         unique_together = (('slug', 'year', 'month'),)
         index_together = ['slug', 'year', 'month']
+
+    def clean(self):
+        if bool(self.year != 0) != bool(self.month != 0):
+            # logical xor
+            raise ValidationError(
+                'Either both year and month must be defined, or neither')
 
     @property
     def data_uri(self):
