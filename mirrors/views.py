@@ -56,7 +56,6 @@ class ComponentList(mixins.CreateModelMixin,
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -71,7 +70,6 @@ class ComponentDetail(mixins.RetrieveModelMixin,
     queryset = Component.objects.all()
     serializer_class = ComponentSerializer
 
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -99,7 +97,6 @@ class ComponentAttributeList(mixins.CreateModelMixin,
     queryset = ComponentAttribute.objects.all()
     serializer_class = ComponentAttributeSerializer
 
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     @requires_lock_access
@@ -127,7 +124,6 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
     lookup_field = 'name'
     serializer_class = ComponentAttributeSerializer
 
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def _normalize_request_data(self, data):
@@ -219,7 +215,6 @@ class ComponentAttributeDetail(mixins.UpdateModelMixin,
 
 class ComponentRevisionList(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -235,7 +230,6 @@ class ComponentRevisionList(mixins.RetrieveModelMixin,
 
 class ComponentRevisionDetail(mixins.RetrieveModelMixin,
                               generics.GenericAPIView):
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -251,7 +245,6 @@ class ComponentRevisionDetail(mixins.RetrieveModelMixin,
 
 class ComponentRevisionData(mixins.RetrieveModelMixin,
                             generics.GenericAPIView):
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -275,7 +268,6 @@ class ComponentRevisionData(mixins.RetrieveModelMixin,
 
 
 class ComponentData(generics.GenericAPIView):
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -328,7 +320,6 @@ class ComponentData(generics.GenericAPIView):
 
 
 class ComponentLock(generics.GenericAPIView):
-    authentication_classes = (SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
