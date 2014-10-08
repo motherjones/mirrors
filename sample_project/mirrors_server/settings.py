@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'mirrors',
+    'mirrors_publisher',
 )
 
 MIDDLEWARE_CLASSES = (

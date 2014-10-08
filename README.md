@@ -35,7 +35,7 @@ python manage.py test mirrors
 If you want to get all of the test coverage, run this:
 
 ```bash
-coverage run --source='../mirrors/mirrors' --omit='*migrations*' manage.py test mirrors; coverage html
+coverage run --source='.' --omit='*migrations*' manage.py test mirrors; coverage html
 ```
 
 ## Documentation
@@ -43,4 +43,3 @@ coverage run --source='../mirrors/mirrors' --omit='*migrations*' manage.py test 
 The actual docs can be found at http://motherjones.github.io/mirrors/ and in
 the docs directory of this project. Just run `make` inside of it and it'll
 build you a nice, readable version of our API.
-    

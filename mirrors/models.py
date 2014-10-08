@@ -48,7 +48,6 @@ class Component(models.Model):
                ``/component/<YYYY>/<MM>/<slug>`` format. If the value of both
                of those are 0, they are treated as having no associated year
                and month and are presented in ``/component/<slug>`` format.
-    
 
     .. warning :: The implementation of this class is incomplete and may change
                   in the future.
