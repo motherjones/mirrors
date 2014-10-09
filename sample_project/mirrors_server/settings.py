@@ -55,10 +55,8 @@ ROOT_URLCONF = 'mirrors_server.urls'
 
 WSGI_APPLICATION = 'mirrors_server.wsgi.application'
 
-
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -108,6 +106,9 @@ REST_FRAMEWORK = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
+
+BACKEND_ADAPTER = 'mirrors_publisher.backend_adapters.MockAdapter'
+BACKEND_ADAPTER_ARGS = {}
 
 LANGUAGE_CODE = 'en-us'
 
